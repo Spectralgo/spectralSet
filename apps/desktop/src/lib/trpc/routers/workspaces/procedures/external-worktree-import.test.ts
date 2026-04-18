@@ -93,7 +93,7 @@ describe("External worktree detection and import", () => {
 	});
 
 	test("external worktree can be created and detected", () => {
-		// Create external worktree manually (simulates user creating it outside Superset)
+		// Create external worktree manually (simulates user creating it outside SpectralSet)
 		createExternalWorktree(
 			mainRepoPath,
 			"feature-external",
