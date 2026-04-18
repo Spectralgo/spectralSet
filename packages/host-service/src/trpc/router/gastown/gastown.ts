@@ -1,8 +1,10 @@
 import {
+	checkRecovery,
 	listBeads,
 	listPolecats,
 	listRigs,
 	mergeStrategySchema,
+	nuke,
 	peek,
 	probe,
 	sling,
@@ -37,6 +39,15 @@ const slingInputSchema = z.object({
 	notes: z.string().max(10_000).optional(),
 });
 
+const polecatTargetSchema = z.object({
+	rig: z.string().min(1),
+	polecat: z.string().min(1),
+});
+
+const nukeInputSchema = polecatTargetSchema.extend({
+	force: z.boolean().optional(),
+});
+
 export const gastownRouter = router({
 	probe: publicProcedure.query(() => probe()),
 	listRigs: publicProcedure.query(() => listRigs()),
@@ -61,6 +72,18 @@ export const gastownRouter = router({
 			bead: input.bead,
 			mergeStrategy: input.mergeStrategy,
 			notes: input.notes,
+		}),
+	),
+	checkRecovery: publicProcedure
+		.input(polecatTargetSchema)
+		.query(({ input }) =>
+			checkRecovery({ rig: input.rig, polecat: input.polecat }),
+		),
+	nuke: publicProcedure.input(nukeInputSchema).mutation(({ input }) =>
+		nuke({
+			rig: input.rig,
+			polecat: input.polecat,
+			force: input.force,
 		}),
 	),
 });

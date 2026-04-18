@@ -7,17 +7,26 @@ import {
 	GastownCliNotInstalledError,
 } from "./exec";
 import { parseBeadList } from "./parsers/beads";
+import {
+	isNukeSafetyFailure,
+	NukeSafetyError,
+	parseNukeSafetyReasons,
+	parseNukeSuccess,
+} from "./parsers/nuke";
 import { parsePeek } from "./parsers/peek";
 import { parsePolecatList } from "./parsers/polecats";
+import { parseRecovery } from "./parsers/recovery";
 import { parseRigList } from "./parsers/rigs";
 import { parseSlingResult } from "./parsers/sling";
 import { parseVersion } from "./parsers/version";
 import type {
 	Bead,
 	MergeStrategy,
+	NukeResult,
 	PeekResult,
 	Polecat,
 	ProbeResult,
+	RecoveryCheck,
 	Rig,
 	SlingResult,
 } from "./types";
@@ -27,15 +36,23 @@ export {
 	GastownCliNotInstalledError,
 	GastownCliTimeoutError,
 } from "./exec";
+export {
+	NukeParseError,
+	NukeSafetyError,
+} from "./parsers/nuke";
+export { RecoveryParseError } from "./parsers/recovery";
 export { SlingParseError } from "./parsers/sling";
 export type {
 	Bead,
 	BeadStatus,
 	MergeStrategy,
+	NukeResult,
 	PeekResult,
 	Polecat,
 	PolecatState,
 	ProbeResult,
+	RecoveryCheck,
+	RecoveryStatus,
 	Rig,
 	SlingResult,
 } from "./types";
@@ -43,6 +60,9 @@ export {
 	beadSchema,
 	beadStatusSchema,
 	mergeStrategySchema,
+	nukeResultSchema,
+	recoveryCheckSchema,
+	recoveryStatusSchema,
 	slingResultSchema,
 } from "./types";
 
@@ -201,6 +221,54 @@ export async function sling(
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
 	return parseSlingResult(stdout);
+}
+
+export interface CheckRecoveryArgs {
+	rig: string;
+	polecat: string;
+}
+
+export async function checkRecovery(
+	args: CheckRecoveryArgs,
+	options: GastownCliClientOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<RecoveryCheck> {
+	const target = `${args.rig}/${args.polecat}`;
+	const argv = ["polecat", "check-recovery", target, "--json"];
+	const { stdout, stderr, exitCode } = await execGt(argv, options, deps);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+	return parseRecovery(stdout);
+}
+
+export interface NukeArgs {
+	rig: string;
+	polecat: string;
+	force?: boolean;
+}
+
+export async function nuke(
+	args: NukeArgs,
+	options: GastownCliClientOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<NukeResult> {
+	const target = `${args.rig}/${args.polecat}`;
+	const argv = ["polecat", "nuke", target];
+	if (args.force) argv.push("--force");
+	const { stdout, stderr, exitCode } = await execGt(argv, options, deps);
+	if (exitCode !== 0) {
+		if (isNukeSafetyFailure(stderr)) {
+			throw new NukeSafetyError({
+				reasons: parseNukeSafetyReasons(stderr),
+				stderr,
+				stdout,
+			});
+		}
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+	const parsed = parseNukeSuccess(stdout);
+	return { ok: true, closedBead: parsed.closedBead };
 }
 
 function resolveRigCwd(

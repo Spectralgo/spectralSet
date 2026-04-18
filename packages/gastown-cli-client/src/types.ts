@@ -80,3 +80,31 @@ export const slingResultSchema = z.object({
 });
 
 export type SlingResult = z.infer<typeof slingResultSchema>;
+
+export const recoveryStatusSchema = z.object({
+	rig: z.string(),
+	polecat: z.string(),
+	cleanupStatus: z.string(),
+	needsRecovery: z.boolean(),
+	verdict: z.string(),
+	branch: z.string().optional(),
+	issue: z.string().optional(),
+});
+
+export type RecoveryStatus = z.infer<typeof recoveryStatusSchema>;
+
+export const recoveryCheckSchema = z.object({
+	status: recoveryStatusSchema,
+	canNuke: z.boolean(),
+	reason: z.string().optional(),
+	suggestions: z.array(z.string()).optional(),
+});
+
+export type RecoveryCheck = z.infer<typeof recoveryCheckSchema>;
+
+export const nukeResultSchema = z.object({
+	ok: z.literal(true),
+	closedBead: z.string().optional(),
+});
+
+export type NukeResult = z.infer<typeof nukeResultSchema>;

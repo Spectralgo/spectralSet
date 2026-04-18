@@ -13,6 +13,10 @@ import {
 	HiOutlineArrowPath,
 } from "react-icons/hi2";
 import {
+	NukeConfirmDialog,
+	type NukeTarget,
+} from "renderer/components/Gastown/NukeConfirmDialog";
+import {
 	PolecatPeekDrawer,
 	type PolecatPeekTarget,
 } from "renderer/components/Gastown/PolecatPeekDrawer";
@@ -39,6 +43,8 @@ function GastownSidebarSectionBody() {
 	const [open, setOpen] = useState(true);
 	const [target, setTarget] = useState<PolecatPeekTarget | null>(null);
 	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [nukeTarget, setNukeTarget] = useState<NukeTarget | null>(null);
+	const [nukeOpen, setNukeOpen] = useState(false);
 
 	const fleetQuery = useGastownFleet({ enabled: true });
 	const polecats = fleetQuery.data ?? [];
@@ -103,6 +109,10 @@ function GastownSidebarSectionBody() {
 									setTarget({ rig: p.rig, name: p.name, state: p.state });
 									setDrawerOpen(true);
 								}}
+								onNuke={(p) => {
+									setNukeTarget({ rig: p.rig, name: p.name });
+									setNukeOpen(true);
+								}}
 							/>
 						))
 					)}
@@ -116,6 +126,14 @@ function GastownSidebarSectionBody() {
 					if (!next) setTarget(null);
 				}}
 			/>
+			<NukeConfirmDialog
+				target={nukeTarget}
+				open={nukeOpen}
+				onOpenChange={(next) => {
+					setNukeOpen(next);
+					if (!next) setNukeTarget(null);
+				}}
+			/>
 		</div>
 	);
 }
@@ -124,9 +142,10 @@ interface RigGroupProps {
 	rig: string;
 	polecats: Polecat[];
 	onPeek: (polecat: Polecat) => void;
+	onNuke: (polecat: Polecat) => void;
 }
 
-function RigGroup({ rig, polecats, onPeek }: RigGroupProps) {
+function RigGroup({ rig, polecats, onPeek, onNuke }: RigGroupProps) {
 	const [open, setOpen] = useState(true);
 	return (
 		<Collapsible open={open} onOpenChange={setOpen}>
@@ -146,7 +165,8 @@ function RigGroup({ rig, polecats, onPeek }: RigGroupProps) {
 					<PolecatRow
 						key={`${polecat.rig}/${polecat.name}`}
 						polecat={polecat}
-						onClick={() => onPeek(polecat)}
+						onPeek={() => onPeek(polecat)}
+						onNuke={() => onNuke(polecat)}
 					/>
 				))}
 			</CollapsibleContent>
