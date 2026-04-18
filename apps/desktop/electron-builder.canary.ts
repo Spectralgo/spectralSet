@@ -13,14 +13,14 @@ import type { Configuration } from "electron-builder";
 import baseConfig from "./electron-builder";
 import pkg from "./package.json";
 
-const productName = "Superset Canary";
+const productName = "SpectralSet Canary";
 const canaryMacIconPath = join(pkg.resources, "build/icons/icon-canary.icns");
 const canaryLinuxIconPath = join(pkg.resources, "build/icons/icon-canary.png");
 const canaryWinIconPath = join(pkg.resources, "build/icons/icon-canary.ico");
 
 const config: Configuration = {
 	...baseConfig,
-	appId: "com.superset.desktop.canary",
+	appId: "com.spectralset.desktop.canary",
 	productName,
 
 	publish: {

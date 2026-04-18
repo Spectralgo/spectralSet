@@ -11,13 +11,13 @@ config({
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
-	name: "Superset",
-	slug: "superset",
+	name: "SpectralSet",
+	slug: "spectralset",
 	version: "1.0.0",
 	orientation: "portrait",
 	icon: "./assets/icon.png",
 	userInterfaceStyle: "dark",
-	scheme: "superset",
+	scheme: "spectralset",
 	splash: {
 		image: "./assets/splash-icon.png",
 		resizeMode: "contain",
@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	},
 	ios: {
 		supportsTablet: true,
-		bundleIdentifier: "sh.superset.mobile",
+		bundleIdentifier: "sh.spectralset.mobile",
 		infoPlist: {
 			ITSAppUsesNonExemptEncryption: false,
 		},
@@ -35,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			foregroundImage: "./assets/adaptive-icon.png",
 			backgroundColor: "#ffffff",
 		},
-		package: "sh.superset.mobile",
+		package: "sh.spectralset.mobile",
 		predictiveBackGestureEnabled: false,
 	},
 	web: {

@@ -1,6 +1,6 @@
 {
 	"name": "@spectralset/desktop",
-	"productName": "Superset",
+	"productName": "SpectralSet",
 	"description": "The last developer tool you'll ever need",
 	"version": "1.5.5",
 	"main": "./dist/main/index.js",

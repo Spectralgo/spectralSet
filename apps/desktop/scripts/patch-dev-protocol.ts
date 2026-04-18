@@ -188,7 +188,7 @@ export function main() {
 	}
 
 	const PROTOCOL_SCHEME = `superset-${workspaceName}`;
-	const BUNDLE_ID = `com.superset.desktop.${workspaceName}`;
+	const BUNDLE_ID = `com.spectralset.desktop.${workspaceName}`;
 	const ELECTRON_DIST_DIR = resolve(
 		import.meta.dirname,
 		"../node_modules/electron/dist",
