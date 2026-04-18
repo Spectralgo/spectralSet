@@ -1,13 +1,13 @@
-import { FEATURE_FLAGS } from "@superset/shared/constants";
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+import { FEATURE_FLAGS } from "@spectralset/shared/constants";
+import { Badge } from "@spectralset/ui/badge";
+import { Button } from "@spectralset/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
-} from "@superset/ui/card";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@spectralset/ui/card";
+import { Skeleton } from "@spectralset/ui/skeleton";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useCallback, useEffect, useState } from "react";

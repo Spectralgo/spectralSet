@@ -1,8 +1,8 @@
 import {
 	PromptInputButton,
 	usePromptInputAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@spectralset/ui/ai-elements/prompt-input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
 import { PaperclipIcon } from "lucide-react";
 import { GoIssueOpened } from "react-icons/go";
 import { LuGitPullRequest } from "react-icons/lu";

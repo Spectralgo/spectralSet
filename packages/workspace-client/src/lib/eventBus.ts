@@ -1,8 +1,8 @@
 import type {
 	ClientMessage,
 	ServerMessage,
-} from "@superset/host-service/events";
-import type { FsWatchEvent } from "@superset/workspace-fs/host";
+} from "@spectralset/host-service/events";
+import type { FsWatchEvent } from "@spectralset/workspace-fs/host";
 
 type EventType = "fs:events" | "git:changed";
 

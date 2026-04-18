@@ -1,14 +1,14 @@
-import { stripeClient } from "@superset/auth/stripe";
-import { db } from "@superset/db/client";
-import { members, organizations } from "@superset/db/schema";
+import { stripeClient } from "@spectralset/auth/stripe";
+import { db } from "@spectralset/db/client";
+import { members, organizations } from "@spectralset/db/schema";
 import {
 	sessions as authSessions,
 	invitations,
 	verifications,
-} from "@superset/db/schema/auth";
-import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
-import { findOrgMembership } from "@superset/db/utils";
-import { canRemoveMember, type OrganizationRole } from "@superset/shared/auth";
+} from "@spectralset/db/schema/auth";
+import { seedDefaultStatuses } from "@spectralset/db/seed-default-statuses";
+import { findOrgMembership } from "@spectralset/db/utils";
+import { canRemoveMember, type OrganizationRole } from "@spectralset/shared/auth";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";

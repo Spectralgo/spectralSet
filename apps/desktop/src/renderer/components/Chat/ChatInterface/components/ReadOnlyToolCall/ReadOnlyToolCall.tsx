@@ -1,10 +1,10 @@
-import { ShimmerLabel } from "@superset/ui/ai-elements/shimmer-label";
-import { ToolInput, ToolOutput } from "@superset/ui/ai-elements/tool";
+import { ShimmerLabel } from "@spectralset/ui/ai-elements/shimmer-label";
+import { ToolInput, ToolOutput } from "@spectralset/ui/ai-elements/tool";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
+} from "@spectralset/ui/collapsible";
 import { getToolName } from "ai";
 import {
 	CheckIcon,

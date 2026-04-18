@@ -1,4 +1,4 @@
-import { findOrgMembership } from "@superset/db/utils";
+import { findOrgMembership } from "@spectralset/db/utils";
 import { TRPCError } from "@trpc/server";
 
 export async function verifyOrgMembership(

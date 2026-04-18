@@ -1,4 +1,4 @@
-import type { WorkspaceState } from "@superset/panes";
+import type { WorkspaceState } from "@spectralset/panes";
 import type {
 	PaneViewerData,
 	TerminalPaneData,

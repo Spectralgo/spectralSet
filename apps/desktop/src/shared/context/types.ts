@@ -1,4 +1,4 @@
-import type { AgentDefinitionId } from "@superset/shared/agent-catalog";
+import type { AgentDefinitionId } from "@spectralset/shared/agent-catalog";
 import type { ResolvedAgentConfig } from "shared/utils/agent-settings";
 
 /**

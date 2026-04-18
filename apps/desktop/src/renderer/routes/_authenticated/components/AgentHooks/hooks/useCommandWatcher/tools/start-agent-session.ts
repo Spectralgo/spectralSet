@@ -2,7 +2,7 @@ import {
 	chatLaunchConfigSchema,
 	normalizeAgentLaunchRequest,
 	STARTABLE_AGENT_TYPES,
-} from "@superset/shared/agent-launch";
+} from "@spectralset/shared/agent-launch";
 import {
 	launchAgentSession,
 	queueAgentSessionLaunch,

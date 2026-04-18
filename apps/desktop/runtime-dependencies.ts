@@ -44,10 +44,10 @@ const externalizedRuntimeModules: ExternalizedRuntimeModule[] = [
 		asarUnpackGlobs: ["**/node_modules/node-pty/**/*"],
 	},
 	{
-		specifier: "@superset/macos-process-metrics",
-		materialize: ["@superset/macos-process-metrics"],
-		packagedCopies: [copyWholeModule("@superset/macos-process-metrics")],
-		asarUnpackGlobs: ["**/node_modules/@superset/macos-process-metrics/**/*"],
+		specifier: "@spectralset/macos-process-metrics",
+		materialize: ["@spectralset/macos-process-metrics"],
+		packagedCopies: [copyWholeModule("@spectralset/macos-process-metrics")],
+		asarUnpackGlobs: ["**/node_modules/@spectralset/macos-process-metrics/**/*"],
 	},
 	{
 		specifier: "@ast-grep/napi",

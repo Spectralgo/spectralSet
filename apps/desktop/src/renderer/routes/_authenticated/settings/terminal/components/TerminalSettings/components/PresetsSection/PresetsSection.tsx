@@ -2,9 +2,9 @@ import {
 	type ExecutionMode,
 	normalizeExecutionMode,
 	type TerminalPreset,
-} from "@superset/local-db";
-import { Button } from "@superset/ui/button";
-import { Label } from "@superset/ui/label";
+} from "@spectralset/local-db";
+import { Button } from "@spectralset/ui/button";
+import { Label } from "@spectralset/ui/label";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { useIsDarkTheme } from "renderer/assets/app-icons/preset-icons";

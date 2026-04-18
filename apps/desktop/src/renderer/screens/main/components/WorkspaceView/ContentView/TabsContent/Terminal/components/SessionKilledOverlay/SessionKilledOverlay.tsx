@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Card } from "@superset/ui/card";
+import { Button } from "@spectralset/ui/button";
+import { Card } from "@spectralset/ui/card";
 import { LuPower } from "react-icons/lu";
 
 interface SessionKilledOverlayProps {

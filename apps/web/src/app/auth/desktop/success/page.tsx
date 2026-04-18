@@ -1,6 +1,6 @@
-import { auth } from "@superset/auth/server";
-import { db } from "@superset/db/client";
-import { sessions } from "@superset/db/schema/auth";
+import { auth } from "@spectralset/auth/server";
+import { db } from "@spectralset/db/client";
+import { sessions } from "@spectralset/db/schema/auth";
 import { headers } from "next/headers";
 
 import { DesktopRedirect } from "./components/DesktopRedirect";

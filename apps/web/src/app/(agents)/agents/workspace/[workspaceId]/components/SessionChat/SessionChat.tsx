@@ -4,13 +4,13 @@ import {
 	Conversation,
 	ConversationContent,
 	ConversationScrollButton,
-} from "@superset/ui/ai-elements/conversation";
-import { FileDiffTool } from "@superset/ui/ai-elements/file-diff-tool";
+} from "@spectralset/ui/ai-elements/conversation";
+import { FileDiffTool } from "@spectralset/ui/ai-elements/file-diff-tool";
 import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
+} from "@spectralset/ui/ai-elements/message";
 import type { MockDiffFile, MockMessage } from "../../../../../mock-data";
 
 type SessionChatProps = {

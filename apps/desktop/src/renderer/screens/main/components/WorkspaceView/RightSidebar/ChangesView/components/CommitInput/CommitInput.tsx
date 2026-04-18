@@ -1,16 +1,16 @@
-import type { GitHubStatus } from "@superset/local-db";
-import { Button } from "@superset/ui/button";
-import { ButtonGroup } from "@superset/ui/button-group";
+import type { GitHubStatus } from "@spectralset/local-db";
+import { Button } from "@spectralset/ui/button";
+import { ButtonGroup } from "@spectralset/ui/button-group";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
-import { Textarea } from "@superset/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@spectralset/ui/dropdown-menu";
+import { toast } from "@spectralset/ui/sonner";
+import { Textarea } from "@spectralset/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
 import { useState } from "react";
 import {
 	VscArrowDown,

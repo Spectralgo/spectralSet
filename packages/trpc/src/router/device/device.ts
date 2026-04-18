@@ -1,4 +1,4 @@
-import { db, dbWs } from "@superset/db/client";
+import { db, dbWs } from "@spectralset/db/client";
 import {
 	devicePresence,
 	deviceTypeValues,
@@ -6,7 +6,7 @@ import {
 	v2ClientTypeValues,
 	v2Hosts,
 	v2UsersHosts,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";

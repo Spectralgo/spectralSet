@@ -1,4 +1,4 @@
-import type { TeardownFailureCause } from "@superset/host-service";
+import type { TeardownFailureCause } from "@spectralset/host-service";
 import { TRPCClientError } from "@trpc/client";
 import { useCallback } from "react";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";

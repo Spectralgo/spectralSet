@@ -1,6 +1,6 @@
 import { MultiFileDiff } from "@pierre/diffs/react";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { toast } from "@spectralset/ui/sonner";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { useQuery } from "@tanstack/react-query";
 import { memo, useMemo } from "react";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";

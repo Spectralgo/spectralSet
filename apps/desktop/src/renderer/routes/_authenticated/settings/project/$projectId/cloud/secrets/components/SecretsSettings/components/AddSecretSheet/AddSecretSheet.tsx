@@ -1,18 +1,18 @@
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+import { alert } from "@spectralset/ui/atoms/Alert";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
 import {
 	Sheet,
 	SheetContent,
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
-} from "@superset/ui/sheet";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
-import { Textarea } from "@superset/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/sheet";
+import { toast } from "@spectralset/ui/sonner";
+import { Switch } from "@spectralset/ui/switch";
+import { Textarea } from "@spectralset/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	HiOutlineArrowDownTray,

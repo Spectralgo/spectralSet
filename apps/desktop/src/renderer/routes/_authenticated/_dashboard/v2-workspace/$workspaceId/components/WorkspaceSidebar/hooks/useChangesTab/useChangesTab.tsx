@@ -1,5 +1,5 @@
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import { toast } from "@spectralset/ui/sonner";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { useCallback } from "react";
 import type { useGitStatus } from "renderer/hooks/host-service/useGitStatus";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

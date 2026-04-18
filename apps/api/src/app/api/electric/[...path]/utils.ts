@@ -1,4 +1,4 @@
-import { db } from "@superset/db/client";
+import { db } from "@spectralset/db/client";
 import {
 	agentCommands,
 	chatSessions,
@@ -20,7 +20,7 @@ import {
 	v2UsersHosts,
 	v2Workspaces,
 	workspaces,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import { eq, inArray, sql } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { QueryBuilder } from "drizzle-orm/pg-core";

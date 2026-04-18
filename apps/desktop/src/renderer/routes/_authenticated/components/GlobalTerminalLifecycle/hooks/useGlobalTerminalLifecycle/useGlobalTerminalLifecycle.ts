@@ -1,4 +1,4 @@
-import type { WorkspaceState } from "@superset/panes";
+import type { WorkspaceState } from "@spectralset/panes";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useRef } from "react";
 import { terminalRuntimeRegistry } from "renderer/lib/terminal/terminal-runtime-registry";

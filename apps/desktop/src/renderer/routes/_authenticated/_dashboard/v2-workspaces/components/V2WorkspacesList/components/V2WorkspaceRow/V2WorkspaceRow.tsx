@@ -1,5 +1,5 @@
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+import { Badge } from "@spectralset/ui/badge";
+import { Button } from "@spectralset/ui/button";
 import {
 	Item,
 	ItemActions,
@@ -7,7 +7,7 @@ import {
 	ItemDescription,
 	ItemMedia,
 	ItemTitle,
-} from "@superset/ui/item";
+} from "@spectralset/ui/item";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import {

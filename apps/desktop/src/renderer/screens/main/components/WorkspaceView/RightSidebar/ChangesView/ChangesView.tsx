@@ -1,6 +1,6 @@
-import { toast } from "@superset/ui/sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@superset/ui/tabs";
-import { cn } from "@superset/ui/utils";
+import { toast } from "@spectralset/ui/sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
+import { cn } from "@spectralset/ui/utils";
 import { useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";

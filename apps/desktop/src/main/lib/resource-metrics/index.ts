@@ -1,5 +1,5 @@
 import os from "node:os";
-import { projects, workspaces } from "@superset/local-db";
+import { projects, workspaces } from "@spectralset/local-db";
 import { eq } from "drizzle-orm";
 import { app } from "electron";
 import { localDb } from "main/lib/local-db";

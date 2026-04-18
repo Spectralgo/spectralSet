@@ -1,4 +1,4 @@
-import type { TerminalPreset } from "@superset/local-db";
+import type { TerminalPreset } from "@spectralset/local-db";
 import {
 	filterMatchingPresetsForProject,
 	isProjectTargetedPreset,

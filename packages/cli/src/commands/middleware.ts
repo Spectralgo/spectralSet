@@ -1,4 +1,4 @@
-import { middleware } from "@superset/cli-framework";
+import { middleware } from "@spectralset/cli-framework";
 import { readDeviceConfig } from "../lib/config";
 import { resolveAuth } from "../lib/resolve-auth";
 

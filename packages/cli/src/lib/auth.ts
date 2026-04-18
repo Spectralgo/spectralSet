@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { createServer, type Server } from "node:http";
-import { CLIError } from "@superset/cli-framework";
+import { CLIError } from "@spectralset/cli-framework";
 import type { SupersetConfig } from "./config";
 
 const LOOPBACK_CANDIDATES = [51789, 51790];

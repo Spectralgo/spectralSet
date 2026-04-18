@@ -2,14 +2,14 @@ import {
 	canRemoveMember,
 	getRoleSortPriority,
 	type OrganizationRole,
-} from "@superset/shared/auth";
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
-import { Card, CardContent } from "@superset/ui/card";
-import { Input } from "@superset/ui/input";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/shared/auth";
+import { Avatar } from "@spectralset/ui/atoms/Avatar";
+import { Badge } from "@spectralset/ui/badge";
+import { Button } from "@spectralset/ui/button";
+import { Card, CardContent } from "@spectralset/ui/card";
+import { Input } from "@spectralset/ui/input";
+import { Skeleton } from "@spectralset/ui/skeleton";
+import { toast } from "@spectralset/ui/sonner";
 import {
 	Table,
 	TableBody,
@@ -17,7 +17,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@spectralset/ui/table";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useState } from "react";

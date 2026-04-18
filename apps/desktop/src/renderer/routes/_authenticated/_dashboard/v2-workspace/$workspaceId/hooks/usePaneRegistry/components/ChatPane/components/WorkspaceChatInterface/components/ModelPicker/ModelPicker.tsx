@@ -6,9 +6,9 @@ import {
 	ModelSelectorList,
 	ModelSelectorLogo,
 	ModelSelectorTrigger,
-} from "@superset/ui/ai-elements/model-selector";
-import { PromptInputButton } from "@superset/ui/ai-elements/prompt-input";
-import { claudeIcon } from "@superset/ui/icons/preset-icons";
+} from "@spectralset/ui/ai-elements/model-selector";
+import { PromptInputButton } from "@spectralset/ui/ai-elements/prompt-input";
+import { claudeIcon } from "@spectralset/ui/icons/preset-icons";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDownIcon } from "lucide-react";
 import { useMemo } from "react";

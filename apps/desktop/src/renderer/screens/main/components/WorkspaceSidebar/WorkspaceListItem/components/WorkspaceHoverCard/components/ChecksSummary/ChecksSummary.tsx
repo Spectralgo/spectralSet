@@ -1,4 +1,4 @@
-import type { CheckItem } from "@superset/local-db";
+import type { CheckItem } from "@spectralset/local-db";
 import { LuCheck, LuLoaderCircle, LuX } from "react-icons/lu";
 import { STROKE_WIDTH } from "../../../../../constants";
 

@@ -1,5 +1,5 @@
 import type { NodeWebSocket } from "@hono/node-ws";
-import type { FsWatchEvent } from "@superset/workspace-fs/host";
+import type { FsWatchEvent } from "@spectralset/workspace-fs/host";
 import type { Hono } from "hono";
 import type { HostDb } from "../db";
 import type { WorkspaceFilesystemManager } from "../runtime/filesystem";

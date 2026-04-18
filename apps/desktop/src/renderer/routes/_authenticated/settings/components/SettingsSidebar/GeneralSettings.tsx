@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import {
 	HiOutlineBell,

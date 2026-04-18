@@ -5,7 +5,7 @@ import {
 	SHELLS_WITH_READY_MARKER,
 	type ShellReadyScanState,
 	scanForShellReady,
-} from "@superset/shared/shell-ready-scanner";
+} from "@spectralset/shared/shell-ready-scanner";
 import { and, eq } from "drizzle-orm";
 import type { Hono } from "hono";
 import { type IPty, spawn } from "node-pty";
@@ -45,7 +45,7 @@ const MAX_BUFFER_BYTES = 64 * 1024;
 
 // ---------------------------------------------------------------------------
 // OSC 133 shell readiness detection (FinalTerm semantic prompt standard).
-// Scanner logic lives in @superset/shared/shell-ready-scanner.
+// Scanner logic lives in @spectralset/shared/shell-ready-scanner.
 // ---------------------------------------------------------------------------
 
 /**

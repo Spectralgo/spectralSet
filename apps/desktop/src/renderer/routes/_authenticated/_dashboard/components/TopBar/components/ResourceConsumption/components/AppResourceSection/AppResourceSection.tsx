@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/lib/utils";
+import { cn } from "@spectralset/ui/lib/utils";
 import type { AppMetrics, UsageValues } from "../../types";
 import { formatCpu, formatMemory } from "../../utils/formatters";
 import {

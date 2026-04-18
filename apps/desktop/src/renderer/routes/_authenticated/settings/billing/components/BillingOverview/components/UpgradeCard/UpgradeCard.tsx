@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Card, CardContent } from "@superset/ui/card";
+import { Button } from "@spectralset/ui/button";
+import { Card, CardContent } from "@spectralset/ui/card";
 import { Link } from "@tanstack/react-router";
 import { HiCheck } from "react-icons/hi2";
 import { PLANS } from "../../../../constants";

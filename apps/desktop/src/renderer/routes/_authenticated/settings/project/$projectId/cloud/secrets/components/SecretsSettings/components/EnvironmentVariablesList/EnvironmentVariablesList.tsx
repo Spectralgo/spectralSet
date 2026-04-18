@@ -1,12 +1,12 @@
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@spectralset/ui/select";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	HiArrowsUpDown,

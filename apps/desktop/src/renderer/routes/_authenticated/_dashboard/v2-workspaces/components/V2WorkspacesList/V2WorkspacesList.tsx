@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	Empty,
 	EmptyContent,
@@ -6,9 +6,9 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@superset/ui/empty";
-import { ItemGroup } from "@superset/ui/item";
-import { ScrollArea } from "@superset/ui/scroll-area";
+} from "@spectralset/ui/empty";
+import { ItemGroup } from "@spectralset/ui/item";
+import { ScrollArea } from "@spectralset/ui/scroll-area";
 import { useMatchRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { LuLayers, LuSearchX } from "react-icons/lu";

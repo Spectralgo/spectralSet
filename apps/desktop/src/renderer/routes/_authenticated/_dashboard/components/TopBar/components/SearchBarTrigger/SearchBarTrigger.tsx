@@ -1,4 +1,4 @@
-import { Kbd, KbdGroup } from "@superset/ui/kbd";
+import { Kbd, KbdGroup } from "@spectralset/ui/kbd";
 import { useCallback } from "react";
 import { LuSearch } from "react-icons/lu";
 import { getBinding, useHotkeyDisplay } from "renderer/hotkeys";

@@ -1,7 +1,7 @@
-import { Button } from "@superset/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@superset/ui/tabs";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@spectralset/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { LuFile, LuGitCompareArrows } from "react-icons/lu";

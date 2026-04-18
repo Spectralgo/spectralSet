@@ -1,5 +1,5 @@
 {
-	"name": "@superset/mcp",
+	"name": "@spectralset/mcp",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -23,13 +23,13 @@
 	},
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "^1.26.0",
-		"@superset/db": "workspace:*",
-		"@superset/shared": "workspace:*",
+		"@spectralset/db": "workspace:*",
+		"@spectralset/shared": "workspace:*",
 		"drizzle-orm": "0.45.1",
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@types/node": "^24.9.1",
 		"bun-types": "^1.3.1",
 		"typescript": "^5.9.3"

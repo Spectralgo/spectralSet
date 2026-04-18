@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { SiLinear } from "react-icons/si";
 

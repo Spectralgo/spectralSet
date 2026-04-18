@@ -162,7 +162,7 @@ mock.module("main/lib/analytics", () => ({
 }));
 
 // =============================================================================
-// @superset/local-db Schema Mock (drizzle-orm/sqlite-core not available in Bun tests)
+// @spectralset/local-db Schema Mock (drizzle-orm/sqlite-core not available in Bun tests)
 // =============================================================================
 
 const mockTable = (name: string) => ({ id: `${name}_id` });
@@ -224,8 +224,8 @@ const localDbMock = () => ({
 
 // Mock both the package name and the resolved source path to handle
 // bun's workspace package resolution in different versions.
-mock.module("@superset/local-db", localDbMock);
-mock.module("@superset/local-db/schema", localDbMock);
+mock.module("@spectralset/local-db", localDbMock);
+mock.module("@spectralset/local-db/schema", localDbMock);
 
 // =============================================================================
 // Local DB Mock (better-sqlite3 not supported in Bun tests)

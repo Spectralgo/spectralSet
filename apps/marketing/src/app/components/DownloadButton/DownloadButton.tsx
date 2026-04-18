@@ -1,6 +1,6 @@
 "use client";
 
-import { COMPANY, DOWNLOAD_URL_MAC_ARM64 } from "@superset/shared/constants";
+import { COMPANY, DOWNLOAD_URL_MAC_ARM64 } from "@spectralset/shared/constants";
 import { HiMiniArrowDownTray, HiMiniClock } from "react-icons/hi2";
 import { track } from "@/lib/analytics";
 import { usePlatform } from "../../hooks/useOS";

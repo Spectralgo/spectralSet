@@ -1,6 +1,6 @@
 "use client";
 
-import { MeshGradient } from "@superset/ui/mesh-gradient";
+import { MeshGradient } from "@spectralset/ui/mesh-gradient";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 

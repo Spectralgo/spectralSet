@@ -1,5 +1,5 @@
 import * as p from "@clack/prompts";
-import { string } from "@superset/cli-framework";
+import { string } from "@spectralset/cli-framework";
 import { createApiClient } from "../../../lib/api-client";
 import { login } from "../../../lib/auth";
 import { command } from "../../../lib/command";

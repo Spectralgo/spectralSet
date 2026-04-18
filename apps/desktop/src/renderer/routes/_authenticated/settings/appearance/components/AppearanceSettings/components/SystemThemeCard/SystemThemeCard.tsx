@@ -4,8 +4,8 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/select";
+import { cn } from "@spectralset/ui/utils";
 import { HiCheck } from "react-icons/hi2";
 import { getTerminalColors, type Theme } from "shared/themes";
 

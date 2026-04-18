@@ -1,6 +1,6 @@
-import { Button } from "@superset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@spectralset/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 import type { ReactNode } from "react";
 
 export interface RowHoverAction {

@@ -1,6 +1,6 @@
-import { db } from "@superset/db/client";
-import { members } from "@superset/db/schema";
-import * as authSchema from "@superset/db/schema/auth";
+import { db } from "@spectralset/db/client";
+import { members } from "@spectralset/db/schema";
+import * as authSchema from "@spectralset/db/schema/auth";
 import { and, eq } from "drizzle-orm";
 
 export async function getOrganizationOwners(organizationId: string) {

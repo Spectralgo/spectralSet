@@ -1,5 +1,5 @@
 {
-	"name": "@superset/api",
+	"name": "@spectralset/api",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -23,11 +23,11 @@
 		"@sentry/nextjs": "^10.36.0",
 		"@slack/types": "^2.19.0",
 		"@slack/web-api": "^7.13.0",
-		"@superset/auth": "workspace:*",
-		"@superset/db": "workspace:*",
-		"@superset/mcp": "workspace:*",
-		"@superset/shared": "workspace:*",
-		"@superset/trpc": "workspace:*",
+		"@spectralset/auth": "workspace:*",
+		"@spectralset/db": "workspace:*",
+		"@spectralset/mcp": "workspace:*",
+		"@spectralset/shared": "workspace:*",
+		"@spectralset/trpc": "workspace:*",
 		"@t3-oss/env-nextjs": "^0.13.8",
 		"@tavily/core": "^0.7.1",
 		"@trpc/server": "^11.7.1",
@@ -50,7 +50,7 @@
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@types/lodash.chunk": "^4.2.9",
 		"@types/node": "^24.9.1",
 		"@types/react": "~19.2.2",

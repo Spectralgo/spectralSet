@@ -1,5 +1,5 @@
-import { dbWs } from "@superset/db/client";
-import { githubRepositories, v2Projects } from "@superset/db/schema";
+import { dbWs } from "@spectralset/db/client";
+import { githubRepositories, v2Projects } from "@spectralset/db/schema";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";

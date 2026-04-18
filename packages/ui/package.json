@@ -1,5 +1,5 @@
 {
-	"name": "@superset/ui",
+	"name": "@spectralset/ui",
 	"private": true,
 	"version": "0.1.0",
 	"type": "module",
@@ -50,7 +50,7 @@
 		"@radix-ui/react-tooltip": "^1.2.8",
 		"@radix-ui/react-use-controllable-state": "^1.2.2",
 		"@streamdown/mermaid": "1.0.2",
-		"@superset/shared": "workspace:*",
+		"@spectralset/shared": "workspace:*",
 		"@xyflow/react": "^12.10.0",
 		"ai": "^6.0.0",
 		"class-variance-authority": "^0.7.1",
@@ -80,7 +80,7 @@
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@tailwindcss/postcss": "^4.0.9",
 		"@types/bun": "^1.2.17",
 		"@types/react": "~19.2.2",

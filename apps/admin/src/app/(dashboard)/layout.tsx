@@ -1,5 +1,5 @@
-import { auth } from "@superset/auth/server";
-import { COMPANY } from "@superset/shared/constants";
+import { auth } from "@spectralset/auth/server";
+import { COMPANY } from "@spectralset/shared/constants";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -7,13 +7,13 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@superset/ui/breadcrumb";
-import { Separator } from "@superset/ui/separator";
+} from "@spectralset/ui/breadcrumb";
+import { Separator } from "@spectralset/ui/separator";
 import {
 	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
-} from "@superset/ui/sidebar";
+} from "@spectralset/ui/sidebar";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 

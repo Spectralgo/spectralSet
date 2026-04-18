@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 import { type ComponentPropsWithoutRef, forwardRef } from "react";
 import { HiChevronRight } from "react-icons/hi2";
 import { LuGripVertical, LuPencil } from "react-icons/lu";

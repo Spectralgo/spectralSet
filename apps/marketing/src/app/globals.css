@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@superset/ui/globals.css";
+@import "@spectralset/ui/globals.css";
 
 @theme {
 	--font-family-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

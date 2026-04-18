@@ -3,8 +3,8 @@ import {
 	type PromptInputMessage,
 	PromptInputProvider,
 	useProviderAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
-import { workspaceTrpc } from "@superset/workspace-client";
+} from "@spectralset/ui/ai-elements/prompt-input";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { useQuery } from "@tanstack/react-query";
 import type { ChatStatus } from "ai";
 import type React from "react";

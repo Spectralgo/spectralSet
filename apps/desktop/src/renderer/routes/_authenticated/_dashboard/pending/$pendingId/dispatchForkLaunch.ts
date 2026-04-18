@@ -1,4 +1,4 @@
-import { toast } from "@superset/ui/sonner";
+import { toast } from "@spectralset/ui/sonner";
 import { env } from "renderer/env.renderer";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import type {

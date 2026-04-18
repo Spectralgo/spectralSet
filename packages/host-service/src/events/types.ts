@@ -1,4 +1,4 @@
-import type { FsWatchEvent } from "@superset/workspace-fs/host";
+import type { FsWatchEvent } from "@spectralset/workspace-fs/host";
 
 // ── Server → Client ────────────────────────────────────────────────
 

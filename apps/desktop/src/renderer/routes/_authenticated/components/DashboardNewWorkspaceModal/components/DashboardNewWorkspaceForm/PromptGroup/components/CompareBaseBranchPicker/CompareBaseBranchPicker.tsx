@@ -4,15 +4,15 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { Tabs, TabsList, TabsTrigger } from "@superset/ui/tabs";
+} from "@spectralset/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import { Tabs, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "@superset/ui/tooltip";
+} from "@spectralset/ui/tooltip";
 import { useEffect, useRef, useState } from "react";
 import { GoGitBranch } from "react-icons/go";
 import { HiCheck, HiChevronUpDown } from "react-icons/hi2";

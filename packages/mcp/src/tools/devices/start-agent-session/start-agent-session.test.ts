@@ -27,7 +27,7 @@ const selectMock = mock(() => ({
 	}),
 }));
 
-mock.module("@superset/db/client", () => ({
+mock.module("@spectralset/db/client", () => ({
 	db: {
 		select: selectMock,
 	},

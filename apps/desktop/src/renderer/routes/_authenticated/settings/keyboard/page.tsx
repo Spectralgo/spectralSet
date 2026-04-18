@@ -5,11 +5,11 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Kbd, KbdGroup } from "@superset/ui/kbd";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
+import { Kbd, KbdGroup } from "@spectralset/ui/kbd";
+import { toast } from "@spectralset/ui/sonner";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";

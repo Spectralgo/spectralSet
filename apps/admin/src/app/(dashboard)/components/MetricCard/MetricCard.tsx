@@ -6,8 +6,8 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@spectralset/ui/card";
+import { Skeleton } from "@spectralset/ui/skeleton";
 import type { ReactNode } from "react";
 
 interface MetricCardProps {

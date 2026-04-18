@@ -1,11 +1,11 @@
-import { dbWs } from "@superset/db/client";
+import { dbWs } from "@spectralset/db/client";
 import {
 	projects,
 	workspaceConfigSchema,
 	workspaces,
 	workspaceTypeEnum,
-} from "@superset/db/schema";
-import { getCurrentTxid } from "@superset/db/utils";
+} from "@spectralset/db/schema";
+import { getCurrentTxid } from "@spectralset/db/utils";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";

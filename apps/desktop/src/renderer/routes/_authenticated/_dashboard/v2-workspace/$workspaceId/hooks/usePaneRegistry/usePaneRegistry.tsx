@@ -2,10 +2,10 @@ import type {
 	ContextMenuActionConfig,
 	PaneRegistry,
 	RendererContext,
-} from "@superset/panes";
-import { alert } from "@superset/ui/atoms/Alert";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/panes";
+import { alert } from "@spectralset/ui/atoms/Alert";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 import {
 	Circle,
 	GitCompareArrows,

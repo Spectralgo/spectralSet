@@ -1,6 +1,6 @@
 "use client";
 
-import { DOWNLOAD_URL_MAC_ARM64 } from "@superset/shared/constants";
+import { DOWNLOAD_URL_MAC_ARM64 } from "@spectralset/shared/constants";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { HiCheck } from "react-icons/hi2";

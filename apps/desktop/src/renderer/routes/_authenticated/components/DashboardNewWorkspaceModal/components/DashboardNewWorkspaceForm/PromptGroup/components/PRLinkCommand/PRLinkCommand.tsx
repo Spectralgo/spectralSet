@@ -5,8 +5,8 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverAnchor, PopoverContent } from "@superset/ui/popover";
+} from "@spectralset/ui/command";
+import { Popover, PopoverAnchor, PopoverContent } from "@spectralset/ui/popover";
 import { useQuery } from "@tanstack/react-query";
 import type React from "react";
 import type { RefObject } from "react";

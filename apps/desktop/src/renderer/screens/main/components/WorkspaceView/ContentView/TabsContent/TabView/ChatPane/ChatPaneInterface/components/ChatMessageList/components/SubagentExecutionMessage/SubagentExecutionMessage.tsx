@@ -1,5 +1,5 @@
-import { Message, MessageContent } from "@superset/ui/ai-elements/message";
-import { cn } from "@superset/ui/lib/utils";
+import { Message, MessageContent } from "@spectralset/ui/ai-elements/message";
+import { cn } from "@spectralset/ui/lib/utils";
 import { useState } from "react";
 import { MarkdownToggleContent } from "renderer/components/Chat/components/MarkdownToggleContent";
 import {

@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Label } from "@superset/ui/label";
+import { Button } from "@spectralset/ui/button";
+import { Label } from "@spectralset/ui/label";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 
 interface WorktreeLocationPickerProps {

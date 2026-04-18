@@ -1,4 +1,4 @@
-import { FEATURE_FLAGS } from "@superset/shared/constants";
+import { FEATURE_FLAGS } from "@spectralset/shared/constants";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 

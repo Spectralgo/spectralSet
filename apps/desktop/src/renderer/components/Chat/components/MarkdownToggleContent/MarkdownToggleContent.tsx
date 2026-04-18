@@ -1,5 +1,5 @@
-import { MessageResponse } from "@superset/ui/ai-elements/message";
-import { Switch } from "@superset/ui/switch";
+import { MessageResponse } from "@spectralset/ui/ai-elements/message";
+import { Switch } from "@spectralset/ui/switch";
 
 interface MarkdownToggleContentProps {
 	toggleId: string;

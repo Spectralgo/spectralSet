@@ -1,12 +1,12 @@
 import { LinearClient } from "@linear/sdk";
-import { buildConflictUpdateColumns, db } from "@superset/db";
+import { buildConflictUpdateColumns, db } from "@spectralset/db";
 import {
 	integrationConnections,
 	members,
 	taskStatuses,
 	tasks,
 	users,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import { Receiver } from "@upstash/qstash";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import chunk from "lodash.chunk";

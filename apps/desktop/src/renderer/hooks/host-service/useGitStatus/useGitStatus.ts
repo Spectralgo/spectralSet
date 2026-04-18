@@ -1,4 +1,4 @@
-import { workspaceTrpc } from "@superset/workspace-client";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { useCallback } from "react";
 import { useWorkspaceEvent } from "../useWorkspaceEvent";
 

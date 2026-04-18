@@ -1,4 +1,4 @@
-import { Spinner } from "@superset/ui/spinner";
+import { Spinner } from "@spectralset/ui/spinner";
 import { HiCheckCircle } from "react-icons/hi2";
 import type { TaskWithStatus } from "../../hooks/useTasksData";
 import { useTasksData } from "../../hooks/useTasksData";

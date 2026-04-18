@@ -5,10 +5,10 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
-import { Label } from "@superset/ui/label";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
+import { Checkbox } from "@spectralset/ui/checkbox";
+import { Label } from "@spectralset/ui/label";
 import { useId } from "react";
 
 interface DestroyConfirmPaneProps {

@@ -1,4 +1,4 @@
-import type { UseChatDisplayReturn } from "@superset/chat/client";
+import type { UseChatDisplayReturn } from "@spectralset/chat/client";
 import type { StartFreshSessionResult } from "renderer/components/Chat/ChatInterface/types";
 import type { ChatLaunchConfig } from "shared/tabs-types";
 

@@ -1,7 +1,7 @@
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@spectralset/ui/button";
+import { toast } from "@spectralset/ui/sonner";
+import { Switch } from "@spectralset/ui/switch";
+import { cn } from "@spectralset/ui/utils";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { differenceInDays, format } from "date-fns";

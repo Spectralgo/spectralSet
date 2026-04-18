@@ -1,8 +1,8 @@
-import type { TaskInput } from "@superset/shared/agent-command";
+import type { TaskInput } from "@spectralset/shared/agent-command";
 import type {
 	AgentLaunchRequest,
 	AgentLaunchSource,
-} from "@superset/shared/agent-launch";
+} from "@spectralset/shared/agent-launch";
 import {
 	type AgentDefinitionId,
 	buildFileCommandFromAgentConfig,

@@ -1,4 +1,4 @@
-import { CLIError } from "@superset/cli-framework";
+import { CLIError } from "@spectralset/cli-framework";
 import { command } from "../../../lib/command";
 import { getApiUrl } from "../../../lib/config";
 

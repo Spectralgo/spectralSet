@@ -1,5 +1,5 @@
-import { Badge } from "@superset/ui/badge";
-import { cn } from "@superset/ui/utils";
+import { Badge } from "@spectralset/ui/badge";
+import { cn } from "@spectralset/ui/utils";
 import type { ReactNode } from "react";
 
 interface AccountCardProps {

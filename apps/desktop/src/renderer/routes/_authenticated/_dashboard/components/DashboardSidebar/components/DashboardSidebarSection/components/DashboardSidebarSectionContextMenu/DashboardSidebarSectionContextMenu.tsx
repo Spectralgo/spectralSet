@@ -7,7 +7,7 @@ import {
 	ContextMenuSubContent,
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
+} from "@spectralset/ui/context-menu";
 import { LuPalette, LuPencil, LuTrash2 } from "react-icons/lu";
 import { ColorSelector } from "renderer/components/ColorSelector";
 import { PROJECT_COLOR_DEFAULT } from "shared/constants/project-colors";

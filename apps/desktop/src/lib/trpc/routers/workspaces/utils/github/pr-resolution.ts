@@ -1,4 +1,4 @@
-import type { CheckItem, GitHubStatus } from "@superset/local-db";
+import type { CheckItem, GitHubStatus } from "@spectralset/local-db";
 import { execGitWithShellPath } from "../git-client";
 import { execWithShellEnv } from "../shell-env";
 import { getPullRequestRepoArgs } from "./repo-context";

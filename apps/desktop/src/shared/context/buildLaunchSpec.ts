@@ -1,4 +1,4 @@
-import { renderPromptTemplate } from "@superset/shared/agent-prompt-template";
+import { renderPromptTemplate } from "@spectralset/shared/agent-prompt-template";
 import type { ResolvedAgentConfig } from "shared/utils/agent-settings";
 import type {
 	AgentLaunchSpec,

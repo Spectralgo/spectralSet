@@ -1,5 +1,5 @@
 {
-	"name": "@superset/repo",
+	"name": "@spectralset/repo",
 	"version": "0.0.0",
 	"repository": {
 		"type": "git"
@@ -16,12 +16,12 @@
 	"packageManager": "bun@1.3.11",
 	"private": true,
 	"scripts": {
-		"dev": "turbo run dev dev:caddy --filter=@superset/api --filter=@superset/web --filter=@superset/desktop --filter=electric-proxy --filter=//",
+		"dev": "turbo run dev dev:caddy --filter=@spectralset/api --filter=@spectralset/web --filter=@spectralset/desktop --filter=electric-proxy --filter=//",
 		"dev:all": "turbo dev",
 		"dev:caddy": "dotenv -- caddy run --config Caddyfile",
-		"dev:docs": "turbo dev --filter=@superset/docs",
-		"dev:marketing": "turbo dev --filter=@superset/marketing --filter=@superset/docs",
-		"build": "turbo build --filter=@superset/desktop",
+		"dev:docs": "turbo dev --filter=@spectralset/docs",
+		"dev:marketing": "turbo dev --filter=@spectralset/marketing --filter=@spectralset/docs",
+		"build": "turbo build --filter=@spectralset/desktop",
 		"test": "turbo test",
 		"lint": "./scripts/lint.sh",
 		"check:desktop-git-env": "./scripts/check-desktop-git-env.sh",

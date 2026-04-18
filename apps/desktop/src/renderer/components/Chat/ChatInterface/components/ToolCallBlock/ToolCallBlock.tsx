@@ -1,7 +1,7 @@
-import { BashTool } from "@superset/ui/ai-elements/bash-tool";
-import { FileDiffTool } from "@superset/ui/ai-elements/file-diff-tool";
-import { WebFetchTool } from "@superset/ui/ai-elements/web-fetch-tool";
-import { WebSearchTool } from "@superset/ui/ai-elements/web-search-tool";
+import { BashTool } from "@spectralset/ui/ai-elements/bash-tool";
+import { FileDiffTool } from "@spectralset/ui/ai-elements/file-diff-tool";
+import { WebFetchTool } from "@spectralset/ui/ai-elements/web-fetch-tool";
+import { WebSearchTool } from "@spectralset/ui/ai-elements/web-search-tool";
 import { getToolName } from "ai";
 import { FileIcon, FolderIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";

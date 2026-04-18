@@ -5,8 +5,8 @@ import {
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/context-menu";
+import { cn } from "@spectralset/ui/utils";
 import {
 	LuChevronDown,
 	LuChevronRight,

@@ -1,4 +1,4 @@
-import { CLIError, string } from "@superset/cli-framework";
+import { CLIError, string } from "@spectralset/cli-framework";
 import { command } from "../../../lib/command";
 
 export default command({

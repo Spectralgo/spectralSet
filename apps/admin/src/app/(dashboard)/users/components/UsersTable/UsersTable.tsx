@@ -1,6 +1,6 @@
 "use client";
 
-import { getInitials } from "@superset/shared/names";
+import { getInitials } from "@spectralset/shared/names";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -10,23 +10,23 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
-import { Button } from "@superset/ui/button";
+} from "@spectralset/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
+import { Button } from "@spectralset/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
+} from "@spectralset/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/dropdown-menu";
+import { toast } from "@spectralset/ui/sonner";
 import {
 	Table,
 	TableBody,
@@ -34,7 +34,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@spectralset/ui/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";

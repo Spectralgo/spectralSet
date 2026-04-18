@@ -1,8 +1,8 @@
 import {
 	ContextMenuItem,
 	ContextMenuSeparator,
-} from "@superset/ui/context-menu";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/context-menu";
+import { toast } from "@spectralset/ui/sonner";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 

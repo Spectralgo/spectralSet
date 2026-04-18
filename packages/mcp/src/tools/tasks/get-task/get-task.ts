@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { db } from "@superset/db/client";
-import { taskStatuses, tasks, users } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { taskStatuses, tasks, users } from "@spectralset/db/schema";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";

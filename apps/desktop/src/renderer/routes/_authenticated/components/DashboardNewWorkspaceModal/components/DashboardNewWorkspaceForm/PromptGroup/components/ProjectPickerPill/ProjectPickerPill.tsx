@@ -1,4 +1,4 @@
-import { PromptInputButton } from "@superset/ui/ai-elements/prompt-input";
+import { PromptInputButton } from "@spectralset/ui/ai-elements/prompt-input";
 import {
 	Command,
 	CommandEmpty,
@@ -6,8 +6,8 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
+} from "@spectralset/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
 import { useState } from "react";
 import { HiCheck, HiChevronUpDown } from "react-icons/hi2";
 import { ProjectThumbnail } from "renderer/routes/_authenticated/components/ProjectThumbnail";

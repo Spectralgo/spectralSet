@@ -1,5 +1,5 @@
 {
-	"name": "@superset/workspace-fs",
+	"name": "@spectralset/workspace-fs",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -34,7 +34,7 @@
 		"fast-glob": "^3.3.3"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@types/node": "^24.9.1",
 		"typescript": "^5.9.3"
 	}

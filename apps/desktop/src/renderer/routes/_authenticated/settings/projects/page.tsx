@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { HiChevronRight } from "react-icons/hi2";
 import { electronTrpc } from "renderer/lib/electron-trpc";

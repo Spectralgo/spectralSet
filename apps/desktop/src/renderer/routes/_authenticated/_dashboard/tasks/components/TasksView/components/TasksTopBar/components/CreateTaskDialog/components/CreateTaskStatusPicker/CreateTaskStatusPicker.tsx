@@ -1,10 +1,10 @@
-import type { SelectTaskStatus } from "@superset/db/schema";
+import type { SelectTaskStatus } from "@spectralset/db/schema";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { useMemo, useState } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import {

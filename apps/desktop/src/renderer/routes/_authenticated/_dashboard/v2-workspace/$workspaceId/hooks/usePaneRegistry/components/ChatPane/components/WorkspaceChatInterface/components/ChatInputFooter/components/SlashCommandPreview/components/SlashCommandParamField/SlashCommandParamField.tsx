@@ -1,4 +1,4 @@
-import { Input } from "@superset/ui/input";
+import { Input } from "@spectralset/ui/input";
 import type { ParamField } from "../../slash-command-preview.model";
 
 interface SlashCommandParamFieldProps {

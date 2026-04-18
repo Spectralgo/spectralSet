@@ -1,11 +1,11 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { useState } from "react";
 import {
 	HiEllipsisHorizontal,

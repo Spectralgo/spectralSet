@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
+import { Button } from "@spectralset/ui/button";
+import { toast } from "@spectralset/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";

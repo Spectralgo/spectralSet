@@ -1,5 +1,5 @@
-import { Message, MessageContent } from "@superset/ui/ai-elements/message";
-import { ShimmerLabel } from "@superset/ui/ai-elements/shimmer-label";
+import { Message, MessageContent } from "@spectralset/ui/ai-elements/message";
+import { ShimmerLabel } from "@spectralset/ui/ai-elements/shimmer-label";
 
 export function ThinkingMessage() {
 	return (

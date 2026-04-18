@@ -1,4 +1,4 @@
-import type { RendererContext } from "@superset/panes";
+import type { RendererContext } from "@spectralset/panes";
 import { useCallback } from "react";
 import { useSharedFileDocument } from "../../../../../../state/fileDocumentStore";
 import type { FilePaneData, PaneViewerData } from "../../../../../../types";

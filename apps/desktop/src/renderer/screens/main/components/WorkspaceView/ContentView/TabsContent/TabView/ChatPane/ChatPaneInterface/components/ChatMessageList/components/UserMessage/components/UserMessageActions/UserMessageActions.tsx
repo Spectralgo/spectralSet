@@ -1,7 +1,7 @@
 import {
 	MessageAction,
 	MessageActions,
-} from "@superset/ui/ai-elements/message";
+} from "@spectralset/ui/ai-elements/message";
 import {
 	CheckIcon,
 	CopyIcon,

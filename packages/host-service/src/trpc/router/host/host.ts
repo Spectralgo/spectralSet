@@ -1,5 +1,5 @@
 import os from "node:os";
-import { getDeviceName, getHashedDeviceId } from "@superset/shared/device-info";
+import { getDeviceName, getHashedDeviceId } from "@spectralset/shared/device-info";
 import { TRPCError } from "@trpc/server";
 import type { ApiClient } from "../../../types";
 import { protectedProcedure, router } from "../../index";

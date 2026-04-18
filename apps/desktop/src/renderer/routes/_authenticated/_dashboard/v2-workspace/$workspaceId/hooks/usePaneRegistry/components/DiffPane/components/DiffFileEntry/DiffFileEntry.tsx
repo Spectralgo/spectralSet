@@ -1,4 +1,4 @@
-import { toast } from "@superset/ui/sonner";
+import { toast } from "@spectralset/ui/sonner";
 import { memo, useCallback, useRef, useState } from "react";
 import type { ChangesetFile } from "../../../../../useChangeset";
 import { DiffFileHeader } from "../DiffFileHeader";

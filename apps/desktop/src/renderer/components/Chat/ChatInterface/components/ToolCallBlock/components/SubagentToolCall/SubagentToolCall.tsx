@@ -1,10 +1,10 @@
-import { ShimmerLabel } from "@superset/ui/ai-elements/shimmer-label";
+import { ShimmerLabel } from "@spectralset/ui/ai-elements/shimmer-label";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { cn } from "@superset/ui/lib/utils";
+} from "@spectralset/ui/collapsible";
+import { cn } from "@spectralset/ui/lib/utils";
 import { BotIcon, CheckIcon, Loader2Icon, XIcon } from "lucide-react";
 import { useId, useMemo, useState } from "react";
 import { MarkdownToggleContent } from "renderer/components/Chat/components/MarkdownToggleContent";

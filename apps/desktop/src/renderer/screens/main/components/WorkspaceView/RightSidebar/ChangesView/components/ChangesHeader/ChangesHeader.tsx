@@ -1,21 +1,21 @@
-import type { GitHubStatus } from "@superset/local-db";
-import { Button } from "@superset/ui/button";
+import type { GitHubStatus } from "@spectralset/local-db";
+import { Button } from "@spectralset/ui/button";
 import {
 	Command,
 	CommandEmpty,
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
+} from "@spectralset/ui/command";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+} from "@spectralset/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
 	VscCheck,

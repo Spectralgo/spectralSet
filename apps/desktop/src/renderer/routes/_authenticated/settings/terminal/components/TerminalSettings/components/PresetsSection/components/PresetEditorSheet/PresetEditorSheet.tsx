@@ -1,17 +1,17 @@
-import type { ExecutionMode, TerminalPreset } from "@superset/local-db";
-import { Alert, AlertDescription } from "@superset/ui/alert";
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { RadioGroup, RadioGroupItem } from "@superset/ui/radio-group";
+import type { ExecutionMode, TerminalPreset } from "@spectralset/local-db";
+import { Alert, AlertDescription } from "@spectralset/ui/alert";
+import { Button } from "@spectralset/ui/button";
+import { Checkbox } from "@spectralset/ui/checkbox";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
+import { RadioGroup, RadioGroupItem } from "@spectralset/ui/radio-group";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@spectralset/ui/select";
 import {
 	Sheet,
 	SheetContent,
@@ -19,7 +19,7 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@superset/ui/sheet";
+} from "@spectralset/ui/sheet";
 import { useMemo } from "react";
 import { HiExclamationTriangle, HiOutlineFolderOpen } from "react-icons/hi2";
 import { electronTrpc } from "renderer/lib/electron-trpc";

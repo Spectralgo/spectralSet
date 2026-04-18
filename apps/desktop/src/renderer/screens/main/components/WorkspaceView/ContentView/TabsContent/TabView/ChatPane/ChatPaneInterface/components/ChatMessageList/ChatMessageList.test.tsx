@@ -2,7 +2,7 @@ import { describe, expect, it, mock } from "bun:test";
 import { forwardRef } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-mock.module("@superset/ui/ai-elements/conversation", () => ({
+mock.module("@spectralset/ui/ai-elements/conversation", () => ({
 	Conversation: ({ children }: { children: React.ReactNode }) => (
 		<div>{children}</div>
 	),
@@ -19,7 +19,7 @@ mock.module("@superset/ui/ai-elements/conversation", () => ({
 	ConversationScrollButton: () => null,
 }));
 
-mock.module("@superset/ui/ai-elements/message", () => ({
+mock.module("@spectralset/ui/ai-elements/message", () => ({
 	Message: ({ children }: { children: React.ReactNode }) => (
 		<div>{children}</div>
 	),
@@ -28,7 +28,7 @@ mock.module("@superset/ui/ai-elements/message", () => ({
 	),
 }));
 
-mock.module("@superset/ui/ai-elements/shimmer-label", () => ({
+mock.module("@spectralset/ui/ai-elements/shimmer-label", () => ({
 	ShimmerLabel: ({ children }: { children: React.ReactNode }) => (
 		<span>{children}</span>
 	),

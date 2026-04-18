@@ -5,7 +5,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { useEffect, useMemo, useState } from "react";
 import {
 	HiMiniArrowPath,

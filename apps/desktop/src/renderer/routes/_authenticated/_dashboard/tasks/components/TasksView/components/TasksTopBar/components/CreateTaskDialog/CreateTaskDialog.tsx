@@ -1,6 +1,6 @@
-import { authClient } from "@superset/auth/client";
-import type { TaskPriority } from "@superset/db/enums";
-import { Button } from "@superset/ui/button";
+import { authClient } from "@spectralset/auth/client";
+import type { TaskPriority } from "@spectralset/db/enums";
+import { Button } from "@spectralset/ui/button";
 import {
 	Dialog,
 	DialogClose,
@@ -9,9 +9,9 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Kbd, KbdGroup } from "@superset/ui/kbd";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/dialog";
+import { Kbd, KbdGroup } from "@spectralset/ui/kbd";
+import { toast } from "@spectralset/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";

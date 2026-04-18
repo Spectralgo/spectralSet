@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -6,9 +6,9 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/dialog";
+import { Input } from "@spectralset/ui/input";
+import { toast } from "@spectralset/ui/sonner";
 import { useEffect, useState } from "react";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 

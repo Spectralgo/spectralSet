@@ -1,6 +1,6 @@
-import { stripeClient } from "@superset/auth/stripe";
-import { db } from "@superset/db/client";
-import { members, subscriptions } from "@superset/db/schema";
+import { stripeClient } from "@spectralset/auth/stripe";
+import { db } from "@spectralset/db/client";
+import { members, subscriptions } from "@spectralset/db/schema";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import type Stripe from "stripe";

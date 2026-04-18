@@ -1,5 +1,5 @@
 {
-	"name": "@superset/auth",
+	"name": "@spectralset/auth",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -31,9 +31,9 @@
 		"@better-auth/expo": "1.5.6",
 		"@better-auth/oauth-provider": "1.5.6",
 		"@better-auth/stripe": "1.5.6",
-		"@superset/db": "workspace:*",
-		"@superset/email": "workspace:*",
-		"@superset/shared": "workspace:*",
+		"@spectralset/db": "workspace:*",
+		"@spectralset/email": "workspace:*",
+		"@spectralset/shared": "workspace:*",
 		"@t3-oss/env-core": "^0.13.8",
 		"@t3-oss/env-nextjs": "^0.13.8",
 		"@upstash/qstash": "^2.8.4",
@@ -47,7 +47,7 @@
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@types/node": "^24.9.1",
 		"typescript": "^5.9.3"
 	}

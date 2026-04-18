@@ -1,13 +1,13 @@
-import type { GitHubStatus, PullRequestComment } from "@superset/local-db";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
+import type { GitHubStatus, PullRequestComment } from "@spectralset/local-db";
+import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/collapsible";
+import { Skeleton } from "@spectralset/ui/skeleton";
+import { toast } from "@spectralset/ui/sonner";
+import { cn } from "@spectralset/ui/utils";
 import { useEffect, useRef, useState } from "react";
 import {
 	LuArrowUpRight,

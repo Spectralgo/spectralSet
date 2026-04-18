@@ -1,10 +1,10 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/dropdown-menu";
+import { cn } from "@spectralset/ui/utils";
 import { PlusIcon } from "lucide-react";
 import {
 	type ReactNode,

@@ -1,5 +1,5 @@
-import type { AppRouter } from "@superset/host-service";
-import { workspaceTrpc } from "@superset/workspace-client";
+import type { AppRouter } from "@spectralset/host-service";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { useMemo } from "react";
 import type { CommentPaneData } from "../../../../types";

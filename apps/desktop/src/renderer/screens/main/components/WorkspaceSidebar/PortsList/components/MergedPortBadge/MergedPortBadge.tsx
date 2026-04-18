@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
 import { LuExternalLink, LuX } from "react-icons/lu";
 import { electronTrpc } from "renderer/lib/electron-trpc";

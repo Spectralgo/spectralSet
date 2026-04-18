@@ -3,9 +3,9 @@ import {
 	getRoleLevel,
 	ORGANIZATION_ROLES,
 	type OrganizationRole,
-} from "@superset/shared/auth";
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
+} from "@spectralset/shared/auth";
+import { alert } from "@spectralset/ui/atoms/Alert";
+import { Button } from "@spectralset/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -14,8 +14,8 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/dropdown-menu";
+import { toast } from "@spectralset/ui/sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { HiEllipsisVertical, HiOutlineTrash } from "react-icons/hi2";

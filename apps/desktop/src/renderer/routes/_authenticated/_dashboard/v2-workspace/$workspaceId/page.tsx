@@ -1,11 +1,11 @@
-import { type PaneActionConfig, Workspace } from "@superset/panes";
-import { alert } from "@superset/ui/atoms/Alert";
+import { type PaneActionConfig, Workspace } from "@spectralset/panes";
+import { alert } from "@spectralset/ui/atoms/Alert";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
-} from "@superset/ui/resizable";
-import { workspaceTrpc } from "@superset/workspace-client";
+} from "@spectralset/ui/resizable";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";

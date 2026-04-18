@@ -1,6 +1,6 @@
-import { CardDescription, CardHeader, CardTitle } from "@superset/ui/card";
-import { Switch } from "@superset/ui/switch";
-import { cn } from "@superset/ui/utils";
+import { CardDescription, CardHeader, CardTitle } from "@spectralset/ui/card";
+import { Switch } from "@spectralset/ui/switch";
+import { cn } from "@spectralset/ui/utils";
 import { ChevronDownIcon } from "lucide-react";
 import {
 	getPresetIcon,

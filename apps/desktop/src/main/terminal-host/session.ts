@@ -16,7 +16,7 @@ import {
 	SHELLS_WITH_READY_MARKER,
 	type ShellReadyScanState,
 	scanForShellReady,
-} from "@superset/shared/shell-ready-scanner";
+} from "@spectralset/shared/shell-ready-scanner";
 import { DEFAULT_TERMINAL_SCROLLBACK } from "shared/constants";
 import {
 	getCommandShellArgs,
@@ -164,7 +164,7 @@ export class Session {
 	private shellReadyState: ShellReadyState;
 	private shellReadyTimeoutId: ReturnType<typeof setTimeout> | null = null;
 	private preReadyStdinQueue: string[] = [];
-	// OSC 133;A scanner state — shared with v2 host-service via @superset/shared
+	// OSC 133;A scanner state — shared with v2 host-service via @spectralset/shared
 	private scanState: ShellReadyScanState = createScanState();
 
 	private emulatorWriteQueue: string[] = [];

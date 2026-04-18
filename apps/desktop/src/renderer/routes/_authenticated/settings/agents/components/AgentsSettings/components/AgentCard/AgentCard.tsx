@@ -1,6 +1,6 @@
-import { Card, CardContent } from "@superset/ui/card";
-import { Collapsible, CollapsibleContent } from "@superset/ui/collapsible";
-import { toast } from "@superset/ui/sonner";
+import { Card, CardContent } from "@spectralset/ui/card";
+import { Collapsible, CollapsibleContent } from "@spectralset/ui/collapsible";
+import { toast } from "@spectralset/ui/sonner";
 import { useMemo, useState } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import type {

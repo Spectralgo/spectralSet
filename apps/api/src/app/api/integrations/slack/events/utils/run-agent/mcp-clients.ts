@@ -1,7 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import type { McpContext } from "@superset/mcp/auth";
-import { createInMemoryMcpClient } from "@superset/mcp/in-memory";
+import type { McpContext } from "@spectralset/mcp/auth";
+import { createInMemoryMcpClient } from "@spectralset/mcp/in-memory";
 import { posthog } from "@/lib/analytics";
 
 interface McpTool {

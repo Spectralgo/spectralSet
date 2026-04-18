@@ -1,6 +1,6 @@
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
+import { Label } from "@spectralset/ui/label";
+import { toast } from "@spectralset/ui/sonner";
+import { Switch } from "@spectralset/ui/switch";
 import { useState } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import {

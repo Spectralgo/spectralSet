@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 
 export type StatusType =
 	| "backlog"

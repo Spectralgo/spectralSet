@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import { db } from "@superset/db/client";
-import { verifications } from "@superset/db/schema/auth";
+import { db } from "@spectralset/db/client";
+import { verifications } from "@spectralset/db/schema/auth";
 
 export async function generateMagicTokenForInvite({
 	invitationId,

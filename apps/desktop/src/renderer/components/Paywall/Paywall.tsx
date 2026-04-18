@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Dialog, DialogContent } from "@superset/ui/dialog";
+import { Button } from "@spectralset/ui/button";
+import { Dialog, DialogContent } from "@spectralset/ui/dialog";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { track } from "renderer/lib/analytics";

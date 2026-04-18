@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { chatSessions } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { chatSessions } from "@spectralset/db/schema";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";

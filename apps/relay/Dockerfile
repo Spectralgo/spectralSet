@@ -4,7 +4,7 @@ WORKDIR /app
 # Stage 1: Prune monorepo to relay's dependency graph
 FROM base AS prune
 COPY . .
-RUN bunx turbo prune @superset/relay --docker
+RUN bunx turbo prune @spectralset/relay --docker
 
 # Stage 2: Install deps + copy full source
 FROM base AS builder

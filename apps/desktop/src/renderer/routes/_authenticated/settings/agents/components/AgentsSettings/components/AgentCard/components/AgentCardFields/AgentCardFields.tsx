@@ -1,6 +1,6 @@
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Textarea } from "@superset/ui/textarea";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
+import { Textarea } from "@spectralset/ui/textarea";
 import type { ResolvedAgentConfig } from "shared/utils/agent-settings";
 import type { AgentEditableField } from "../../agent-card.types";
 

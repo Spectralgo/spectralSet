@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 interface WeekPickerProps {

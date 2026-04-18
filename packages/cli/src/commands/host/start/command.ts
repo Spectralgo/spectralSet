@@ -1,5 +1,5 @@
 import * as p from "@clack/prompts";
-import { boolean, CLIError, number } from "@superset/cli-framework";
+import { boolean, CLIError, number } from "@spectralset/cli-framework";
 import { command } from "../../../lib/command";
 import { isProcessAlive, readManifest } from "../../../lib/host/manifest";
 import { spawnHostService } from "../../../lib/host/spawn";

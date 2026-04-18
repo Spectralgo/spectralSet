@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { getBuiltinAgentDefinition } from "@superset/shared/agent-catalog";
+import { getBuiltinAgentDefinition } from "@spectralset/shared/agent-catalog";
 import { TRPCError } from "@trpc/server";
 import {
 	createCustomAgentInputSchema,

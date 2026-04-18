@@ -1,5 +1,5 @@
-import type { auth, Session } from "@superset/auth/server";
-import { COMPANY } from "@superset/shared/constants";
+import type { auth, Session } from "@spectralset/auth/server";
+import { COMPANY } from "@spectralset/shared/constants";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";

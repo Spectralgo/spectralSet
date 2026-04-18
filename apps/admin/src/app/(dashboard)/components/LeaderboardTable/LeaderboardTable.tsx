@@ -1,15 +1,15 @@
 "use client";
 
-import { getInitials } from "@superset/shared/names";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
+import { getInitials } from "@spectralset/shared/names";
+import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@spectralset/ui/card";
+import { Skeleton } from "@spectralset/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -17,7 +17,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@spectralset/ui/table";
 import type { ReactNode } from "react";
 
 interface LeaderboardEntry {

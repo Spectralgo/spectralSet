@@ -5,9 +5,9 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
+import { cn } from "@spectralset/ui/utils";
 import { useEffect, useState } from "react";
 import { HiExclamationTriangle } from "react-icons/hi2";
 import { LuCheck, LuCircle, LuGitBranch, LuLoader } from "react-icons/lu";

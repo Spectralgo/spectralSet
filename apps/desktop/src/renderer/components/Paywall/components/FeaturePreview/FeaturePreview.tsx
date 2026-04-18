@@ -1,6 +1,6 @@
-import { Badge } from "@superset/ui/badge";
-import { MeshGradient } from "@superset/ui/mesh-gradient";
-import { cn } from "@superset/ui/utils";
+import { Badge } from "@spectralset/ui/badge";
+import { MeshGradient } from "@spectralset/ui/mesh-gradient";
+import { cn } from "@spectralset/ui/utils";
 import type { ComponentType } from "react";
 import type { ProFeature } from "../../constants";
 import { PRO_FEATURES } from "../../constants";

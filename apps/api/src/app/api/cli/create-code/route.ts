@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
-import { auth } from "@superset/auth/server";
-import { db } from "@superset/db/client";
-import { members } from "@superset/db/schema";
+import { auth } from "@spectralset/auth/server";
+import { db } from "@spectralset/db/client";
+import { members } from "@spectralset/db/schema";
 import { Redis } from "@upstash/redis";
 import { and, eq } from "drizzle-orm";
 import { env } from "@/env";

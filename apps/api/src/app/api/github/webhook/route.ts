@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { webhookEvents } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { webhookEvents } from "@spectralset/db/schema";
 import { eq, sql } from "drizzle-orm";
 
 import { webhooks } from "./webhooks";

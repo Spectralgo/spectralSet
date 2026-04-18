@@ -1,14 +1,14 @@
 import {
 	PromptInputButton,
 	usePromptInputAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
+} from "@spectralset/ui/ai-elements/prompt-input";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { HiMiniPaperClip } from "react-icons/hi2";
 import { LuPlus } from "react-icons/lu";
 import { SiLinear } from "react-icons/si";

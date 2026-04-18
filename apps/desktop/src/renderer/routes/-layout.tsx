@@ -1,4 +1,4 @@
-import { Alerter } from "@superset/ui/atoms/Alert";
+import { Alerter } from "@spectralset/ui/atoms/Alert";
 import type { ReactNode } from "react";
 import { PostHogUserIdentifier } from "renderer/components/PostHogUserIdentifier";
 import { TelemetrySync } from "renderer/components/TelemetrySync";

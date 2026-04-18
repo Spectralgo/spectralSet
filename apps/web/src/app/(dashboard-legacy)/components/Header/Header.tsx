@@ -1,7 +1,7 @@
 "use client";
 
-import { authClient } from "@superset/auth/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
+import { authClient } from "@spectralset/auth/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, LogOut } from "lucide-react";
 import Image from "next/image";

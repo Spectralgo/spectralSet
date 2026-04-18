@@ -1,5 +1,5 @@
-import { COMPANY } from "@superset/shared/constants";
-import { Button } from "@superset/ui/button";
+import { COMPANY } from "@spectralset/shared/constants";
+import { Button } from "@spectralset/ui/button";
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { marketplaceSubmissionLinks } from "@/lib/marketplace";

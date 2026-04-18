@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { db } from "@superset/db/client";
-import { devicePresence, deviceTypeValues, users } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { devicePresence, deviceTypeValues, users } from "@spectralset/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getMcpContext } from "../../utils";

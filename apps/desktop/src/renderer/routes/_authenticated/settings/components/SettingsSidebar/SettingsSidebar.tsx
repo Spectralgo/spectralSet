@@ -1,4 +1,4 @@
-import { COMPANY } from "@superset/shared/constants";
+import { COMPANY } from "@spectralset/shared/constants";
 import { Link } from "@tanstack/react-router";
 import {
 	HiArrowLeft,

@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Card, CardContent } from "@superset/ui/card";
+import { Button } from "@spectralset/ui/button";
+import { Card, CardContent } from "@spectralset/ui/card";
 import { useEffect, useState } from "react";
 import stripeLinkIcon from "renderer/assets/stripe-link.png";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";

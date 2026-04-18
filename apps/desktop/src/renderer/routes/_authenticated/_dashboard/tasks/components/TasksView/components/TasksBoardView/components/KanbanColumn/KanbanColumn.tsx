@@ -3,8 +3,8 @@ import {
 	SortableContext,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { SelectTaskStatus } from "@superset/db/schema";
-import { cn } from "@superset/ui/utils";
+import type { SelectTaskStatus } from "@spectralset/db/schema";
+import { cn } from "@spectralset/ui/utils";
 import {
 	StatusIcon,
 	type StatusType,

@@ -1,6 +1,6 @@
-import type { WorkspaceStore } from "@superset/panes";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import type { WorkspaceStore } from "@spectralset/panes";
+import { toast } from "@spectralset/ui/sonner";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useEffect, useRef } from "react";
@@ -21,7 +21,7 @@ interface UseConsumePendingLaunchArgs {
 /**
  * Consumes a pending row's `terminalLaunch` / `chatLaunch` stashed by
  * the pending page after host-service.create resolved. Opens the
- * corresponding pane in the V2 `@superset/panes` store, clears the
+ * corresponding pane in the V2 `@spectralset/panes` store, clears the
  * field so subsequent mounts don't re-dispatch.
  *
  * Pattern mirrors useV2PresetExecution: live-query a record, open a

@@ -1,4 +1,4 @@
-import { Spinner } from "@superset/ui/spinner";
+import { Spinner } from "@spectralset/ui/spinner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";

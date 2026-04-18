@@ -1,11 +1,11 @@
-import { Label } from "@superset/ui/label";
+import { Label } from "@spectralset/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@spectralset/ui/select";
 import { useCallback } from "react";
 import { HiSpeakerWave } from "react-icons/hi2";
 import { electronTrpc } from "renderer/lib/electron-trpc";

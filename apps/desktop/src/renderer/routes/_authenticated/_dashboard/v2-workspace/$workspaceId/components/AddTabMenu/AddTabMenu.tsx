@@ -1,4 +1,4 @@
-import { DropdownMenuItem } from "@superset/ui/dropdown-menu";
+import { DropdownMenuItem } from "@spectralset/ui/dropdown-menu";
 import { BsTerminalPlus } from "react-icons/bs";
 import { TbMessageCirclePlus, TbWorld } from "react-icons/tb";
 import { HotkeyMenuShortcut } from "renderer/components/HotkeyMenuShortcut";

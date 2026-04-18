@@ -2,7 +2,7 @@ import {
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
-} from "@superset/ui/context-menu";
+} from "@spectralset/ui/context-menu";
 import { PathActionsMenuItems } from "../PathActionsMenuItems";
 
 interface FileContextMenuProps {

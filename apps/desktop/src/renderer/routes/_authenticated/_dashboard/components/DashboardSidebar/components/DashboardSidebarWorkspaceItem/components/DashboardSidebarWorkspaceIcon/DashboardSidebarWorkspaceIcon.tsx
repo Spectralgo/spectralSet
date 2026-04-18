@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 import { HiExclamationTriangle } from "react-icons/hi2";
 import { LuCloud, LuFolderGit2, LuLaptop } from "react-icons/lu";
 import { AsciiSpinner } from "renderer/screens/main/components/AsciiSpinner";

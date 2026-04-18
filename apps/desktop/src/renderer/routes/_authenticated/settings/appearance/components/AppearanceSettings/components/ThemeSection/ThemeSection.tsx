@@ -1,6 +1,6 @@
-import { COMPANY } from "@superset/shared/constants";
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
+import { COMPANY } from "@spectralset/shared/constants";
+import { Button } from "@spectralset/ui/button";
+import { toast } from "@spectralset/ui/sonner";
 import { type ChangeEvent, useRef, useState } from "react";
 import {
 	HiOutlineArrowDownTray,

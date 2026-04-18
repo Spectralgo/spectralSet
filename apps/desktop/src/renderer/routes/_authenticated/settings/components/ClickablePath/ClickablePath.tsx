@@ -1,11 +1,11 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@spectralset/local-db";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/dropdown-menu";
+import { toast } from "@spectralset/ui/sonner";
+import { cn } from "@spectralset/ui/utils";
 import { useState } from "react";
 import { LuExternalLink } from "react-icons/lu";
 import { OpenInExternalDropdownItems } from "renderer/components/OpenInExternalDropdown";

@@ -3,7 +3,7 @@ import {
 	getSpatialNeighborPaneId,
 	type PaneRegistry,
 	type WorkspaceStore,
-} from "@superset/panes";
+} from "@spectralset/panes";
 import { useCallback, useRef } from "react";
 import { useHotkey } from "renderer/hotkeys";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";

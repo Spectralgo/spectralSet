@@ -7,7 +7,7 @@ import type {
 	SelectTask,
 	SelectTaskStatus,
 	SelectUser,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import type { Collection } from "@tanstack/react-db";
 import { createCollection } from "@tanstack/react-db";

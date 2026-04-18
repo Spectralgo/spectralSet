@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import { GlobeIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { TbCopy } from "react-icons/tb";

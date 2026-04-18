@@ -1,4 +1,4 @@
-import { CommandPrimitive } from "@superset/ui/command";
+import { CommandPrimitive } from "@spectralset/ui/command";
 import { FileIcon } from "renderer/screens/main/components/WorkspaceView/RightSidebar/FilesView/utils";
 
 interface FileResultItemProps {

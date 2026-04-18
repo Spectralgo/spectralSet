@@ -1,7 +1,7 @@
 import {
 	generateTitleFromMessage,
 	generateTitleFromMessageWithStreamingModel,
-} from "@superset/chat/server/desktop";
+} from "@spectralset/chat/server/desktop";
 import { callSmallModel } from "lib/ai/call-small-model";
 import { sanitizeBranchNameWithMaxLength } from "shared/utils/branch";
 

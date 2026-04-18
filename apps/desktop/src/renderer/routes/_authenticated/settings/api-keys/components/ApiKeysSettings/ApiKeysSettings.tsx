@@ -1,7 +1,7 @@
-import { COMPANY } from "@superset/shared/constants";
-import { alert } from "@superset/ui/atoms/Alert";
-import { Badge } from "@superset/ui/badge";
-import { Button } from "@superset/ui/button";
+import { COMPANY } from "@spectralset/shared/constants";
+import { alert } from "@spectralset/ui/atoms/Alert";
+import { Badge } from "@spectralset/ui/badge";
+import { Button } from "@spectralset/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -9,11 +9,11 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Skeleton } from "@superset/ui/skeleton";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/dialog";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
+import { Skeleton } from "@spectralset/ui/skeleton";
+import { toast } from "@spectralset/ui/sonner";
 import {
 	Table,
 	TableBody,
@@ -21,7 +21,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@spectralset/ui/table";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useState } from "react";
 import {

@@ -10,7 +10,7 @@ import {
 	useSensors,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import type { SelectTaskStatus } from "@superset/db/schema";
+import type { SelectTaskStatus } from "@spectralset/db/schema";
 import { useCallback, useMemo, useState } from "react";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import type { TaskWithStatus } from "../../hooks/useTasksData";

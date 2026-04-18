@@ -1,4 +1,4 @@
-import { CLIError } from "@superset/cli-framework";
+import { CLIError } from "@spectralset/cli-framework";
 import { type ApiClient, createApiClient } from "./api-client";
 import { readConfig, type SupersetConfig } from "./config";
 

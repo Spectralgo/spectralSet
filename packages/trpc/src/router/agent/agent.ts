@@ -1,6 +1,6 @@
-import { dbWs } from "@superset/db/client";
-import { agentCommands, commandStatusValues } from "@superset/db/schema";
-import { getCurrentTxid } from "@superset/db/utils";
+import { dbWs } from "@spectralset/db/client";
+import { agentCommands, commandStatusValues } from "@spectralset/db/schema";
+import { getCurrentTxid } from "@spectralset/db/utils";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";

@@ -1,5 +1,5 @@
-import { FEATURE_FLAGS } from "@superset/shared/constants";
-import { cn } from "@superset/ui/utils";
+import { FEATURE_FLAGS } from "@spectralset/shared/constants";
+import { cn } from "@spectralset/ui/utils";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { HiOutlineFolder } from "react-icons/hi2";

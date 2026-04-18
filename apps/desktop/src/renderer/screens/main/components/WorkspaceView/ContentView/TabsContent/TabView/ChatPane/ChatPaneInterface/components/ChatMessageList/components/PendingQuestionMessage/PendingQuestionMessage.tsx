@@ -1,11 +1,11 @@
-import type { UseChatDisplayReturn } from "@superset/chat/client";
+import type { UseChatDisplayReturn } from "@spectralset/chat/client";
 import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+} from "@spectralset/ui/ai-elements/message";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type PendingQuestion = UseChatDisplayReturn["pendingQuestion"];

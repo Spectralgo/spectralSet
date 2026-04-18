@@ -1,7 +1,7 @@
 import "highlight.js/styles/github-dark.css";
 import "./task-markdown.css";
 
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 import { Extension } from "@tiptap/core";
 import { Blockquote } from "@tiptap/extension-blockquote";
 import { Bold } from "@tiptap/extension-bold";

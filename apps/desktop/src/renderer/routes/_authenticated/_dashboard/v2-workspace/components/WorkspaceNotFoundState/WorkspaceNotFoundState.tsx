@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import { Link } from "@tanstack/react-router";
 import { FolderX } from "lucide-react";
 

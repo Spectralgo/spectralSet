@@ -1,5 +1,5 @@
-import { Toaster } from "@superset/ui/sonner";
-import { cn } from "@superset/ui/utils";
+import { Toaster } from "@spectralset/ui/sonner";
+import { cn } from "@spectralset/ui/utils";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 

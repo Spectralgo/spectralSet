@@ -1,6 +1,6 @@
-import { TaskItem } from "@superset/ui/ai-elements/task";
-import { Badge } from "@superset/ui/badge";
-import { cn } from "@superset/ui/lib/utils";
+import { TaskItem } from "@spectralset/ui/ai-elements/task";
+import { Badge } from "@spectralset/ui/badge";
+import { cn } from "@spectralset/ui/lib/utils";
 
 interface TaskItemDisplayDetail {
 	label: string;

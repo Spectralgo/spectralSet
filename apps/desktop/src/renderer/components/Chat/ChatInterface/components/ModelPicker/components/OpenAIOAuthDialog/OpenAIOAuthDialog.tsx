@@ -1,13 +1,13 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@superset/ui/dialog";
-import { InputGroup, InputGroupInput } from "@superset/ui/input-group";
-import { Label } from "@superset/ui/label";
+} from "@spectralset/ui/dialog";
+import { InputGroup, InputGroupInput } from "@spectralset/ui/input-group";
+import { Label } from "@spectralset/ui/label";
 
 const OPENAI_OAUTH_CALLBACK_URL = "http://localhost:1455/auth/callback";
 

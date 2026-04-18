@@ -1,5 +1,5 @@
 {
-	"name": "@superset/workspace-client",
+	"name": "@spectralset/workspace-client",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -14,15 +14,15 @@
 		"typecheck": "tsc --noEmit --emitDeclarationOnly false"
 	},
 	"dependencies": {
-		"@superset/host-service": "workspace:*",
-		"@superset/workspace-fs": "workspace:*",
+		"@spectralset/host-service": "workspace:*",
+		"@spectralset/workspace-fs": "workspace:*",
 		"@tanstack/react-query": "^5.90.19",
 		"@trpc/client": "^11.7.1",
 		"@trpc/react-query": "^11.7.1",
 		"superjson": "^2.2.5"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@types/react": "~19.2.2",
 		"react": "19.2.0",
 		"typescript": "^5.9.3"

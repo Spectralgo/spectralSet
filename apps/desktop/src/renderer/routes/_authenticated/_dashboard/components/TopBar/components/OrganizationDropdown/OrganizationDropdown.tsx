@@ -1,5 +1,5 @@
-import { COMPANY } from "@superset/shared/constants";
-import { Avatar } from "@superset/ui/atoms/Avatar";
+import { COMPANY } from "@spectralset/shared/constants";
+import { Avatar } from "@spectralset/ui/atoms/Avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useNavigate } from "@tanstack/react-router";
 import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";

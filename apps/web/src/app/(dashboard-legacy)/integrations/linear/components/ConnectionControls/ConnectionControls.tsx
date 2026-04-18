@@ -10,8 +10,8 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Unplug } from "lucide-react";
 import { useRouter } from "next/navigation";

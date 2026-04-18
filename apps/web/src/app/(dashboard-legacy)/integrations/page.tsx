@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATURE_FLAGS } from "@superset/shared/constants";
+import { FEATURE_FLAGS } from "@spectralset/shared/constants";
 import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useMemo } from "react";
 import { FaGithub, FaSlack } from "react-icons/fa";

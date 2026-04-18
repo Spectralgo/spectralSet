@@ -1,11 +1,11 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { Skeleton } from "@superset/ui/skeleton";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/collapsible";
+import { Skeleton } from "@spectralset/ui/skeleton";
+import { cn } from "@spectralset/ui/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LuArrowUpRight, LuCheck, LuCopy } from "react-icons/lu";
 import { VscChevronRight } from "react-icons/vsc";

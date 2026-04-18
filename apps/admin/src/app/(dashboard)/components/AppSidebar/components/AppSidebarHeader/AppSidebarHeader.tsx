@@ -2,7 +2,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@superset/ui/sidebar";
+} from "@spectralset/ui/sidebar";
 import Image from "next/image";
 
 export function AppSidebarHeader() {

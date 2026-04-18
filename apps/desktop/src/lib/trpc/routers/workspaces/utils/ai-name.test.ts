@@ -35,7 +35,7 @@ mock.module("lib/ai/call-small-model", () => ({
 	callSmallModel: callSmallModelMock,
 }));
 
-mock.module("@superset/chat/server/desktop", () => ({
+mock.module("@spectralset/chat/server/desktop", () => ({
 	__esModule: true,
 	generateTitleFromMessage: generateTitleFromMessageMock,
 	generateTitleFromMessageWithStreamingModel:
@@ -71,7 +71,7 @@ mock.module("main/lib/local-db", () => ({
 	localDb: localDbMock,
 }));
 
-mock.module("@superset/local-db", () => ({
+mock.module("@spectralset/local-db", () => ({
 	workspaces: {
 		id: "id",
 		branch: "branch",

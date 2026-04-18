@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { githubInstallations, members } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { githubInstallations, members } from "@spectralset/db/schema";
 import { Client } from "@upstash/qstash";
 import { and, eq } from "drizzle-orm";
 

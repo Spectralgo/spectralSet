@@ -1,4 +1,4 @@
-import { isTerminalAgentDefinition } from "@superset/shared/agent-catalog";
+import { isTerminalAgentDefinition } from "@spectralset/shared/agent-catalog";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import type {
 	PendingChatLaunch,

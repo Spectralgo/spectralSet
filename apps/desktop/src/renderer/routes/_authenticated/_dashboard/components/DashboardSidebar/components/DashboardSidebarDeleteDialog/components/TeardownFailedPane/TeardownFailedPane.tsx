@@ -1,4 +1,4 @@
-import type { TeardownFailureCause } from "@superset/host-service";
+import type { TeardownFailureCause } from "@spectralset/host-service";
 import {
 	AlertDialog,
 	AlertDialogContent,
@@ -6,8 +6,8 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
 import stripAnsi from "strip-ansi";
 import { formatTeardownReason } from "./formatTeardownReason";
 

@@ -1,13 +1,13 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@spectralset/local-db";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/context-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	VscAdd,

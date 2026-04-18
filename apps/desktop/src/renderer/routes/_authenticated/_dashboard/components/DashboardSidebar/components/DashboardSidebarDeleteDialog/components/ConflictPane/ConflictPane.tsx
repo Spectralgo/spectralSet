@@ -5,8 +5,8 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
 
 interface ConflictPaneProps {
 	open: boolean;

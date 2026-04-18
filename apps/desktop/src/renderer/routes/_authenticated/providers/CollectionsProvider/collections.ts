@@ -20,8 +20,8 @@ import type {
 	SelectV2UsersHosts,
 	SelectV2Workspace,
 	SelectWorkspace,
-} from "@superset/db/schema";
-import type { AppRouter } from "@superset/trpc";
+} from "@spectralset/db/schema";
+import type { AppRouter } from "@spectralset/trpc";
 import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 import type {
 	Collection,

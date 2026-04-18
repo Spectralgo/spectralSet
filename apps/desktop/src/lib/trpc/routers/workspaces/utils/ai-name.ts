@@ -1,8 +1,8 @@
 import {
 	generateTitleFromMessage,
 	generateTitleFromMessageWithStreamingModel,
-} from "@superset/chat/server/desktop";
-import { workspaces } from "@superset/local-db";
+} from "@spectralset/chat/server/desktop";
+import { workspaces } from "@spectralset/local-db";
 import { and, eq, isNull } from "drizzle-orm";
 import {
 	callSmallModel,

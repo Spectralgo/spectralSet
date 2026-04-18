@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@superset/ui/select";
+} from "@spectralset/ui/select";
 import { useState } from "react";
 import { LuBuilding2 } from "react-icons/lu";
 

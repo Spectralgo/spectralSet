@@ -1,4 +1,4 @@
-import { Button } from "@superset/ui/button";
+import { Button } from "@spectralset/ui/button";
 import {
 	Command,
 	CommandEmpty,
@@ -6,9 +6,9 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@superset/ui/radio-group";
+} from "@spectralset/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@spectralset/ui/radio-group";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { normalizePresetProjectIds } from "shared/preset-project-targeting";

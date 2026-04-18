@@ -1,17 +1,17 @@
 import type { LinearClient, WorkflowState } from "@linear/sdk";
-import { db } from "@superset/db/client";
-import type { LinearConfig, SelectTask } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import type { LinearConfig, SelectTask } from "@spectralset/db/schema";
 import {
 	integrationConnections,
 	members,
 	taskStatuses,
 	tasks,
 	users,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import {
 	getLinearClient,
 	mapPriorityToLinear,
-} from "@superset/trpc/integrations/linear";
+} from "@spectralset/trpc/integrations/linear";
 import { Receiver } from "@upstash/qstash";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";

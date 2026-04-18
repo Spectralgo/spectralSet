@@ -1,4 +1,4 @@
-import { taskPriorityValues } from "@superset/db/enums";
+import { taskPriorityValues } from "@spectralset/db/enums";
 import { z } from "zod";
 
 export const createTaskSchema = z.object({

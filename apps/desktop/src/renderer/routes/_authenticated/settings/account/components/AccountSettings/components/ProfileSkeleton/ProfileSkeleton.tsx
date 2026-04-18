@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@superset/ui/card";
-import { Skeleton } from "@superset/ui/skeleton";
+import { Card, CardContent } from "@spectralset/ui/card";
+import { Skeleton } from "@spectralset/ui/skeleton";
 
 export function ProfileSkeleton() {
 	return (

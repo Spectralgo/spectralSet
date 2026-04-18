@@ -1,6 +1,6 @@
 import { WorkerPoolContextProvider } from "@pierre/diffs/react";
-import { Button } from "@superset/ui/button";
-import { Spinner } from "@superset/ui/spinner";
+import { Button } from "@spectralset/ui/button";
+import { Spinner } from "@spectralset/ui/spinner";
 import {
 	createFileRoute,
 	Navigate,

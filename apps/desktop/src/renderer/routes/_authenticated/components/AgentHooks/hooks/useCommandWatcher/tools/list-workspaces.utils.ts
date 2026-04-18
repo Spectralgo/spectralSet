@@ -1,4 +1,4 @@
-import type { SelectProject, SelectWorkspace } from "@superset/local-db";
+import type { SelectProject, SelectWorkspace } from "@spectralset/local-db";
 
 export interface ListedWorkspace {
 	id: string;

@@ -1,11 +1,11 @@
-import { db, dbWs } from "@superset/db/client";
-import { members, taskStatuses, tasks, users } from "@superset/db/schema";
-import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
-import { getCurrentTxid } from "@superset/db/utils";
+import { db, dbWs } from "@spectralset/db/client";
+import { members, taskStatuses, tasks, users } from "@spectralset/db/schema";
+import { seedDefaultStatuses } from "@spectralset/db/seed-default-statuses";
+import { getCurrentTxid } from "@spectralset/db/utils";
 import {
 	generateBaseTaskSlug,
 	generateUniqueTaskSlug,
-} from "@superset/shared/task-slug";
+} from "@spectralset/shared/task-slug";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, desc, eq, ilike, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";

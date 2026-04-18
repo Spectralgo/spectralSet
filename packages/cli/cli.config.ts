@@ -1,4 +1,4 @@
-import { boolean, defineConfig, string } from "@superset/cli-framework";
+import { boolean, defineConfig, string } from "@spectralset/cli-framework";
 
 export default defineConfig({
 	name: "superset",

@@ -4,8 +4,8 @@ import {
 	PromptInputAttachments,
 	type PromptInputMessage,
 	PromptInputTextarea,
-} from "@superset/ui/ai-elements/prompt-input";
-import type { ThinkingLevel } from "@superset/ui/ai-elements/thinking-toggle";
+} from "@spectralset/ui/ai-elements/prompt-input";
+import type { ThinkingLevel } from "@spectralset/ui/ai-elements/thinking-toggle";
 import type { ChatStatus, FileUIPart } from "ai";
 import type React from "react";
 import type { ReactNode } from "react";

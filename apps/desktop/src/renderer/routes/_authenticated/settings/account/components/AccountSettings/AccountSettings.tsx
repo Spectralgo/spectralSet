@@ -1,8 +1,8 @@
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Button } from "@superset/ui/button";
-import { Card, CardContent } from "@superset/ui/card";
-import { Input } from "@superset/ui/input";
-import { toast } from "@superset/ui/sonner";
+import { Avatar } from "@spectralset/ui/atoms/Avatar";
+import { Button } from "@spectralset/ui/button";
+import { Card, CardContent } from "@spectralset/ui/card";
+import { Input } from "@spectralset/ui/input";
+import { toast } from "@spectralset/ui/sonner";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useEffect, useState } from "react";
 import { HiOutlinePencil } from "react-icons/hi2";

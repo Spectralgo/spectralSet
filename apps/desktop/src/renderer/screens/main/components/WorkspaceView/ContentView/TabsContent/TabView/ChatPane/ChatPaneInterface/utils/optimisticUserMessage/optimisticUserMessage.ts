@@ -1,4 +1,4 @@
-import type { UseChatDisplayReturn } from "@superset/chat/client";
+import type { UseChatDisplayReturn } from "@spectralset/chat/client";
 import type { ChatSendMessageInput } from "../sendMessage";
 
 export type ChatHistoryMessage = NonNullable<

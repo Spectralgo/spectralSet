@@ -1,5 +1,5 @@
-import { auth } from "@superset/auth/server";
-import { findOrgMembership } from "@superset/db/utils";
+import { auth } from "@spectralset/auth/server";
+import { findOrgMembership } from "@spectralset/db/utils";
 
 import { env } from "@/env";
 import { createSignedState } from "@/lib/oauth-state";

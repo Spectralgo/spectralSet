@@ -95,7 +95,7 @@ const transactionMock = mock(async (callback: (tx: unknown) => unknown) =>
 	callback(txState.tx),
 );
 
-mock.module("@superset/db/client", () => ({
+mock.module("@spectralset/db/client", () => ({
 	db: {
 		select: dbSelectProxyMock,
 	},
@@ -104,7 +104,7 @@ mock.module("@superset/db/client", () => ({
 	},
 }));
 
-mock.module("@superset/db/schema", () => ({
+mock.module("@spectralset/db/schema", () => ({
 	members: {
 		organizationId: "members.organizationId",
 		userId: "members.userId",
@@ -131,15 +131,15 @@ mock.module("@superset/db/schema", () => ({
 	},
 }));
 
-mock.module("@superset/db/seed-default-statuses", () => ({
+mock.module("@spectralset/db/seed-default-statuses", () => ({
 	seedDefaultStatuses: seedDefaultStatusesMock,
 }));
 
-mock.module("@superset/db/utils", () => ({
+mock.module("@spectralset/db/utils", () => ({
 	getCurrentTxid: getCurrentTxidMock,
 }));
 
-mock.module("@superset/shared/task-slug", () => ({
+mock.module("@spectralset/shared/task-slug", () => ({
 	generateBaseTaskSlug: mock(() => "task"),
 	generateUniqueTaskSlug: mock(() => "task"),
 }));

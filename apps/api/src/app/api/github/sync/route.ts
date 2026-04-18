@@ -1,9 +1,9 @@
-import { db } from "@superset/db/client";
+import { db } from "@spectralset/db/client";
 import {
 	githubInstallations,
 	githubPullRequests,
 	githubRepositories,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import { subDays } from "date-fns";
 import { eq } from "drizzle-orm";
 import { z } from "zod";

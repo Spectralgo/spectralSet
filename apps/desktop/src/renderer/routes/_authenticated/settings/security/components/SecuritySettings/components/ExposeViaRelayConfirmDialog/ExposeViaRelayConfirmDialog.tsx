@@ -5,10 +5,10 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@superset/ui/alert-dialog";
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
+} from "@spectralset/ui/alert-dialog";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
 import { useEffect, useState } from "react";
 
 const CONFIRM_PHRASE = "I understand";

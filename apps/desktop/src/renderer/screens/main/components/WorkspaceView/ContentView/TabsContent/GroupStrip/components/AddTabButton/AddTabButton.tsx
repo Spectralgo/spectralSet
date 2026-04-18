@@ -1,5 +1,5 @@
-import type { TerminalPreset } from "@superset/local-db";
-import { Button } from "@superset/ui/button";
+import type { TerminalPreset } from "@spectralset/local-db";
+import { Button } from "@spectralset/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -7,7 +7,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import { BsTerminalPlus } from "react-icons/bs";
 import { HiMiniChevronDown } from "react-icons/hi2";
 import { LuPlus } from "react-icons/lu";

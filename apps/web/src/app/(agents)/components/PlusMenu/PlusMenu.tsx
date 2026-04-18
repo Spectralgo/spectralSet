@@ -3,7 +3,7 @@
 import {
 	PromptInputButton,
 	usePromptInputAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
+} from "@spectralset/ui/ai-elements/prompt-input";
 import { PaperclipIcon, PlusIcon } from "lucide-react";
 import { ResponsiveDropdown } from "../ResponsiveDropdown";
 

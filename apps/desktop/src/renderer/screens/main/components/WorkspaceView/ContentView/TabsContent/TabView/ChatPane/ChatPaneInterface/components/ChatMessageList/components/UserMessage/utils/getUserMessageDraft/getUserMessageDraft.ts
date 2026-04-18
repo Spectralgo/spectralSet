@@ -1,4 +1,4 @@
-import type { UseChatDisplayReturn } from "@superset/chat/client";
+import type { UseChatDisplayReturn } from "@spectralset/chat/client";
 import type { FileUIPart } from "ai";
 
 type ChatMessage = NonNullable<UseChatDisplayReturn["messages"]>[number];

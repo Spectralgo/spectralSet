@@ -2,10 +2,10 @@ import {
 	Message,
 	MessageContent,
 	MessageResponse,
-} from "@superset/ui/ai-elements/message";
-import { Button } from "@superset/ui/button";
-import { Switch } from "@superset/ui/switch";
-import { Textarea } from "@superset/ui/textarea";
+} from "@spectralset/ui/ai-elements/message";
+import { Button } from "@spectralset/ui/button";
+import { Switch } from "@spectralset/ui/switch";
+import { Textarea } from "@spectralset/ui/textarea";
 import { useEffect, useId, useRef, useState } from "react";
 import type { UseChatDisplayReturn } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/usePaneRegistry/components/ChatPane/hooks/useWorkspaceChatDisplay";
 

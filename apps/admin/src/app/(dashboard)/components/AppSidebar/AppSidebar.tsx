@@ -1,11 +1,11 @@
 "use client";
 
-import type { RouterOutputs } from "@superset/trpc";
+import type { RouterOutputs } from "@spectralset/trpc";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
+} from "@spectralset/ui/collapsible";
 import {
 	Sidebar,
 	SidebarContent,
@@ -18,7 +18,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarRail,
-} from "@superset/ui/sidebar";
+} from "@spectralset/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { LuChevronRight, LuHouse, LuUsers } from "react-icons/lu";
 

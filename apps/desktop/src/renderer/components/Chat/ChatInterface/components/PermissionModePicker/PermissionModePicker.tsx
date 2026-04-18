@@ -1,10 +1,10 @@
-import { PromptInputButton } from "@superset/ui/ai-elements/prompt-input";
+import { PromptInputButton } from "@spectralset/ui/ai-elements/prompt-input";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
+} from "@spectralset/ui/dropdown-menu";
 import type { LucideIcon } from "lucide-react";
 import {
 	CheckIcon,

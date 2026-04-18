@@ -1,4 +1,4 @@
-import { projects } from "@superset/local-db";
+import { projects } from "@spectralset/local-db";
 import { eq } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 import { z } from "zod";

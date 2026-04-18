@@ -1,5 +1,5 @@
-import { Badge } from "@superset/ui/badge";
-import { ScrollArea } from "@superset/ui/scroll-area";
+import { Badge } from "@spectralset/ui/badge";
+import { ScrollArea } from "@spectralset/ui/scroll-area";
 import type { TaskWithStatus } from "../../../components/TasksView/hooks/useTasksTable";
 import { AssigneeProperty } from "./components/AssigneeProperty";
 import { OpenInWorkspace } from "./components/OpenInWorkspace";

@@ -1,6 +1,6 @@
-import { ToggleGroup, ToggleGroupItem } from "@superset/ui/toggle-group";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import { ToggleGroup, ToggleGroupItem } from "@spectralset/ui/toggle-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 
 import {
 	TbFold,

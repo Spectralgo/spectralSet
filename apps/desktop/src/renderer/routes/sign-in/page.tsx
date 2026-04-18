@@ -1,6 +1,6 @@
-import { type AuthProvider, COMPANY } from "@superset/shared/constants";
-import { Button } from "@superset/ui/button";
-import { Spinner } from "@superset/ui/spinner";
+import { type AuthProvider, COMPANY } from "@spectralset/shared/constants";
+import { Button } from "@spectralset/ui/button";
+import { Spinner } from "@spectralset/ui/spinner";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";

@@ -1,5 +1,5 @@
-import { PROMPT_TRANSPORTS } from "@superset/local-db";
-import type { AgentDefinition } from "@superset/shared/agent-catalog";
+import { PROMPT_TRANSPORTS } from "@spectralset/local-db";
+import type { AgentDefinition } from "@spectralset/shared/agent-catalog";
 import { TRPCError } from "@trpc/server";
 import type {
 	AgentPresetPatch,

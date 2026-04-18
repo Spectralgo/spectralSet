@@ -1,10 +1,10 @@
-import type { AppRouter } from "@superset/host-service";
-import type { ExternalApp } from "@superset/local-db";
-import { alert } from "@superset/ui/atoms/Alert";
-import { Button } from "@superset/ui/button";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { workspaceTrpc } from "@superset/workspace-client";
+import type { AppRouter } from "@spectralset/host-service";
+import type { ExternalApp } from "@spectralset/local-db";
+import { alert } from "@spectralset/ui/atoms/Alert";
+import { Button } from "@spectralset/ui/button";
+import { toast } from "@spectralset/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import type { inferRouterOutputs } from "@trpc/server";

@@ -4,7 +4,7 @@ import {
 	type ParsedNamedSlashArgument,
 	parseNamedSlashArgumentToken,
 	tokenizeSlashCommandArguments,
-} from "@superset/chat/shared";
+} from "@spectralset/chat/shared";
 
 export type NamedArgEntry = ParsedNamedSlashArgument;
 

@@ -1,5 +1,5 @@
 {
-	"name": "@superset/marketing",
+	"name": "@spectralset/marketing",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -14,10 +14,10 @@
 		"@react-three/drei": "^10.7.6",
 		"@react-three/fiber": "^9.4.0",
 		"@sentry/nextjs": "^10.36.0",
-		"@superset/auth": "workspace:*",
-		"@superset/email": "workspace:*",
-		"@superset/shared": "workspace:*",
-		"@superset/ui": "workspace:*",
+		"@spectralset/auth": "workspace:*",
+		"@spectralset/email": "workspace:*",
+		"@spectralset/shared": "workspace:*",
+		"@spectralset/ui": "workspace:*",
 		"@t3-oss/env-nextjs": "^0.13.8",
 		"framer-motion": "^12.23.26",
 		"geist": "^1.7.0",
@@ -43,7 +43,7 @@
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@superset/typescript": "workspace:*",
+		"@spectralset/typescript": "workspace:*",
 		"@tailwindcss/postcss": "^4.0.9",
 		"@tailwindcss/typography": "^0.5.16",
 		"@types/mdx": "^2.0.13",

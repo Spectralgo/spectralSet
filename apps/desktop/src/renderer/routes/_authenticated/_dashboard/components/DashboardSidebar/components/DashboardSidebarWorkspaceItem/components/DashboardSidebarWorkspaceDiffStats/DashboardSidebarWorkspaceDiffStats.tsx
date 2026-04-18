@@ -1,4 +1,4 @@
-import { cn } from "@superset/ui/utils";
+import { cn } from "@spectralset/ui/utils";
 
 interface DashboardSidebarWorkspaceDiffStatsProps {
 	additions: number;

@@ -9,12 +9,12 @@ import {
 	settings,
 	TERMINAL_LINK_BEHAVIORS,
 	type TerminalPreset,
-} from "@superset/local-db";
+} from "@spectralset/local-db";
 import {
 	AGENT_PRESET_COMMANDS,
 	AGENT_PRESET_DESCRIPTIONS,
 	DEFAULT_TERMINAL_PRESET_AGENT_TYPES,
-} from "@superset/shared/agent-command";
+} from "@spectralset/shared/agent-command";
 import { TRPCError } from "@trpc/server";
 import { app } from "electron";
 import { env } from "main/env.main";

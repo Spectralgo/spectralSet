@@ -1,17 +1,17 @@
-import type { ExternalApp } from "@superset/local-db";
+import type { ExternalApp } from "@spectralset/local-db";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
+} from "@spectralset/ui/collapsible";
 import {
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@superset/ui/context-menu";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/context-menu";
+import { cn } from "@spectralset/ui/utils";
 import { type ReactNode, useState } from "react";
 import {
 	VscAdd,

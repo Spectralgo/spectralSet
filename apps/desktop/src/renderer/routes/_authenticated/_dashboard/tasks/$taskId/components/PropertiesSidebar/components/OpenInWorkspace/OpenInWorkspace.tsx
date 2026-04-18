@@ -1,14 +1,14 @@
-import type { AgentLaunchRequest } from "@superset/shared/agent-launch";
-import { Button } from "@superset/ui/button";
+import type { AgentLaunchRequest } from "@spectralset/shared/agent-launch";
+import { Button } from "@spectralset/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Label } from "@superset/ui/label";
-import { toast } from "@superset/ui/sonner";
-import { Switch } from "@superset/ui/switch";
+} from "@spectralset/ui/dropdown-menu";
+import { Label } from "@spectralset/ui/label";
+import { toast } from "@spectralset/ui/sonner";
+import { Switch } from "@spectralset/ui/switch";
 import { useMemo } from "react";
 import { HiArrowRight, HiChevronDown } from "react-icons/hi2";
 import { AgentSelect } from "renderer/components/AgentSelect";

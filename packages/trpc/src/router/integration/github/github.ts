@@ -1,9 +1,9 @@
-import { db } from "@superset/db/client";
+import { db } from "@spectralset/db/client";
 import {
 	githubInstallations,
 	githubPullRequests,
 	githubRepositories,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { Client } from "@upstash/qstash";

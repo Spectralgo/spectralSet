@@ -30,7 +30,7 @@ const tsconfigPaths = tsconfigPathsPlugin({
 });
 
 const workspaceDependencies = Object.keys(dependencies).filter((dependency) =>
-	dependency.startsWith("@superset/"),
+	dependency.startsWith("@spectralset/"),
 );
 
 // Sentry plugin for uploading sourcemaps (only in CI with auth token)

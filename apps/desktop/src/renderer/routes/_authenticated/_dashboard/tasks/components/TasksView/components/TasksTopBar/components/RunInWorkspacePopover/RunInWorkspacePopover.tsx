@@ -1,16 +1,16 @@
-import type { AgentLaunchRequest } from "@superset/shared/agent-launch";
-import { Button } from "@superset/ui/button";
+import type { AgentLaunchRequest } from "@spectralset/shared/agent-launch";
+import { Button } from "@spectralset/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { Label } from "@superset/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { toast } from "@superset/ui/sonner";
-import { Spinner } from "@superset/ui/spinner";
-import { Switch } from "@superset/ui/switch";
+} from "@spectralset/ui/dropdown-menu";
+import { Label } from "@spectralset/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import { toast } from "@spectralset/ui/sonner";
+import { Spinner } from "@spectralset/ui/spinner";
+import { Switch } from "@spectralset/ui/switch";
 import { ChevronDownIcon } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { HiCheck, HiMiniPlay, HiXMark } from "react-icons/hi2";

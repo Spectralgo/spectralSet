@@ -1,5 +1,5 @@
-import type { RendererContext } from "@superset/panes";
-import { alert } from "@superset/ui/atoms/Alert";
+import type { RendererContext } from "@spectralset/panes";
+import { alert } from "@spectralset/ui/atoms/Alert";
 import { useCallback, useEffect } from "react";
 import { useSharedFileDocument } from "../../../../state/fileDocumentStore";
 import type { FilePaneData, PaneViewerData } from "../../../../types";

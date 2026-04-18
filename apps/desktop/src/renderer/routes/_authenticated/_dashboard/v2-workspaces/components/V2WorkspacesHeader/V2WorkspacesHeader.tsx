@@ -2,8 +2,8 @@ import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
-} from "@superset/ui/input-group";
-import { ToggleGroup, ToggleGroupItem } from "@superset/ui/toggle-group";
+} from "@spectralset/ui/input-group";
+import { ToggleGroup, ToggleGroupItem } from "@spectralset/ui/toggle-group";
 import {
 	LuCloud,
 	LuLaptop,

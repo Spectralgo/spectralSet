@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
-import { chatSessions } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { chatSessions } from "@spectralset/db/schema";
 import { eq } from "drizzle-orm";
 import { env } from "@/env";
 import {

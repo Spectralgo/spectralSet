@@ -5,7 +5,7 @@ import {
 	type AgentPresetOverrideEnvelope,
 	agentCustomDefinitionSchema,
 	agentPresetOverrideEnvelopeSchema,
-} from "@superset/local-db";
+} from "@spectralset/local-db";
 import {
 	type AgentDefinition,
 	type AgentDefinitionId,
@@ -13,21 +13,21 @@ import {
 	type ChatAgentDefinition,
 	isTerminalAgentDefinition,
 	type TerminalAgentDefinition,
-} from "@superset/shared/agent-catalog";
-import type { TaskInput } from "@superset/shared/agent-command";
-import { createTerminalAgentDefinition } from "@superset/shared/agent-definition";
+} from "@spectralset/shared/agent-catalog";
+import type { TaskInput } from "@spectralset/shared/agent-command";
+import { createTerminalAgentDefinition } from "@spectralset/shared/agent-definition";
 import {
 	buildPromptCommandString,
 	buildPromptFileCommandString,
 	type PromptTransport,
-} from "@superset/shared/agent-prompt-launch";
+} from "@spectralset/shared/agent-prompt-launch";
 import {
 	DEFAULT_CHAT_TASK_PROMPT_TEMPLATE,
 	DEFAULT_TERMINAL_TASK_PROMPT_TEMPLATE,
 	getSupportedTaskPromptVariables,
 	renderTaskPromptTemplate,
 	validateTaskPromptTemplate,
-} from "@superset/shared/agent-prompt-template";
+} from "@spectralset/shared/agent-prompt-template";
 
 const TERMINAL_OVERRIDE_FIELDS = [
 	"enabled",
@@ -618,4 +618,4 @@ export function resetAgentPresetOverride({
 export function resetAllAgentPresetOverrides(): AgentPresetOverrideEnvelope {
 	return EMPTY_AGENT_PRESET_OVERRIDE_ENVELOPE;
 }
-export type { AgentDefinitionId } from "@superset/shared/agent-catalog";
+export type { AgentDefinitionId } from "@spectralset/shared/agent-catalog";

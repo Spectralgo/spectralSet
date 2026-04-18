@@ -1,5 +1,5 @@
 import type { Octokit } from "@octokit/rest";
-import type { AppRouter } from "@superset/trpc";
+import type { AppRouter } from "@spectralset/trpc";
 import type { TRPCClient } from "@trpc/client";
 import type { HostDb } from "./db";
 import type { ChatRuntimeManager } from "./runtime/chat";

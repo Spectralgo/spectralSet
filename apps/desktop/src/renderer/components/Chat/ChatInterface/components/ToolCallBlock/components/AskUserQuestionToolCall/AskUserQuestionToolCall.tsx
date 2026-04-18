@@ -1,5 +1,5 @@
-import { MessageResponse } from "@superset/ui/ai-elements/message";
-import { UserQuestionTool } from "@superset/ui/ai-elements/user-question-tool";
+import { MessageResponse } from "@spectralset/ui/ai-elements/message";
+import { UserQuestionTool } from "@spectralset/ui/ai-elements/user-question-tool";
 import { MessageCircleQuestionIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { ToolPart } from "../../../../utils/tool-helpers";

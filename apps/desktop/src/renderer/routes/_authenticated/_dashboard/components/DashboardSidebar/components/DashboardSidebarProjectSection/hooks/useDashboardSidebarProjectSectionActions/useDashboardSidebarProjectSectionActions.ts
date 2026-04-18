@@ -1,5 +1,5 @@
-import { alert } from "@superset/ui/atoms/Alert";
-import { toast } from "@superset/ui/sonner";
+import { alert } from "@spectralset/ui/atoms/Alert";
+import { toast } from "@spectralset/ui/sonner";
 import { useState } from "react";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { useDashboardSidebarState } from "renderer/routes/_authenticated/hooks/useDashboardSidebarState";

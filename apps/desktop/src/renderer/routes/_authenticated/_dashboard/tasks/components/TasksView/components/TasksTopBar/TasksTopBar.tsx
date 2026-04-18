@@ -1,7 +1,7 @@
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@superset/ui/tabs";
-import { cn } from "@superset/ui/utils";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
+import { cn } from "@spectralset/ui/utils";
 import { useRef, useState } from "react";
 import {
 	HiOutlineMagnifyingGlass,

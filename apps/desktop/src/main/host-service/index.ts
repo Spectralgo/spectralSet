@@ -12,12 +12,12 @@ import {
 	LocalGitCredentialProvider,
 	LocalModelProvider,
 	PskHostAuthProvider,
-} from "@superset/host-service";
+} from "@spectralset/host-service";
 import {
 	initTerminalBaseEnv,
 	resolveTerminalBaseEnv,
-} from "@superset/host-service/terminal-env";
-import { connectRelay } from "@superset/host-service/tunnel";
+} from "@spectralset/host-service/terminal-env";
+import { connectRelay } from "@spectralset/host-service/tunnel";
 import { removeManifest, writeManifest } from "main/lib/host-service-manifest";
 import { env } from "./env";
 

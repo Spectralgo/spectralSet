@@ -1,7 +1,7 @@
 import { useVirtualizer, Virtualizer } from "@pierre/diffs/react";
-import type { RendererContext } from "@superset/panes";
-import { toast } from "@superset/ui/sonner";
-import { workspaceTrpc } from "@superset/workspace-client";
+import type { RendererContext } from "@spectralset/panes";
+import { toast } from "@spectralset/ui/sonner";
+import { workspaceTrpc } from "@spectralset/workspace-client";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { useSettings } from "renderer/stores/settings";

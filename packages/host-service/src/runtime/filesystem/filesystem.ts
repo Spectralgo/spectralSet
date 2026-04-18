@@ -3,7 +3,7 @@ import {
 	type FsHostService,
 	FsWatcherManager,
 	getSearchIndex,
-} from "@superset/workspace-fs/host";
+} from "@spectralset/workspace-fs/host";
 import { eq } from "drizzle-orm";
 import type { HostDb } from "../../db";
 import { workspaces } from "../../db/schema";

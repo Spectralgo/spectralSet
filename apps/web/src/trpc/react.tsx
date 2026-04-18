@@ -1,6 +1,6 @@
 "use client";
 
-import type { AppRouter } from "@superset/trpc";
+import type { AppRouter } from "@spectralset/trpc";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {

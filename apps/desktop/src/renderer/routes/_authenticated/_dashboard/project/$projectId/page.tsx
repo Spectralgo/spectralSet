@@ -1,22 +1,22 @@
-import { Button } from "@superset/ui/button";
-import { Checkbox } from "@superset/ui/checkbox";
+import { Button } from "@spectralset/ui/button";
+import { Checkbox } from "@spectralset/ui/checkbox";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
+} from "@spectralset/ui/collapsible";
 import {
 	Command,
 	CommandEmpty,
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@superset/ui/command";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
-import { toast } from "@superset/ui/sonner";
-import { Textarea } from "@superset/ui/textarea";
+} from "@spectralset/ui/command";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import { toast } from "@spectralset/ui/sonner";
+import { Textarea } from "@spectralset/ui/textarea";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";

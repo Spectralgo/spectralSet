@@ -3,8 +3,8 @@ import {
 	LINEAR_WEBHOOK_SIGNATURE_HEADER,
 	LinearWebhookClient,
 } from "@linear/sdk/webhooks";
-import { db } from "@superset/db/client";
-import type { SelectIntegrationConnection } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import type { SelectIntegrationConnection } from "@spectralset/db/schema";
 import {
 	integrationConnections,
 	members,
@@ -12,8 +12,8 @@ import {
 	tasks,
 	users,
 	webhookEvents,
-} from "@superset/db/schema";
-import { mapPriorityFromLinear } from "@superset/trpc/integrations/linear";
+} from "@spectralset/db/schema";
+import { mapPriorityFromLinear } from "@spectralset/trpc/integrations/linear";
 import { and, eq, sql } from "drizzle-orm";
 import { env } from "@/env";
 

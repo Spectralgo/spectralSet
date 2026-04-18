@@ -1,4 +1,4 @@
-import { auth } from "@superset/auth/server";
+import { auth } from "@spectralset/auth/server";
 import { toNextJsHandler } from "better-auth/next-js";
 
 const { GET: _GET, POST: _POST } = toNextJsHandler(auth);

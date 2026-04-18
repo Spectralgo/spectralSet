@@ -1,5 +1,5 @@
-import { ContextMenu, ContextMenuTrigger } from "@superset/ui/context-menu";
-import { cn } from "@superset/ui/utils";
+import { ContextMenu, ContextMenuTrigger } from "@spectralset/ui/context-menu";
+import { cn } from "@spectralset/ui/utils";
 import { memo } from "react";
 import { LuChevronDown, LuChevronRight, LuCircle } from "react-icons/lu";
 import type { FileTreeNode } from "renderer/hooks/host-service/useFileTree";

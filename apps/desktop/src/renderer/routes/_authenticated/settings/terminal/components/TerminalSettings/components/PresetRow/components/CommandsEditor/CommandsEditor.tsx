@@ -1,5 +1,5 @@
-import { Button } from "@superset/ui/button";
-import { Input } from "@superset/ui/input";
+import { Button } from "@spectralset/ui/button";
+import { Input } from "@spectralset/ui/input";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HiMiniPlus, HiMiniXMark } from "react-icons/hi2";
 

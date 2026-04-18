@@ -6,14 +6,14 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@superset/ui/card";
+} from "@spectralset/ui/card";
 import {
 	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@superset/ui/chart";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@spectralset/ui/chart";
+import { Skeleton } from "@spectralset/ui/skeleton";
 import type { ReactNode } from "react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 

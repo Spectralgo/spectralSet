@@ -1,4 +1,4 @@
-import { getDeviceName, getHashedDeviceId } from "@superset/shared/device-info";
+import { getDeviceName, getHashedDeviceId } from "@spectralset/shared/device-info";
 import type { JwtApiAuthProvider } from "../providers/auth/JwtAuthProvider/JwtAuthProvider";
 import type { ApiClient } from "../types";
 import { TunnelClient } from "./tunnel-client";

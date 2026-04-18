@@ -1,8 +1,8 @@
 "use client";
 
-import { authClient } from "@superset/auth/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@superset/ui/avatar";
-import { Drawer, DrawerContent, DrawerTitle } from "@superset/ui/drawer";
+import { authClient } from "@spectralset/auth/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
+import { Drawer, DrawerContent, DrawerTitle } from "@spectralset/ui/drawer";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -13,9 +13,9 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@superset/ui/dropdown-menu";
-import { useIsMobile } from "@superset/ui/hooks/use-mobile";
-import { toast } from "@superset/ui/sonner";
+} from "@spectralset/ui/dropdown-menu";
+import { useIsMobile } from "@spectralset/ui/hooks/use-mobile";
+import { toast } from "@spectralset/ui/sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, LogOut } from "lucide-react";
 import Link from "next/link";

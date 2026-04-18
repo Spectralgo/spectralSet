@@ -2,8 +2,8 @@ import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@superset/ui/collapsible";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/collapsible";
+import { cn } from "@spectralset/ui/utils";
 import type { ReactNode } from "react";
 import { VscChevronRight } from "react-icons/vsc";
 

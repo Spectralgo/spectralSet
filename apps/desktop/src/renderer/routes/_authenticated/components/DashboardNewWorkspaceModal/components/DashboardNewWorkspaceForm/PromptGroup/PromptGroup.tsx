@@ -7,10 +7,10 @@ import {
 	PromptInputTextarea,
 	PromptInputTools,
 	useProviderAttachments,
-} from "@superset/ui/ai-elements/prompt-input";
-import { Input } from "@superset/ui/input";
-import { isEnterSubmit } from "@superset/ui/lib/keyboard";
-import { cn } from "@superset/ui/utils";
+} from "@spectralset/ui/ai-elements/prompt-input";
+import { Input } from "@spectralset/ui/input";
+import { isEnterSubmit } from "@spectralset/ui/lib/keyboard";
+import { cn } from "@spectralset/ui/utils";
 import type { FileUIPart } from "ai";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpIcon } from "lucide-react";

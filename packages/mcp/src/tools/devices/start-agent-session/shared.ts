@@ -1,16 +1,16 @@
-import { db } from "@superset/db/client";
-import { taskStatuses, tasks } from "@superset/db/schema";
+import { db } from "@spectralset/db/client";
+import { taskStatuses, tasks } from "@spectralset/db/schema";
 import {
 	type AGENT_TYPES,
 	buildAgentCommand,
 	buildAgentPromptCommand,
 	buildAgentTaskPrompt,
-} from "@superset/shared/agent-command";
+} from "@spectralset/shared/agent-command";
 import {
 	type AgentLaunchRequest,
 	STARTABLE_AGENT_LABELS,
 	STARTABLE_AGENT_TYPES,
-} from "@superset/shared/agent-launch";
+} from "@spectralset/shared/agent-launch";
 import { and, eq, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { type ZodError, z } from "zod";

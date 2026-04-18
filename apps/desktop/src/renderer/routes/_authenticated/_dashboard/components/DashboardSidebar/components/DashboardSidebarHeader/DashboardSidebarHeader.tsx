@@ -1,5 +1,5 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
-import { cn } from "@superset/ui/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import { cn } from "@spectralset/ui/utils";
 import { useMatchRoute, useNavigate } from "@tanstack/react-router";
 import { LuFolderPlus, LuLayers, LuPlus } from "react-icons/lu";
 import { useHotkeyDisplay } from "renderer/hotkeys";
