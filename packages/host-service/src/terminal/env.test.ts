@@ -89,20 +89,20 @@ describe("stripTerminalRuntimeEnv", () => {
 		VITE_API_URL: "http://localhost:3000",
 		NEXT_PUBLIC_KEY: "pk_123",
 		TURBO_TEAM: "my-team",
-		// Legacy SUPERSET_* vars that should be stripped
-		SUPERSET_PANE_ID: "pane-1",
-		SUPERSET_TAB_ID: "tab-1",
-		SUPERSET_PORT: "51741",
-		SUPERSET_HOOK_VERSION: "2",
-		SUPERSET_WORKSPACE_NAME: "my-ws",
+		// Legacy SPECTRALSET_* vars that should be stripped
+		SPECTRALSET_PANE_ID: "pane-1",
+		SPECTRALSET_TAB_ID: "tab-1",
+		SPECTRALSET_PORT: "51741",
+		SPECTRALSET_HOOK_VERSION: "2",
+		SPECTRALSET_WORKSPACE_NAME: "my-ws",
 		// Keys that SHOULD survive
 		HOME: "/Users/test",
 		PATH: "/usr/bin:/usr/local/bin",
 		SHELL: "/bin/zsh",
 		EDITOR: "vim",
-		SUPERSET_HOME_DIR: "/Users/test/.superset",
-		SUPERSET_AGENT_HOOK_PORT: "51741",
-		SUPERSET_AGENT_HOOK_VERSION: "2",
+		SPECTRALSET_HOME_DIR: "/Users/test/.superset",
+		SPECTRALSET_AGENT_HOOK_PORT: "51741",
+		SPECTRALSET_AGENT_HOOK_VERSION: "2",
 	};
 
 	test("app/runtime secrets do not reach PTY env", () => {
@@ -178,11 +178,11 @@ describe("stripTerminalRuntimeEnv", () => {
 
 	test("removed legacy vars do not reach PTY env", () => {
 		const result = stripTerminalRuntimeEnv(secretsEnv);
-		expect(result.SUPERSET_PANE_ID).toBeUndefined();
-		expect(result.SUPERSET_TAB_ID).toBeUndefined();
-		expect(result.SUPERSET_PORT).toBeUndefined();
-		expect(result.SUPERSET_HOOK_VERSION).toBeUndefined();
-		expect(result.SUPERSET_WORKSPACE_NAME).toBeUndefined();
+		expect(result.SPECTRALSET_PANE_ID).toBeUndefined();
+		expect(result.SPECTRALSET_TAB_ID).toBeUndefined();
+		expect(result.SPECTRALSET_PORT).toBeUndefined();
+		expect(result.SPECTRALSET_HOOK_VERSION).toBeUndefined();
+		expect(result.SPECTRALSET_WORKSPACE_NAME).toBeUndefined();
 	});
 
 	test("user shell env vars survive stripping", () => {
@@ -195,9 +195,9 @@ describe("stripTerminalRuntimeEnv", () => {
 
 	test("explicit Superset support keys are kept", () => {
 		const result = stripTerminalRuntimeEnv(secretsEnv);
-		expect(result.SUPERSET_HOME_DIR).toBe("/Users/test/.superset");
-		expect(result.SUPERSET_AGENT_HOOK_PORT).toBe("51741");
-		expect(result.SUPERSET_AGENT_HOOK_VERSION).toBe("2");
+		expect(result.SPECTRALSET_HOME_DIR).toBe("/Users/test/.superset");
+		expect(result.SPECTRALSET_AGENT_HOOK_PORT).toBe("51741");
+		expect(result.SPECTRALSET_AGENT_HOOK_VERSION).toBe("2");
 	});
 
 	test("shell-derived env preserves user tooling vars", () => {
@@ -374,7 +374,7 @@ describe("buildV2TerminalEnv", () => {
 			HOME: "/Users/test",
 			PATH: "/usr/bin",
 			SHELL: "/bin/zsh",
-			SUPERSET_HOME_DIR: "/Users/test/.superset",
+			SPECTRALSET_HOME_DIR: "/Users/test/.superset",
 		},
 		shell: "/bin/zsh",
 		supersetHomeDir: "/Users/test/.superset",
@@ -397,13 +397,13 @@ describe("buildV2TerminalEnv", () => {
 			TERM_PROGRAM_VERSION: "2.0.0",
 			COLORTERM: "truecolor",
 			PWD: "/tmp/workspace",
-			SUPERSET_TERMINAL_ID: "term-1",
-			SUPERSET_WORKSPACE_ID: "ws-1",
-			SUPERSET_WORKSPACE_PATH: "/tmp/workspace",
-			SUPERSET_ROOT_PATH: "/tmp/repo",
-			SUPERSET_ENV: "production",
-			SUPERSET_AGENT_HOOK_PORT: "51741",
-			SUPERSET_AGENT_HOOK_VERSION: "2",
+			SPECTRALSET_TERMINAL_ID: "term-1",
+			SPECTRALSET_WORKSPACE_ID: "ws-1",
+			SPECTRALSET_WORKSPACE_PATH: "/tmp/workspace",
+			SPECTRALSET_ROOT_PATH: "/tmp/repo",
+			SPECTRALSET_ENV: "production",
+			SPECTRALSET_AGENT_HOOK_PORT: "51741",
+			SPECTRALSET_AGENT_HOOK_VERSION: "2",
 		});
 		expect(env.TERM_PROGRAM).toBe("Superset");
 		expect(env.LANG).toContain("UTF-8");
@@ -411,15 +411,15 @@ describe("buildV2TerminalEnv", () => {
 
 	test("allows empty root path and alternate Superset env without breaking the contract", () => {
 		const env = buildV2TerminalEnv({ ...baseParams, rootPath: "" });
-		expect(env.SUPERSET_ROOT_PATH).toBe("");
+		expect(env.SPECTRALSET_ROOT_PATH).toBe("");
 
 		const devEnv = buildV2TerminalEnv({
 			...baseParams,
 			rootPath: "",
 			supersetEnv: "development",
 		});
-		expect(devEnv.SUPERSET_ENV).toBe("development");
-		expect(devEnv.SUPERSET_ROOT_PATH).toBe("");
+		expect(devEnv.SPECTRALSET_ENV).toBe("development");
+		expect(devEnv.SPECTRALSET_ROOT_PATH).toBe("");
 	});
 
 	test("defaults COLORFGBG to dark mode", () => {
@@ -440,20 +440,20 @@ describe("buildV2TerminalEnv", () => {
 			...baseParams,
 			baseEnv: {
 				...baseParams.baseEnv,
-				SUPERSET_PANE_ID: "pane-1",
-				SUPERSET_TAB_ID: "tab-1",
-				SUPERSET_PORT: "51741",
-				SUPERSET_HOOK_VERSION: "2",
-				SUPERSET_WORKSPACE_NAME: "my-workspace",
+				SPECTRALSET_PANE_ID: "pane-1",
+				SPECTRALSET_TAB_ID: "tab-1",
+				SPECTRALSET_PORT: "51741",
+				SPECTRALSET_HOOK_VERSION: "2",
+				SPECTRALSET_WORKSPACE_NAME: "my-workspace",
 				NVM_DIR: "/Users/test/.nvm",
 				SSH_AUTH_SOCK: "/tmp/ssh.sock",
 			},
 		});
-		expect(env.SUPERSET_PANE_ID).toBeUndefined();
-		expect(env.SUPERSET_TAB_ID).toBeUndefined();
-		expect(env.SUPERSET_PORT).toBeUndefined();
-		expect(env.SUPERSET_HOOK_VERSION).toBeUndefined();
-		expect(env.SUPERSET_WORKSPACE_NAME).toBeUndefined();
+		expect(env.SPECTRALSET_PANE_ID).toBeUndefined();
+		expect(env.SPECTRALSET_TAB_ID).toBeUndefined();
+		expect(env.SPECTRALSET_PORT).toBeUndefined();
+		expect(env.SPECTRALSET_HOOK_VERSION).toBeUndefined();
+		expect(env.SPECTRALSET_WORKSPACE_NAME).toBeUndefined();
 		expect(env.NVM_DIR).toBe("/Users/test/.nvm");
 		expect(env.SSH_AUTH_SOCK).toBe("/tmp/ssh.sock");
 	});

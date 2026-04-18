@@ -9,7 +9,7 @@ import { getDefaultShell } from "../terminal/env";
  */
 function findBinaryPathsUnix(name: string): string[] {
 	const shell = getDefaultShell();
-	const delimiter = "__SUPERSET_WHICH_DELIMITER__";
+	const delimiter = "__SPECTRALSET_WHICH_DELIMITER__";
 	const result = execFileSync(
 		shell,
 		[

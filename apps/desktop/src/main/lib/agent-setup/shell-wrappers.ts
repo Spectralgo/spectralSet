@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import {
-	SUPERSET_MANAGED_BINARIES,
+	SPECTRALSET_MANAGED_BINARIES,
 	type SupersetManagedBinary,
 } from "./desktop-agent-capabilities";
 import { BASH_DIR, BIN_DIR, ZSH_DIR } from "./paths";
@@ -26,20 +26,20 @@ function getShellName(shell: string): string {
 }
 
 /**
- * Shell snippet to save all SUPERSET_* env vars before sourcing user RC files.
- * Used in tandem with {@link SUPERSET_ENV_RESTORE} to prevent user shell
+ * Shell snippet to save all SPECTRALSET_* env vars before sourcing user RC files.
+ * Used in tandem with {@link SPECTRALSET_ENV_RESTORE} to prevent user shell
  * configs from overriding Superset-managed environment variables (e.g.
- * SUPERSET_WORKSPACE_NAME).
+ * SPECTRALSET_WORKSPACE_NAME).
  *
  * @see https://github.com/AidenIO/superset/issues/2386
  */
-const SUPERSET_ENV_SAVE = `_superset_saved_env="$(export -p 2>/dev/null | grep ' SUPERSET_')"`;
+const SPECTRALSET_ENV_SAVE = `_superset_saved_env="$(export -p 2>/dev/null | grep ' SPECTRALSET_')"`;
 
 /**
- * Shell snippet to restore previously saved SUPERSET_* env vars after
+ * Shell snippet to restore previously saved SPECTRALSET_* env vars after
  * sourcing user RC files.
  */
-const SUPERSET_ENV_RESTORE = `eval "$_superset_saved_env" 2>/dev/null || true`;
+const SPECTRALSET_ENV_RESTORE = `eval "$_superset_saved_env" 2>/dev/null || true`;
 
 function quoteShellLiteral(value: string): string {
 	return `'${value.replaceAll("'", `'"'"'`)}'`;
@@ -87,7 +87,7 @@ function writeFileIfChanged(
 function buildManagedCommandPrelude(shellName: string, binDir: string): string {
 	if (shellName === "fish") {
 		const escapedBinDir = escapeFishDoubleQuoted(binDir);
-		return SUPERSET_MANAGED_BINARIES.map(
+		return SPECTRALSET_MANAGED_BINARIES.map(
 			(name: SupersetManagedBinary) =>
 				`functions -q ${name}; and functions -e ${name}
 function ${name}
@@ -101,7 +101,7 @@ end`,
 		).join("\n");
 	}
 
-	return SUPERSET_MANAGED_BINARIES.map(
+	return SPECTRALSET_MANAGED_BINARIES.map(
 		(name: SupersetManagedBinary) =>
 			`unalias ${name} 2>/dev/null || true
 ${name}() {
@@ -164,11 +164,11 @@ export function createZshWrapper(
 	// switch back so zsh continues through our wrapper chain.
 	const zshenvPath = path.join(paths.ZSH_DIR, ".zshenv");
 	const zshenvScript = `# Superset zsh env wrapper
-${SUPERSET_ENV_SAVE}
-_superset_home="\${SUPERSET_ORIG_ZDOTDIR:-$HOME}"
+${SPECTRALSET_ENV_SAVE}
+_superset_home="\${SPECTRALSET_ORIG_ZDOTDIR:-$HOME}"
 export ZDOTDIR="$_superset_home"
 [[ -f "$_superset_home/.zshenv" ]] && source "$_superset_home/.zshenv"
-${SUPERSET_ENV_RESTORE}
+${SPECTRALSET_ENV_RESTORE}
 export ZDOTDIR=${quotedZshDir}
 `;
 	const wroteZshenv = writeFileIfChanged(zshenvPath, zshenvScript, 0o644);
@@ -177,11 +177,11 @@ export ZDOTDIR=${quotedZshDir}
 	// so startup continues into our .zshrc wrapper.
 	const zprofilePath = path.join(paths.ZSH_DIR, ".zprofile");
 	const zprofileScript = `# Superset zsh profile wrapper
-${SUPERSET_ENV_SAVE}
-_superset_home="\${SUPERSET_ORIG_ZDOTDIR:-$HOME}"
+${SPECTRALSET_ENV_SAVE}
+_superset_home="\${SPECTRALSET_ORIG_ZDOTDIR:-$HOME}"
 export ZDOTDIR="$_superset_home"
 [[ -f "$_superset_home/.zprofile" ]] && source "$_superset_home/.zprofile"
-${SUPERSET_ENV_RESTORE}
+${SPECTRALSET_ENV_RESTORE}
 export ZDOTDIR=${quotedZshDir}
 `;
 	const wroteZprofile = writeFileIfChanged(zprofilePath, zprofileScript, 0o644);
@@ -189,11 +189,11 @@ export ZDOTDIR=${quotedZshDir}
 	// Reset ZDOTDIR before sourcing so Oh My Zsh works correctly
 	const zshrcPath = path.join(paths.ZSH_DIR, ".zshrc");
 	const zshrcScript = `# Superset zsh rc wrapper
-${SUPERSET_ENV_SAVE}
-_superset_home="\${SUPERSET_ORIG_ZDOTDIR:-$HOME}"
+${SPECTRALSET_ENV_SAVE}
+_superset_home="\${SPECTRALSET_ORIG_ZDOTDIR:-$HOME}"
 export ZDOTDIR="$_superset_home"
 [[ -f "$_superset_home/.zshrc" ]] && source "$_superset_home/.zshrc"
-${SUPERSET_ENV_RESTORE}
+${SPECTRALSET_ENV_RESTORE}
 ${buildPathPrependFunction(paths.BIN_DIR)}
 ${buildZshPrecmdHook(paths.BIN_DIR)}
 rehash 2>/dev/null || true
@@ -208,13 +208,13 @@ export ZDOTDIR=${quotedZshDir}
 	// PATH prepend after user startup hooks run.
 	const zloginPath = path.join(paths.ZSH_DIR, ".zlogin");
 	const zloginScript = `# Superset zsh login wrapper
-${SUPERSET_ENV_SAVE}
-_superset_home="\${SUPERSET_ORIG_ZDOTDIR:-$HOME}"
+${SPECTRALSET_ENV_SAVE}
+_superset_home="\${SPECTRALSET_ORIG_ZDOTDIR:-$HOME}"
 export ZDOTDIR="$_superset_home"
 if [[ -o interactive ]]; then
   [[ -f "$_superset_home/.zlogin" ]] && source "$_superset_home/.zlogin"
 fi
-${SUPERSET_ENV_RESTORE}
+${SPECTRALSET_ENV_RESTORE}
 ${buildZshPrecmdHook(paths.BIN_DIR)}
 ${buildPathPrependFunction(paths.BIN_DIR)}
 rehash 2>/dev/null || true
@@ -248,7 +248,7 @@ export function createBashWrapper(
 	const script = `# Superset bash rcfile wrapper
 
 # Save Superset env vars before sourcing user config
-${SUPERSET_ENV_SAVE}
+${SPECTRALSET_ENV_SAVE}
 
 # Source system profile
 [[ -f /etc/profile ]] && source /etc/profile
@@ -266,7 +266,7 @@ fi
 [[ -f "$HOME/.bashrc" ]] && source "$HOME/.bashrc"
 
 # Restore Superset env vars that user config may have overridden
-${SUPERSET_ENV_RESTORE}
+${SPECTRALSET_ENV_RESTORE}
 
 # Keep superset bin first without duplicating entries
 ${buildPathPrependFunction(paths.BIN_DIR)}
@@ -301,7 +301,7 @@ export function getShellEnv(
 	const shellName = getShellName(shell);
 	if (shellName === "zsh") {
 		return {
-			SUPERSET_ORIG_ZDOTDIR: process.env.ZDOTDIR || os.homedir(),
+			SPECTRALSET_ORIG_ZDOTDIR: process.env.ZDOTDIR || os.homedir(),
 			ZDOTDIR: paths.ZSH_DIR,
 		};
 	}

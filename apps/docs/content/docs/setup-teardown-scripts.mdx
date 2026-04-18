@@ -11,7 +11,7 @@ Create `.superset/config.json` in your project:
 
 ```json
 {
-  "setup": ["bun install", "cp \"$SUPERSET_ROOT_PATH/.env\" .env"],
+  "setup": ["bun install", "cp \"$SPECTRALSET_ROOT_PATH/.env\" .env"],
   "teardown": ["docker-compose down"],
   "run": ["./.superset/run.sh"]
 }
@@ -44,15 +44,15 @@ The `run` field defines commands that start your dev server or other long-runnin
 
 | Variable | Description |
 |----------|-------------|
-| `SUPERSET_ROOT_PATH` | Path to root repository |
-| `SUPERSET_WORKSPACE_NAME` | Current workspace name |
-| `SUPERSET_WORKSPACE_PATH` | Path to the workspace worktree |
+| `SPECTRALSET_ROOT_PATH` | Path to root repository |
+| `SPECTRALSET_WORKSPACE_NAME` | Current workspace name |
+| `SPECTRALSET_WORKSPACE_PATH` | Path to the workspace worktree |
 
 ## Examples
 
 **Node.js:**
 ```json
-{ "setup": ["bun install", "cp \"$SUPERSET_ROOT_PATH/.env\" .env"] }
+{ "setup": ["bun install", "cp \"$SPECTRALSET_ROOT_PATH/.env\" .env"] }
 ```
 
 **Docker:**

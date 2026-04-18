@@ -27,7 +27,7 @@ export async function resolveAuth(
 		if (!config.auth) {
 			throw new CLIError(
 				"Not logged in",
-				"Run: superset auth login (or set SUPERSET_API_KEY)",
+				"Run: superset auth login (or set SPECTRALSET_API_KEY)",
 			);
 		}
 		if (config.auth.expiresAt < Date.now()) {

@@ -22,7 +22,7 @@ export { resolvePaneId } from "./resolve-pane-id";
  */
 const SERVER_ENV =
 	env.NODE_ENV === "development" ? "development" : "production";
-const debugHooksOverride = process.env.SUPERSET_DEBUG_HOOKS?.trim();
+const debugHooksOverride = process.env.SPECTRALSET_DEBUG_HOOKS?.trim();
 const DEBUG_HOOKS_ENABLED =
 	debugHooksOverride === undefined
 		? SERVER_ENV === "development"

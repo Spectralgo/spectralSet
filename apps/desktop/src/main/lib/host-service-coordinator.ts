@@ -13,7 +13,7 @@ import { app } from "electron";
 import { env } from "main/env.main";
 import { env as sharedEnv } from "shared/env.shared";
 import { getProcessEnvWithShellPath } from "../../lib/trpc/routers/workspaces/utils/shell-env";
-import { SUPERSET_HOME_DIR } from "./app-environment";
+import { SPECTRALSET_HOME_DIR } from "./app-environment";
 import {
 	type HostServiceManifest,
 	isProcessAlive,
@@ -479,9 +479,9 @@ export class HostServiceCoordinator extends EventEmitter {
 				? path.join(process.resourcesPath, "resources/host-migrations")
 				: path.join(app.getAppPath(), "../../packages/host-service/drizzle"),
 			DESKTOP_VITE_PORT: String(sharedEnv.DESKTOP_VITE_PORT),
-			SUPERSET_HOME_DIR: SUPERSET_HOME_DIR,
-			SUPERSET_AGENT_HOOK_PORT: String(sharedEnv.DESKTOP_NOTIFICATIONS_PORT),
-			SUPERSET_AGENT_HOOK_VERSION: HOOK_PROTOCOL_VERSION,
+			SPECTRALSET_HOME_DIR: SPECTRALSET_HOME_DIR,
+			SPECTRALSET_AGENT_HOOK_PORT: String(sharedEnv.DESKTOP_NOTIFICATIONS_PORT),
+			SPECTRALSET_AGENT_HOOK_VERSION: HOOK_PROTOCOL_VERSION,
 			AUTH_TOKEN: config.authToken,
 			CLOUD_API_URL: config.cloudApiUrl,
 		});

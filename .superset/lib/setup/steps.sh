@@ -3,19 +3,19 @@
 step_load_env() {
   echo "📂 Loading environment variables..."
 
-  if [ -z "${SUPERSET_ROOT_PATH:-}" ]; then
-    error "SUPERSET_ROOT_PATH not set"
+  if [ -z "${SPECTRALSET_ROOT_PATH:-}" ]; then
+    error "SPECTRALSET_ROOT_PATH not set"
     return 1
   fi
 
-  if [ ! -f "$SUPERSET_ROOT_PATH/.env" ]; then
-    error "Root .env file not found at $SUPERSET_ROOT_PATH/.env"
+  if [ ! -f "$SPECTRALSET_ROOT_PATH/.env" ]; then
+    error "Root .env file not found at $SPECTRALSET_ROOT_PATH/.env"
     return 1
   fi
 
   set -a
   # shellcheck source=/dev/null
-  source "$SUPERSET_ROOT_PATH/.env"
+  source "$SPECTRALSET_ROOT_PATH/.env"
   set +a
 
   success "Environment variables loaded"
@@ -94,7 +94,7 @@ step_setup_neon_branch() {
     return 1
   fi
 
-  WORKSPACE_NAME="${SUPERSET_WORKSPACE_NAME:-$(basename "$PWD")}"
+  WORKSPACE_NAME="${SPECTRALSET_WORKSPACE_NAME:-$(basename "$PWD")}"
 
   # Check if branch already exists
   local branches_output
@@ -244,14 +244,14 @@ step_start_electric() {
     docker rm "$ELECTRIC_CONTAINER" &> /dev/null || true
   fi
 
-  # Step 6 allocates SUPERSET_PORT_BASE; Electric must use that reserved port.
-  if [ -z "${SUPERSET_PORT_BASE:-}" ]; then
-    error "SUPERSET_PORT_BASE not set before starting Electric"
+  # Step 6 allocates SPECTRALSET_PORT_BASE; Electric must use that reserved port.
+  if [ -z "${SPECTRALSET_PORT_BASE:-}" ]; then
+    error "SPECTRALSET_PORT_BASE not set before starting Electric"
     return 1
   fi
 
   local port_flag
-  ELECTRIC_PORT=$((SUPERSET_PORT_BASE + 9))
+  ELECTRIC_PORT=$((SPECTRALSET_PORT_BASE + 9))
   port_flag="-p $ELECTRIC_PORT:3000"
 
   echo "  Clearing stale Electric replication sessions..."
@@ -332,7 +332,7 @@ allocate_port_base() {
   fi
 
   if [ -n "$existing" ]; then
-    export SUPERSET_PORT_BASE="$existing"
+    export SPECTRALSET_PORT_BASE="$existing"
     release_port_alloc_lock "$lock_dir"
     return 0
   fi
@@ -366,7 +366,7 @@ allocate_port_base() {
     return 1
   fi
 
-  export SUPERSET_PORT_BASE="$candidate"
+  export SPECTRALSET_PORT_BASE="$candidate"
   release_port_alloc_lock "$lock_dir"
   return 0
 }
@@ -374,13 +374,13 @@ allocate_port_base() {
 step_write_env() {
   echo "📝 Writing .env file..."
 
-  if [ -z "${SUPERSET_ROOT_PATH:-}" ] || [ ! -f "$SUPERSET_ROOT_PATH/.env" ]; then
+  if [ -z "${SPECTRALSET_ROOT_PATH:-}" ] || [ ! -f "$SPECTRALSET_ROOT_PATH/.env" ]; then
     error "Root .env file not available"
     return 1
   fi
 
   # Copy root .env
-  if ! cp "$SUPERSET_ROOT_PATH/.env" .env; then
+  if ! cp "$SPECTRALSET_ROOT_PATH/.env" .env; then
     error "Failed to copy root .env"
     return 1
   fi
@@ -389,8 +389,8 @@ step_write_env() {
   {
     echo ""
     echo "# Workspace Identity"
-    write_env_var "SUPERSET_WORKSPACE_NAME" "${WORKSPACE_NAME:-$(basename "$PWD")}"
-    write_env_var "SUPERSET_HOME_DIR" "$PWD/superset-dev-data"
+    write_env_var "SPECTRALSET_WORKSPACE_NAME" "${WORKSPACE_NAME:-$(basename "$PWD")}"
+    write_env_var "SPECTRALSET_HOME_DIR" "$PWD/superset-dev-data"
     echo ""
     echo "# Workspace Database (Neon Branch)"
     if [ -n "${BRANCH_ID:-}" ]; then
@@ -424,7 +424,7 @@ step_write_env() {
     #          +5 desktop vite, +6 notifications, +7 streams, +8 streams internal, +9 electric,
     #          +10 caddy (HTTP/2 reverse proxy for API electric endpoint), +11 code inspector,
     #          +12 desktop automation (CDP), +13 wrangler (electric-proxy worker)
-    local BASE=$SUPERSET_PORT_BASE
+    local BASE=$SPECTRALSET_PORT_BASE
 
     # App ports (fixed offsets from base)
     local WEB_PORT=$((BASE))
@@ -444,8 +444,8 @@ step_write_env() {
     local RELAY_PORT=$((BASE + 14))
 
     echo ""
-    echo "# Workspace Ports (allocated from SUPERSET_PORT_BASE=$BASE, range=20)"
-    write_env_var "SUPERSET_PORT_BASE" "$BASE"
+    echo "# Workspace Ports (allocated from SPECTRALSET_PORT_BASE=$BASE, range=20)"
+    write_env_var "SPECTRALSET_PORT_BASE" "$BASE"
     write_env_var "WEB_PORT" "$WEB_PORT"
     write_env_var "API_PORT" "$API_PORT"
     write_env_var "MARKETING_PORT" "$MARKETING_PORT"
@@ -502,7 +502,7 @@ step_write_env() {
 
   # Generate .superset/ports.json for static port name mapping in the desktop app
   local superset_dir
-  superset_dir="${SUPERSET_SCRIPT_DIR:-$(dirname "$0")}"
+  superset_dir="${SPECTRALSET_SCRIPT_DIR:-$(dirname "$0")}"
   cat > "$superset_dir/ports.json" <<PORTSJSON
 {
   "ports": [
@@ -551,7 +551,7 @@ step_setup_local_mcp() {
     return 1
   fi
 
-  local api_port="${API_PORT:-$((${SUPERSET_PORT_BASE:-3000} + 1))}"
+  local api_port="${API_PORT:-$((${SPECTRALSET_PORT_BASE:-3000} + 1))}"
   local local_url="http://localhost:${api_port}/api/agent/mcp"
 
   # Add or update superset-local entry

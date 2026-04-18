@@ -73,7 +73,7 @@ const EXTERNAL_OPENAI_ENV_KEYS = [
 	"OPENAI_API_KEY",
 	"OPENAI_AUTH_TOKEN",
 ] as const;
-const originalSupersetHomeDir = process.env.SUPERSET_HOME_DIR;
+const originalSupersetHomeDir = process.env.SPECTRALSET_HOME_DIR;
 const originalAnthropicEnvValues = {
 	ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL,
 	ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
@@ -130,7 +130,7 @@ describe("ChatService OpenAI auth storage", () => {
 		anthropicConfigCredential = null;
 		anthropicKeychainCredential = null;
 		testSupersetHomeDir = mkdtempSync(join(tmpdir(), "chat-service-test-"));
-		process.env.SUPERSET_HOME_DIR = testSupersetHomeDir;
+		process.env.SPECTRALSET_HOME_DIR = testSupersetHomeDir;
 		for (const key of MANAGED_ANTHROPIC_ENV_KEYS) {
 			delete process.env[key];
 		}
@@ -145,9 +145,9 @@ describe("ChatService OpenAI auth storage", () => {
 			testSupersetHomeDir = null;
 		}
 		if (originalSupersetHomeDir) {
-			process.env.SUPERSET_HOME_DIR = originalSupersetHomeDir;
+			process.env.SPECTRALSET_HOME_DIR = originalSupersetHomeDir;
 		} else {
-			delete process.env.SUPERSET_HOME_DIR;
+			delete process.env.SPECTRALSET_HOME_DIR;
 		}
 		for (const key of MANAGED_ANTHROPIC_ENV_KEYS) {
 			const value = originalAnthropicEnvValues[key];

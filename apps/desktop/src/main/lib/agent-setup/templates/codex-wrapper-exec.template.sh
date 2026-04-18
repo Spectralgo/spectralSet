@@ -1,7 +1,7 @@
 # Codex exposes completion notifications via notify.
 # For per-prompt Start notifications and permission requests, watch the TUI
 # session log for task_started/exec_command_begin and *_approval_request events.
-if [ -n "$SUPERSET_TAB_ID" ] && [ -f "{{NOTIFY_PATH}}" ]; then
+if [ -n "$SPECTRALSET_TAB_ID" ] && [ -f "{{NOTIFY_PATH}}" ]; then
   export CODEX_TUI_RECORD_SESSION=1
   if [ -z "$CODEX_TUI_SESSION_LOG_PATH" ]; then
     _superset_codex_ts="$(date +%s 2>/dev/null || echo "$$")"
@@ -69,15 +69,15 @@ if [ -n "$SUPERSET_TAB_ID" ] && [ -f "{{NOTIFY_PATH}}" ]; then
       esac
     done
   ) &
-  SUPERSET_CODEX_START_WATCHER_PID=$!
+  SPECTRALSET_CODEX_START_WATCHER_PID=$!
 fi
 
 "$REAL_BIN" --enable codex_hooks -c 'notify=["bash","{{NOTIFY_PATH}}"]' "$@"
-SUPERSET_CODEX_STATUS=$?
+SPECTRALSET_CODEX_STATUS=$?
 
-if [ -n "$SUPERSET_CODEX_START_WATCHER_PID" ]; then
-  kill "$SUPERSET_CODEX_START_WATCHER_PID" >/dev/null 2>&1 || true
-  wait "$SUPERSET_CODEX_START_WATCHER_PID" 2>/dev/null || true
+if [ -n "$SPECTRALSET_CODEX_START_WATCHER_PID" ]; then
+  kill "$SPECTRALSET_CODEX_START_WATCHER_PID" >/dev/null 2>&1 || true
+  wait "$SPECTRALSET_CODEX_START_WATCHER_PID" 2>/dev/null || true
 fi
 
-exit "$SUPERSET_CODEX_STATUS"
+exit "$SPECTRALSET_CODEX_STATUS"

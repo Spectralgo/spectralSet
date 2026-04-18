@@ -6,7 +6,7 @@
 export type PromptTransport = "argv" | "stdin";
 
 function resolveDelimiter(prompt: string, randomId: string): string {
-	let delimiter = `SUPERSET_PROMPT_${randomId.replaceAll("-", "")}`;
+	let delimiter = `SPECTRALSET_PROMPT_${randomId.replaceAll("-", "")}`;
 	while (prompt.includes(delimiter)) {
 		delimiter = `${delimiter}_X`;
 	}

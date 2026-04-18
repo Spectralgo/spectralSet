@@ -248,7 +248,7 @@ export function createTerminalSessionInternal({
 
 	// Use the preserved shell snapshot — never live process.env
 	const baseEnv = getTerminalBaseEnv();
-	const supersetHomeDir = process.env.SUPERSET_HOME_DIR || "";
+	const supersetHomeDir = process.env.SPECTRALSET_HOME_DIR || "";
 	const shell = resolveLaunchShell(baseEnv);
 	const shellArgs = getShellLaunchArgs({ shell, supersetHomeDir });
 	const ptyEnv = buildV2TerminalEnv({
@@ -264,8 +264,8 @@ export function createTerminalSessionInternal({
 		hostServiceVersion: process.env.HOST_SERVICE_VERSION || "unknown",
 		supersetEnv:
 			process.env.NODE_ENV === "development" ? "development" : "production",
-		agentHookPort: process.env.SUPERSET_AGENT_HOOK_PORT || "",
-		agentHookVersion: process.env.SUPERSET_AGENT_HOOK_VERSION || "",
+		agentHookPort: process.env.SPECTRALSET_AGENT_HOOK_PORT || "",
+		agentHookVersion: process.env.SPECTRALSET_AGENT_HOOK_VERSION || "",
 	});
 
 	let pty: IPty;

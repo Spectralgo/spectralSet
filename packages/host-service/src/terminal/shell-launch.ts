@@ -77,7 +77,7 @@ export function getShellBootstrapEnv(
 		const zshrc = path.join(paths.ZSH_DIR, ".zshrc");
 		if (existsSync(zshrc)) {
 			return {
-				SUPERSET_ORIG_ZDOTDIR: baseEnv.ZDOTDIR || baseEnv.HOME || homedir(),
+				SPECTRALSET_ORIG_ZDOTDIR: baseEnv.ZDOTDIR || baseEnv.HOME || homedir(),
 				ZDOTDIR: paths.ZSH_DIR,
 			};
 		}

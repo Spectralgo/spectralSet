@@ -2,7 +2,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 
 const SHELL_ENV_TIMEOUT_MS = 8_000;
 const CACHE_TTL_MS = 60_000;
-const DELIMITER = "__SUPERSET_SHELL_ENV__";
+const DELIMITER = "__SPECTRALSET_SHELL_ENV__";
 
 const SHELL_BOOTSTRAP_KEYS = [
 	"HOME",

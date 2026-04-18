@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import { PROJECTS_DIR_NAME, SUPERSET_DIR_NAME } from "shared/constants";
+import { PROJECTS_DIR_NAME, SPECTRALSET_DIR_NAME } from "shared/constants";
 import { loadSetupConfig, mergeConfigs } from "./setup";
 
 const TEST_DIR = join(tmpdir(), `superset-test-setup-${process.pid}`);
@@ -11,7 +11,7 @@ const WORKTREE = join(TEST_DIR, "worktree");
 const PROJECT_ID = "test-project-id";
 const USER_CONFIG_DIR = join(
 	homedir(),
-	SUPERSET_DIR_NAME,
+	SPECTRALSET_DIR_NAME,
 	PROJECTS_DIR_NAME,
 	PROJECT_ID,
 );

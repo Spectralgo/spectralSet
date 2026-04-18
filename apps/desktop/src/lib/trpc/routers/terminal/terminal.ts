@@ -19,7 +19,7 @@ import { assertWorkspaceUsable } from "../workspaces/utils/usability";
 import { resolveTerminalThemeType } from "./theme-type";
 import { getWorkspaceTerminalContext, resolveCwd } from "./utils";
 
-const DEBUG_TERMINAL = process.env.SUPERSET_TERMINAL_DEBUG === "1";
+const DEBUG_TERMINAL = process.env.SPECTRALSET_TERMINAL_DEBUG === "1";
 const logger = console;
 let createOrAttachCallCounter = 0;
 
@@ -38,13 +38,13 @@ const SAFE_ID = z
  *
  * Environment variables set for terminal sessions:
  * - PATH: Prepends ~/.superset/bin so wrapper scripts intercept agent commands
- * - SUPERSET_PANE_ID: The pane ID (used by notification hooks, session key)
- * - SUPERSET_TAB_ID: The tab ID (parent of pane, used by notification hooks)
- * - SUPERSET_WORKSPACE_ID: The workspace ID (used by notification hooks)
- * - SUPERSET_WORKSPACE_NAME: The workspace name (used by setup/teardown scripts)
- * - SUPERSET_WORKSPACE_PATH: The worktree path (used by setup/teardown scripts)
- * - SUPERSET_ROOT_PATH: The main repo path (used by setup/teardown scripts)
- * - SUPERSET_PORT: The hooks server port for agent completion notifications
+ * - SPECTRALSET_TERMINAL_ID: The terminal/pane ID (used by notification hooks, session key)
+ * - SPECTRALSET_TAB_ID: The tab ID (parent of pane, used by notification hooks)
+ * - SPECTRALSET_WORKSPACE_ID: The workspace ID (used by notification hooks)
+ * - SPECTRALSET_WORKSPACE_NAME: The workspace name (used by setup/teardown scripts)
+ * - SPECTRALSET_WORKSPACE_PATH: The worktree path (used by setup/teardown scripts)
+ * - SPECTRALSET_ROOT_PATH: The main repo path (used by setup/teardown scripts)
+ * - SPECTRALSET_AGENT_HOOK_PORT: The hooks server port for agent completion notifications
  */
 export const createTerminalRouter = () => {
 	const registry = getWorkspaceRuntimeRegistry();

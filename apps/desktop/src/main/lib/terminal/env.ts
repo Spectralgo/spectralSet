@@ -348,7 +348,7 @@ const ALLOWED_ENV_VARS = new Set([
  * These are checked after exact matches fail.
  */
 const ALLOWED_PREFIXES = [
-	"SUPERSET_", // Our own metadata vars
+	"SPECTRALSET_", // Our own metadata vars
 	"LC_", // Locale settings
 ];
 
@@ -469,17 +469,18 @@ export function buildTerminalEnv(params: {
 		COLORTERM: "truecolor",
 		COLORFGBG: colorFgBg,
 		LANG: locale,
-		SUPERSET_PANE_ID: paneId,
-		SUPERSET_TAB_ID: tabId,
-		SUPERSET_WORKSPACE_ID: workspaceId,
-		SUPERSET_WORKSPACE_NAME: workspaceName || "",
-		SUPERSET_WORKSPACE_PATH: workspacePath || "",
-		SUPERSET_ROOT_PATH: rootPath || "",
-		SUPERSET_PORT: String(env.DESKTOP_NOTIFICATIONS_PORT),
+		SPECTRALSET_TERMINAL_ID: paneId,
+		SPECTRALSET_TAB_ID: tabId,
+		SPECTRALSET_WORKSPACE_ID: workspaceId,
+		SPECTRALSET_WORKSPACE_NAME: workspaceName || "",
+		SPECTRALSET_WORKSPACE_PATH: workspacePath || "",
+		SPECTRALSET_ROOT_PATH: rootPath || "",
+		SPECTRALSET_AGENT_HOOK_PORT: String(env.DESKTOP_NOTIFICATIONS_PORT),
 		// Environment identifier for dev/prod separation
-		SUPERSET_ENV: env.NODE_ENV === "development" ? "development" : "production",
+		SPECTRALSET_ENV:
+			env.NODE_ENV === "development" ? "development" : "production",
 		// Hook protocol version for forward compatibility
-		SUPERSET_HOOK_VERSION: HOOK_PROTOCOL_VERSION,
+		SPECTRALSET_AGENT_HOOK_VERSION: HOOK_PROTOCOL_VERSION,
 	};
 
 	delete terminalEnv.GOOGLE_API_KEY;

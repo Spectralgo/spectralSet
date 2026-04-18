@@ -186,28 +186,28 @@ and integration flows.
 Keep these explicit vars in v2:
 
 ```sh
-SUPERSET_TERMINAL_ID=<terminal id>
-SUPERSET_WORKSPACE_ID=<workspace id>
-SUPERSET_WORKSPACE_PATH=<worktree path>
-SUPERSET_ROOT_PATH=<repo root path, when available>
-SUPERSET_ENV=<development|production>
-SUPERSET_AGENT_HOOK_PORT=<desktop local agent hook server port>
-SUPERSET_AGENT_HOOK_VERSION=<agent hook protocol version>
+SPECTRALSET_TERMINAL_ID=<terminal id>
+SPECTRALSET_WORKSPACE_ID=<workspace id>
+SPECTRALSET_WORKSPACE_PATH=<worktree path>
+SPECTRALSET_ROOT_PATH=<repo root path, when available>
+SPECTRALSET_ENV=<development|production>
+SPECTRALSET_AGENT_HOOK_PORT=<desktop local agent hook server port>
+SPECTRALSET_AGENT_HOOK_VERSION=<agent hook protocol version>
 ```
 
-Rename the old v1 vars as follows:
+Legacy v1 aliases (dropped during SUPERSET_* → SPECTRALSET_* rebrand):
 
-- `SUPERSET_PANE_ID` -> `SUPERSET_TERMINAL_ID`
-- `SUPERSET_PORT` -> `SUPERSET_AGENT_HOOK_PORT`
-- `SUPERSET_HOOK_VERSION` -> `SUPERSET_AGENT_HOOK_VERSION`
+- `SPECTRALSET_PANE_ID` -> dropped (use `SPECTRALSET_TERMINAL_ID`)
+- `SPECTRALSET_PORT` -> dropped (use `SPECTRALSET_AGENT_HOOK_PORT`)
+- `SPECTRALSET_HOOK_VERSION` -> dropped (use `SPECTRALSET_AGENT_HOOK_VERSION`)
 
 Drop this key entirely in v2:
 
-- `SUPERSET_TAB_ID`
+- `SPECTRALSET_TAB_ID`
 
-Do not use a blanket `SUPERSET_*` passthrough rule in v2.
+Do not use a blanket `SPECTRALSET_*` passthrough rule in v2.
 
-The v2 Superset metadata surface should stay explicit and minimal.
+The v2 Spectralset metadata surface should stay explicit and minimal.
 
 ### 5. Shell behavior and integration
 
@@ -251,7 +251,7 @@ Per-shell integration design:
 
 - `zsh`
   - use wrapper startup through `ZDOTDIR`
-  - set `SUPERSET_ORIG_ZDOTDIR` and temporary `ZDOTDIR`
+  - set `SPECTRALSET_ORIG_ZDOTDIR` and temporary `ZDOTDIR`
   - launch as a login shell
 - `bash`
   - use the generated Superset rcfile when available
@@ -285,7 +285,7 @@ Instead, v2 should have a separate shell launch config layer that produces:
 from:
 
 - resolved shell path
-- `SUPERSET_HOME_DIR`
+- `SPECTRALSET_HOME_DIR`
 - wrapper file availability
 
 ### 7. Dynamic state
@@ -327,10 +327,10 @@ SQLite schema.
 
 Implication:
 
-- `SUPERSET_TERMINAL_ID`, `SUPERSET_WORKSPACE_ID`, and
-  `SUPERSET_WORKSPACE_PATH` are straightforward
-- `SUPERSET_ROOT_PATH` is straightforward with a join
-- `SUPERSET_WORKSPACE_NAME` should not be part of the first v2 PTY contract
+- `SPECTRALSET_TERMINAL_ID`, `SPECTRALSET_WORKSPACE_ID`, and
+  `SPECTRALSET_WORKSPACE_PATH` are straightforward
+- `SPECTRALSET_ROOT_PATH` is straightforward with a join
+- `SPECTRALSET_WORKSPACE_NAME` should not be part of the first v2 PTY contract
 
 Do not invent a display name from `branch` or `id`.
 
@@ -402,20 +402,20 @@ Secondary follow-up targets:
    - `HOST_DB_PATH`
    - `HOST_MIGRATIONS_PATH`
    - `DESKTOP_VITE_PORT`
-   - `SUPERSET_HOME_DIR`
-   - `SUPERSET_AGENT_HOOK_PORT`
-   - `SUPERSET_AGENT_HOOK_VERSION`
+   - `SPECTRALSET_HOME_DIR`
+   - `SPECTRALSET_AGENT_HOOK_PORT`
+   - `SPECTRALSET_AGENT_HOOK_VERSION`
    - `AUTH_TOKEN` only when present
    - `CLOUD_API_URL` only when present
 
    Source of each value:
 
    - `DESKTOP_VITE_PORT` comes from `shared/env.shared.ts`
-   - `SUPERSET_AGENT_HOOK_PORT` comes from
+   - `SPECTRALSET_AGENT_HOOK_PORT` comes from
      `shared/env.shared.ts` as `DESKTOP_NOTIFICATIONS_PORT`
-   - `SUPERSET_AGENT_HOOK_VERSION` comes from the existing
+   - `SPECTRALSET_AGENT_HOOK_VERSION` comes from the existing
      `HOOK_PROTOCOL_VERSION` constant for this change
-   - `SUPERSET_HOME_DIR` comes from the already-resolved desktop app env
+   - `SPECTRALSET_HOME_DIR` comes from the already-resolved desktop app env
 
    Do not start from `...(process.env as Record<string, string>)`.
 
@@ -453,11 +453,11 @@ Secondary follow-up targets:
    - `zsh`
      - shell args: `["-l"]`
      - private bootstrap env:
-       - `SUPERSET_ORIG_ZDOTDIR = baseEnv.ZDOTDIR || baseEnv.HOME || homedir()`
-       - `ZDOTDIR = <SUPERSET_HOME_DIR>/zsh`
-     - only apply this bootstrap when `<SUPERSET_HOME_DIR>/zsh/.zshrc` exists
+       - `SPECTRALSET_ORIG_ZDOTDIR = baseEnv.ZDOTDIR || baseEnv.HOME || homedir()`
+       - `ZDOTDIR = <SPECTRALSET_HOME_DIR>/zsh`
+     - only apply this bootstrap when `<SPECTRALSET_HOME_DIR>/zsh/.zshrc` exists
    - `bash`
-     - shell args: `["--rcfile", "<SUPERSET_HOME_DIR>/bash/rcfile"]`
+     - shell args: `["--rcfile", "<SPECTRALSET_HOME_DIR>/bash/rcfile"]`
      - if the rcfile does not exist, fall back to `["-l"]`
      - no bootstrap env keys
    - `fish`
@@ -473,9 +473,9 @@ Secondary follow-up targets:
 
    Desktop remains responsible for creating:
 
-   - `<SUPERSET_HOME_DIR>/bin`
-   - `<SUPERSET_HOME_DIR>/zsh`
-   - `<SUPERSET_HOME_DIR>/bash`
+   - `<SPECTRALSET_HOME_DIR>/bin`
+   - `<SPECTRALSET_HOME_DIR>/zsh`
+   - `<SPECTRALSET_HOME_DIR>/bash`
 
    Host-service is responsible for selecting shell args and bootstrap env.
 
@@ -521,15 +521,15 @@ Secondary follow-up targets:
    - `HOST_*`
    - `DESKTOP_*`
    - `DEVICE_*`
-   - non-kept `SUPERSET_*`
+   - non-kept `SPECTRALSET_*`
 
    Keep these explicit Superset support keys when present:
 
-   - `SUPERSET_HOME_DIR`
-   - `SUPERSET_AGENT_HOOK_PORT`
-   - `SUPERSET_AGENT_HOOK_VERSION`
+   - `SPECTRALSET_HOME_DIR`
+   - `SPECTRALSET_AGENT_HOOK_PORT`
+   - `SPECTRALSET_AGENT_HOOK_VERSION`
 
-   Do not preserve any other `SUPERSET_*` keys by prefix rule.
+   Do not preserve any other `SPECTRALSET_*` keys by prefix rule.
 
 7. Make PTY env construction deterministic in `buildV2TerminalEnv(...)`.
 
@@ -544,15 +544,15 @@ Secondary follow-up targets:
      - `COLORTERM=truecolor`
      - `LANG=<normalized utf8 locale>`
      - `PWD=<cwd>`
-     - `SUPERSET_TERMINAL_ID=<terminalId>`
-     - `SUPERSET_WORKSPACE_ID=<workspaceId>`
-     - `SUPERSET_WORKSPACE_PATH=<workspacePath>`
-     - `SUPERSET_ROOT_PATH=<rootPath or "">`
-     - `SUPERSET_ENV=<development|production>`
-     - `SUPERSET_AGENT_HOOK_PORT=<SUPERSET_AGENT_HOOK_PORT>`
-     - `SUPERSET_AGENT_HOOK_VERSION=<SUPERSET_AGENT_HOOK_VERSION>`
+     - `SPECTRALSET_TERMINAL_ID=<terminalId>`
+     - `SPECTRALSET_WORKSPACE_ID=<workspaceId>`
+     - `SPECTRALSET_WORKSPACE_PATH=<workspacePath>`
+     - `SPECTRALSET_ROOT_PATH=<rootPath or "">`
+     - `SPECTRALSET_ENV=<development|production>`
+     - `SPECTRALSET_AGENT_HOOK_PORT=<SPECTRALSET_AGENT_HOOK_PORT>`
+     - `SPECTRALSET_AGENT_HOOK_VERSION=<SPECTRALSET_AGENT_HOOK_VERSION>`
 
-   `SUPERSET_WORKSPACE_NAME` is not part of the v2 PTY env.
+   `SPECTRALSET_WORKSPACE_NAME` is not part of the v2 PTY env.
 
 8. Update `packages/host-service/src/terminal/terminal.ts`.
 
@@ -573,7 +573,7 @@ Secondary follow-up targets:
 9. Keep v1 and v2 separate.
 
    - do not make v2 call `apps/desktop/src/main/lib/terminal/env.ts`
-   - do not make v2 reuse blanket `SUPERSET_*` passthrough
+   - do not make v2 reuse blanket `SPECTRALSET_*` passthrough
    - do not change v1 desktop terminal behavior in this change
 
 ## Acceptance criteria
@@ -586,17 +586,17 @@ Secondary follow-up targets:
 - user-needed shell env still works for normal tools and version managers
 - zsh, bash, and fish launch with Superset shell integration behavior
 - v2 PTY env includes `TERM_PROGRAM=Superset`
-- v2 PTY env includes `SUPERSET_TERMINAL_ID`
-- v2 PTY env includes `SUPERSET_WORKSPACE_ID`
-- v2 PTY env includes `SUPERSET_WORKSPACE_PATH`
-- v2 PTY env includes `SUPERSET_ROOT_PATH` when it is derivable
-- v2 PTY env includes `SUPERSET_AGENT_HOOK_PORT`
-- v2 PTY env includes `SUPERSET_AGENT_HOOK_VERSION`
-- v2 PTY env does not include `SUPERSET_PANE_ID`
-- v2 PTY env does not include `SUPERSET_TAB_ID`
-- v2 PTY env does not include `SUPERSET_PORT`
-- v2 PTY env does not include `SUPERSET_HOOK_VERSION`
-- v2 PTY env does not require `SUPERSET_WORKSPACE_NAME`
+- v2 PTY env includes `SPECTRALSET_TERMINAL_ID`
+- v2 PTY env includes `SPECTRALSET_WORKSPACE_ID`
+- v2 PTY env includes `SPECTRALSET_WORKSPACE_PATH`
+- v2 PTY env includes `SPECTRALSET_ROOT_PATH` when it is derivable
+- v2 PTY env includes `SPECTRALSET_AGENT_HOOK_PORT`
+- v2 PTY env includes `SPECTRALSET_AGENT_HOOK_VERSION`
+- v2 PTY env does not include `SPECTRALSET_PANE_ID`
+- v2 PTY env does not include `SPECTRALSET_TAB_ID`
+- v2 PTY env does not include `SPECTRALSET_PORT`
+- v2 PTY env does not include `SPECTRALSET_HOOK_VERSION`
+- v2 PTY env does not require `SPECTRALSET_WORKSPACE_NAME`
 - the v2 contract is defined in one place and documented
 
 ## Tests
@@ -620,14 +620,14 @@ Required test coverage:
   - dev-runner and Electron runtime vars do not reach PTY env:
     `npm_*`, `npm_config_*`, `ELECTRON_*`
   - removed legacy vars do not reach PTY env:
-    `SUPERSET_PANE_ID`, `SUPERSET_TAB_ID`, `SUPERSET_PORT`,
-    `SUPERSET_HOOK_VERSION`
+    `SPECTRALSET_PANE_ID`, `SPECTRALSET_TAB_ID`, `SPECTRALSET_PORT`,
+    `SPECTRALSET_HOOK_VERSION`
 
 - retained contract behavior
   - the minimal v2 Superset metadata needed by real consumers is present:
-    `SUPERSET_TERMINAL_ID`, `SUPERSET_WORKSPACE_ID`,
-    `SUPERSET_WORKSPACE_PATH`, `SUPERSET_AGENT_HOOK_PORT`,
-    `SUPERSET_AGENT_HOOK_VERSION`
+    `SPECTRALSET_TERMINAL_ID`, `SPECTRALSET_WORKSPACE_ID`,
+    `SPECTRALSET_WORKSPACE_PATH`, `SPECTRALSET_AGENT_HOOK_PORT`,
+    `SPECTRALSET_AGENT_HOOK_VERSION`
   - `TERM_PROGRAM=Superset` and a UTF-8 locale are present
 
 - shell launch behavior
@@ -639,7 +639,7 @@ Required test coverage:
   - unsupported shells launch natively without Superset-specific bootstrap
 
 - workspace-derived metadata
-  - `SUPERSET_ROOT_PATH` is populated when project data is available
+  - `SPECTRALSET_ROOT_PATH` is populated when project data is available
   - missing project/root metadata degrades to empty string rather than failure
 
 - one integration-level PTY spawn test
@@ -669,6 +669,6 @@ Recommended test location:
 - `packages/host-service/src/terminal/terminal.ts` currently only has
   `workspaceId` on websocket attach, so launch cwd remains the workspace
   worktree path for this change
-- `SUPERSET_WORKSPACE_NAME` is intentionally omitted from the first v2 PTY
+- `SPECTRALSET_WORKSPACE_NAME` is intentionally omitted from the first v2 PTY
   contract because there is no clean host-service source for it and no concrete
   v2 runtime consumer requiring it

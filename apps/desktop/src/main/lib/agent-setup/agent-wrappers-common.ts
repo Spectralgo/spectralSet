@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
-import { SUPERSET_MANAGED_BINARIES } from "./desktop-agent-capabilities";
+import { SPECTRALSET_MANAGED_BINARIES } from "./desktop-agent-capabilities";
 import { BIN_DIR } from "./paths";
 
 export const WRAPPER_MARKER = "# Superset agent-wrapper v1";
-export { SUPERSET_MANAGED_BINARIES };
+export { SPECTRALSET_MANAGED_BINARIES };
 
-const SUPERSET_MANAGED_HOOK_PATH_PATTERN = /\/\.superset(?:-[^/'"\s\\]+)?\//;
+const SPECTRALSET_MANAGED_HOOK_PATH_PATTERN = /\/\.superset(?:-[^/'"\s\\]+)?\//;
 
 export function writeFileIfChanged(
 	filePath: string,
@@ -36,7 +36,7 @@ export function isSupersetManagedHookCommand(
 	if (!command) return false;
 	const normalized = command.replaceAll("\\", "/");
 	if (!normalized.includes(`/hooks/${scriptName}`)) return false;
-	return SUPERSET_MANAGED_HOOK_PATH_PATTERN.test(normalized);
+	return SPECTRALSET_MANAGED_HOOK_PATH_PATTERN.test(normalized);
 }
 
 interface ReconcileManagedEntriesOptions<T> {

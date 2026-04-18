@@ -84,7 +84,7 @@ export function buildCopilotWrapperExecLine(): string {
 
 	return `# Copilot CLI only supports project-level hooks (.github/hooks/*.json in CWD).
 # Auto-inject Superset notification hooks when running inside a Superset terminal.
-if [ -n "$SUPERSET_TAB_ID" ] && [ -f "${hookScriptPath}" ]; then
+if [ -n "$SPECTRALSET_TAB_ID" ] && [ -f "${hookScriptPath}" ]; then
   COPILOT_HOOKS_DIR=".github/hooks"
   COPILOT_HOOK_FILE="$COPILOT_HOOKS_DIR/superset-notify.json"
 

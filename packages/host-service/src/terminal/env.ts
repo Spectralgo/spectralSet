@@ -151,16 +151,16 @@ export function buildV2TerminalEnv(
 	env.LANG = normalizeUtf8Locale(baseEnv);
 	env.PWD = cwd;
 
-	env.SUPERSET_TERMINAL_ID = terminalId;
-	env.SUPERSET_WORKSPACE_ID = workspaceId;
-	env.SUPERSET_WORKSPACE_PATH = workspacePath;
-	env.SUPERSET_ROOT_PATH = rootPath;
-	env.SUPERSET_ENV = supersetEnv;
-	env.SUPERSET_AGENT_HOOK_PORT = agentHookPort;
-	env.SUPERSET_AGENT_HOOK_VERSION = agentHookVersion;
+	env.SPECTRALSET_TERMINAL_ID = terminalId;
+	env.SPECTRALSET_WORKSPACE_ID = workspaceId;
+	env.SPECTRALSET_WORKSPACE_PATH = workspacePath;
+	env.SPECTRALSET_ROOT_PATH = rootPath;
+	env.SPECTRALSET_ENV = supersetEnv;
+	env.SPECTRALSET_AGENT_HOOK_PORT = agentHookPort;
+	env.SPECTRALSET_AGENT_HOOK_VERSION = agentHookVersion;
 
 	if (supersetHomeDir) {
-		env.SUPERSET_HOME_DIR = supersetHomeDir;
+		env.SPECTRALSET_HOME_DIR = supersetHomeDir;
 	}
 
 	// Electron child processes can't access macOS Keychain for TLS cert verification,

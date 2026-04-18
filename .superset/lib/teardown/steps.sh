@@ -7,10 +7,10 @@ step_load_env() {
   WORKSPACE_ENV_LOADED=false
 
   # Source root .env first (contains NEON_PROJECT_ID), then local .env for overrides
-  if [ -n "${SUPERSET_ROOT_PATH:-}" ] && [ -f "$SUPERSET_ROOT_PATH/.env" ]; then
+  if [ -n "${SPECTRALSET_ROOT_PATH:-}" ] && [ -f "$SPECTRALSET_ROOT_PATH/.env" ]; then
     set -a
     # shellcheck source=/dev/null
-    source "$SUPERSET_ROOT_PATH/.env"
+    source "$SPECTRALSET_ROOT_PATH/.env"
     set +a
     sourced_any=true
   fi
@@ -25,7 +25,7 @@ step_load_env() {
   fi
 
   if [ "$sourced_any" = false ]; then
-    warn "No .env file found (set SUPERSET_ROOT_PATH or run from a workspace with .env); using existing environment"
+    warn "No .env file found (set SPECTRALSET_ROOT_PATH or run from a workspace with .env); using existing environment"
     step_skipped "env sourcing (no .env files found)"
     return 0
   fi
@@ -130,7 +130,7 @@ step_stop_electric() {
     return 0
   fi
 
-  WORKSPACE_NAME="${SUPERSET_WORKSPACE_NAME:-$(basename "$PWD")}"
+  WORKSPACE_NAME="${SPECTRALSET_WORKSPACE_NAME:-$(basename "$PWD")}"
 
   # Sanitize workspace name for Docker (same logic as setup)
   local container_suffix
@@ -275,7 +275,7 @@ step_delete_neon_branch() {
     return 0
   fi
 
-  WORKSPACE_NAME="${SUPERSET_WORKSPACE_NAME:-$(basename "$PWD")}"
+  WORKSPACE_NAME="${SPECTRALSET_WORKSPACE_NAME:-$(basename "$PWD")}"
 
   # Check if branch exists before attempting deletion
   if ! neonctl branches get "$BRANCH_ID" --project-id "$NEON_PROJECT_ID" &> /dev/null; then

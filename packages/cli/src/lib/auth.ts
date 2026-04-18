@@ -127,7 +127,7 @@ function waitForCallback({
 }
 
 export function getWebUrl(config: SupersetConfig): string {
-	if (process.env.SUPERSET_WEB_URL) return process.env.SUPERSET_WEB_URL;
+	if (process.env.SPECTRALSET_WEB_URL) return process.env.SPECTRALSET_WEB_URL;
 	const apiUrl = config.apiUrl ?? "https://api.spectralset.dev";
 	return apiUrl.replace("api.spectralset.dev", "app.spectralset.dev");
 }

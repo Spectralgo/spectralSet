@@ -25,16 +25,16 @@ if [ "$NEEDS_RESPONSE" = "true" ]; then
 fi
 
 # cursor-agent runs inside a Superset terminal, so env vars are inherited directly
-[ -z "$SUPERSET_TAB_ID" ] && exit 0
+[ -z "$SPECTRALSET_TAB_ID" ] && exit 0
 
-curl -sG "http://127.0.0.1:${SUPERSET_PORT:-{{DEFAULT_PORT}}}/hook/complete" \
+curl -sG "http://127.0.0.1:${SPECTRALSET_AGENT_HOOK_PORT:-{{DEFAULT_PORT}}}/hook/complete" \
   --connect-timeout 1 --max-time 2 \
-  --data-urlencode "paneId=$SUPERSET_PANE_ID" \
-  --data-urlencode "tabId=$SUPERSET_TAB_ID" \
-  --data-urlencode "workspaceId=$SUPERSET_WORKSPACE_ID" \
+  --data-urlencode "paneId=$SPECTRALSET_TERMINAL_ID" \
+  --data-urlencode "tabId=$SPECTRALSET_TAB_ID" \
+  --data-urlencode "workspaceId=$SPECTRALSET_WORKSPACE_ID" \
   --data-urlencode "eventType=$EVENT_TYPE" \
-  --data-urlencode "env=$SUPERSET_ENV" \
-  --data-urlencode "version=$SUPERSET_HOOK_VERSION" \
+  --data-urlencode "env=$SPECTRALSET_ENV" \
+  --data-urlencode "version=$SPECTRALSET_AGENT_HOOK_VERSION" \
   > /dev/null 2>&1
 
 exit 0

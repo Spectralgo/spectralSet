@@ -22,13 +22,13 @@ export type DeviceConfig = {
 	deviceName: string;
 };
 
-export const SUPERSET_HOME_DIR = join(homedir(), "superset");
-const CONFIG_PATH = join(SUPERSET_HOME_DIR, "config.json");
-const DEVICE_PATH = join(SUPERSET_HOME_DIR, "device.json");
+export const SPECTRALSET_HOME_DIR = join(homedir(), "superset");
+const CONFIG_PATH = join(SPECTRALSET_HOME_DIR, "config.json");
+const DEVICE_PATH = join(SPECTRALSET_HOME_DIR, "device.json");
 
 function ensureDir() {
-	if (!existsSync(SUPERSET_HOME_DIR)) {
-		mkdirSync(SUPERSET_HOME_DIR, { recursive: true, mode: 0o700 });
+	if (!existsSync(SPECTRALSET_HOME_DIR)) {
+		mkdirSync(SPECTRALSET_HOME_DIR, { recursive: true, mode: 0o700 });
 	}
 }
 

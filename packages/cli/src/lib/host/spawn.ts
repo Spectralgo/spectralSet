@@ -67,10 +67,10 @@ async function pollHealth(port: number, secret: string): Promise<boolean> {
  *
  * When running as a compiled binary, it's a sibling file in the same bin/
  * directory as the current executable. In dev (`bun run dev`), allow
- * override via SUPERSET_HOST_BIN env var.
+ * override via SPECTRALSET_HOST_BIN env var.
  */
 function resolveHostBinary(): string {
-	if (process.env.SUPERSET_HOST_BIN) return process.env.SUPERSET_HOST_BIN;
+	if (process.env.SPECTRALSET_HOST_BIN) return process.env.SPECTRALSET_HOST_BIN;
 	const cliBin = process.execPath;
 	return join(dirname(cliBin), "superset-host");
 }
@@ -91,7 +91,7 @@ export async function spawnHostService(
 	const hostBin = resolveHostBinary();
 	if (!existsSync(hostBin)) {
 		throw new Error(
-			`superset-host binary not found at ${hostBin}. Set SUPERSET_HOST_BIN to override.`,
+			`superset-host binary not found at ${hostBin}. Set SPECTRALSET_HOST_BIN to override.`,
 		);
 	}
 

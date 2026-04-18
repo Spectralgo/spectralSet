@@ -4,7 +4,7 @@ import { command } from "../../../lib/command";
 export default command({
 	description: "List workspaces on a device",
 	options: {
-		device: string().env("SUPERSET_DEVICE").desc("Device ID"),
+		device: string().env("SPECTRALSET_DEVICE").desc("Device ID"),
 	},
 	display: (data) =>
 		table(data as Record<string, unknown>[], ["name", "branch", "projectName"]),

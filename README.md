@@ -201,8 +201,8 @@ echo "Workspace ready!"
 ```
 
 Scripts have access to environment variables:
-- `SUPERSET_WORKSPACE_NAME` — Name of the workspace
-- `SUPERSET_ROOT_PATH` — Path to the main repository
+- `SPECTRALSET_WORKSPACE_NAME` — Name of the workspace
+- `SPECTRALSET_ROOT_PATH` — Path to the main repository
 
 ## Mastra Dependencies
 

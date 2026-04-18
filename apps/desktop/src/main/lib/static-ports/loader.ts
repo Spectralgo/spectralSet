@@ -1,6 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PORTS_FILE_NAME, PROJECT_SUPERSET_DIR_NAME } from "shared/constants";
+import {
+	PORTS_FILE_NAME,
+	PROJECT_SPECTRALSET_DIR_NAME,
+} from "shared/constants";
 import type { StaticPortsResult } from "shared/types";
 
 interface PortEntry {
@@ -76,7 +79,7 @@ function validatePortEntry(
 export function loadStaticPorts(worktreePath: string): StaticPortsResult {
 	const portsPath = join(
 		worktreePath,
-		PROJECT_SUPERSET_DIR_NAME,
+		PROJECT_SPECTRALSET_DIR_NAME,
 		PORTS_FILE_NAME,
 	);
 
@@ -157,7 +160,7 @@ export function loadStaticPorts(worktreePath: string): StaticPortsResult {
 export function hasStaticPortsConfig(worktreePath: string): boolean {
 	const portsPath = join(
 		worktreePath,
-		PROJECT_SUPERSET_DIR_NAME,
+		PROJECT_SPECTRALSET_DIR_NAME,
 		PORTS_FILE_NAME,
 	);
 	return existsSync(portsPath);

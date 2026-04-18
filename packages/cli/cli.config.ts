@@ -12,16 +12,16 @@ export default defineConfig({
 		"process.env.CLOUD_API_URL": JSON.stringify(
 			process.env.CLOUD_API_URL ?? "https://api.spectralset.dev",
 		),
-		"process.env.SUPERSET_WEB_URL": JSON.stringify(
-			process.env.SUPERSET_WEB_URL ?? "https://app.spectralset.dev",
+		"process.env.SPECTRALSET_WEB_URL": JSON.stringify(
+			process.env.SPECTRALSET_WEB_URL ?? "https://app.spectralset.dev",
 		),
 	},
 	globals: {
 		json: boolean().desc("Output as JSON"),
 		quiet: boolean().desc("Output IDs only"),
-		device: string().env("SUPERSET_DEVICE").desc("Override device"),
+		device: string().env("SPECTRALSET_DEVICE").desc("Override device"),
 		apiKey: string()
-			.env("SUPERSET_API_KEY")
+			.env("SPECTRALSET_API_KEY")
 			.desc("Use a Superset API key (sk_live_…) instead of OAuth login"),
 	},
 });

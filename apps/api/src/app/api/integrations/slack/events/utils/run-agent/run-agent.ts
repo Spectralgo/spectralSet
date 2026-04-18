@@ -274,7 +274,7 @@ const TOOL_PROGRESS_STATUS: Record<string, string> = {
 };
 
 // Tools excluded from Slack agent context
-const DENIED_SUPERSET_TOOLS = new Set([
+const DENIED_SPECTRALSET_TOOLS = new Set([
 	"switch_workspace",
 	"get_app_context",
 	"list_members",
@@ -492,7 +492,7 @@ export async function runSlackAgent(
 		]);
 
 		const supersetTools = supersetToolsResult.tools
-			.filter((t) => !DENIED_SUPERSET_TOOLS.has(t.name))
+			.filter((t) => !DENIED_SPECTRALSET_TOOLS.has(t.name))
 			.map((t) => mcpToolToAnthropicTool(t, "superset"));
 
 		const tools: Anthropic.Messages.ToolUnion[] = [

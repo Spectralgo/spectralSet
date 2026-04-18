@@ -6,12 +6,12 @@ import { hasStaticPortsConfig, loadStaticPorts } from "./loader";
 
 const TEST_DIR = join(tmpdir(), `superset-test-loader-${process.pid}`);
 const WORKTREE_PATH = join(TEST_DIR, "worktree");
-const SUPERSET_DIR = join(WORKTREE_PATH, ".superset");
-const PORTS_FILE = join(SUPERSET_DIR, "ports.json");
+const SPECTRALSET_DIR = join(WORKTREE_PATH, ".superset");
+const PORTS_FILE = join(SPECTRALSET_DIR, "ports.json");
 
 describe("loadStaticPorts", () => {
 	beforeEach(() => {
-		mkdirSync(SUPERSET_DIR, { recursive: true });
+		mkdirSync(SPECTRALSET_DIR, { recursive: true });
 	});
 
 	afterEach(() => {
@@ -261,7 +261,7 @@ describe("loadStaticPorts", () => {
 
 describe("hasStaticPortsConfig", () => {
 	beforeEach(() => {
-		mkdirSync(SUPERSET_DIR, { recursive: true });
+		mkdirSync(SPECTRALSET_DIR, { recursive: true });
 	});
 
 	afterEach(() => {

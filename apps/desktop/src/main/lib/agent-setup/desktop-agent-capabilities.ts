@@ -95,6 +95,6 @@ export const DESKTOP_AGENT_SETUP_TARGETS = [
 	},
 ] as const satisfies readonly DesktopAgentSetupTarget[];
 
-export const SUPERSET_MANAGED_BINARIES = DESKTOP_AGENT_SETUP_TARGETS.filter(
+export const SPECTRALSET_MANAGED_BINARIES = DESKTOP_AGENT_SETUP_TARGETS.filter(
 	(target) => "managedBinary" in target && target.managedBinary,
 ).map((target) => target.id) satisfies SupersetManagedBinary[];

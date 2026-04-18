@@ -66,7 +66,7 @@ interface ClaudeSettingsJson {
 }
 
 const CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH = `hooks/${NOTIFY_SCRIPT_NAME}`;
-const CLAUDE_DYNAMIC_NOTIFY_PATH_MARKER = `$SUPERSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}`;
+const CLAUDE_DYNAMIC_NOTIFY_PATH_MARKER = `$SPECTRALSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}`;
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -74,11 +74,11 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 /**
  * Returns the shell command written into Claude's global hook config.
- * The notify path is resolved at runtime from SUPERSET_HOME_DIR so one
+ * The notify path is resolved at runtime from SPECTRALSET_HOME_DIR so one
  * shared ~/.claude/settings.json works for both dev and prod installs.
  */
 export function getClaudeManagedHookCommand(): string {
-	return `[ -n "$SUPERSET_HOME_DIR" ] && [ -x "$SUPERSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" ] && "$SUPERSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" || true`;
+	return `[ -n "$SPECTRALSET_HOME_DIR" ] && [ -x "$SPECTRALSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" ] && "$SPECTRALSET_HOME_DIR/${CLAUDE_DYNAMIC_NOTIFY_RELATIVE_PATH}" || true`;
 }
 
 function isManagedClaudeHookCommand(
@@ -263,12 +263,12 @@ export function getOpenCodePluginContent(notifyPath: string): string {
 }
 
 /**
- * Creates the Claude wrapper that forwards SUPERSET_* env vars into the agent.
+ * Creates the Claude wrapper that forwards SPECTRALSET_* env vars into the agent.
  */
 export function createClaudeWrapper(): void {
 	// Hooks are now written directly to ~/.claude/settings.json via
 	// createClaudeSettingsJson(), so the wrapper is a plain pass-through.
-	// We still create the wrapper so SUPERSET_* env vars flow through
+	// We still create the wrapper so SPECTRALSET_* env vars flow through
 	// and the notify script can identify the Superset terminal context.
 	const script = buildWrapperScript("claude", `exec "$REAL_BIN" "$@"`);
 	createWrapper("claude", script);

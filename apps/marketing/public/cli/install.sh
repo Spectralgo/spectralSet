@@ -10,8 +10,8 @@
 set -eu
 
 REPO="superset-sh/superset"
-INSTALL_DIR="${SUPERSET_HOME:-$HOME/superset}"
-TAG="${SUPERSET_VERSION:-latest}"
+INSTALL_DIR="${SPECTRALSET_HOME:-$HOME/superset}"
+TAG="${SPECTRALSET_VERSION:-latest}"
 
 BOLD='\033[1m'
 GREEN='\033[32m'

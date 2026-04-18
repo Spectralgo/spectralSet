@@ -9,7 +9,7 @@
  * - Session-scoped: Tracks root sessionID, ignores events from other sessions
  * - Deduplication: Only sends Start on idle→busy, Stop on busy→idle transitions
  * - Safe defaults: On error, assumes child session to avoid false positives
- * - Debug logging: Set SUPERSET_DEBUG=1 to enable verbose logging
+ * - Debug logging: Set SPECTRALSET_DEBUG=1 to enable verbose logging
  *
  * SUBAGENT FILTERING:
  * When using oh-my-opencode or similar tools that spawn background subagents
@@ -27,10 +27,10 @@ export const SupersetNotifyPlugin = async ({ $, client }) => {
   globalThis.__supersetOpencodeNotifyPluginV8 = true;
 
   // Only run inside a Superset terminal session
-  if (!process?.env?.SUPERSET_TAB_ID) return {};
+  if (!process?.env?.SPECTRALSET_TAB_ID) return {};
 
   const notifyPath = "{{NOTIFY_PATH}}";
-  const debug = process?.env?.SUPERSET_DEBUG === '1';
+  const debug = process?.env?.SPECTRALSET_DEBUG === '1';
 
   // State tracking for deduplication and session-scoping
   let currentState = 'idle'; // 'idle' | 'busy'

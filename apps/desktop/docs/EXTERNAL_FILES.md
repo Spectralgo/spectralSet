@@ -95,15 +95,15 @@ Each terminal session receives these environment variables:
 
 | Variable | Purpose |
 |----------|---------|
-| `SUPERSET_PANE_ID` | Unique identifier for the terminal pane |
-| `SUPERSET_TAB_ID` | Identifier for the containing tab |
-| `SUPERSET_WORKSPACE_ID` | Identifier for the workspace |
-| `SUPERSET_WORKSPACE_NAME` | Human-readable workspace name |
-| `SUPERSET_WORKSPACE_PATH` | Filesystem path to the workspace |
-| `SUPERSET_ROOT_PATH` | Root path of the project |
-| `SUPERSET_PORT` | Port for the notification server |
-| `SUPERSET_ENV` | Environment (`development` or `production`) |
-| `SUPERSET_HOOK_VERSION` | Hook protocol version for compatibility |
+| `SPECTRALSET_TERMINAL_ID` | Unique identifier for the terminal pane |
+| `SPECTRALSET_TAB_ID` | Identifier for the containing tab |
+| `SPECTRALSET_WORKSPACE_ID` | Identifier for the workspace |
+| `SPECTRALSET_WORKSPACE_NAME` | Human-readable workspace name |
+| `SPECTRALSET_WORKSPACE_PATH` | Filesystem path to the workspace |
+| `SPECTRALSET_ROOT_PATH` | Root path of the project |
+| `SPECTRALSET_AGENT_HOOK_PORT` | Port for the notification server |
+| `SPECTRALSET_ENV` | Environment (`development` or `production`) |
+| `SPECTRALSET_AGENT_HOOK_VERSION` | Hook protocol version for compatibility |
 
 ## Adding New External Files
 
@@ -119,6 +119,6 @@ Before adding new files outside of `~/.superset[-{workspace}]/`:
 If you suspect dev/prod cross-talk:
 
 1. Check logs for "Environment mismatch" warnings
-2. Verify `SUPERSET_ENV` and `SUPERSET_PORT` are set correctly in terminal
+2. Verify `SPECTRALSET_ENV` and `SPECTRALSET_AGENT_HOOK_PORT` are set correctly in terminal
 3. Delete stale global files: `rm -rf ~/.config/opencode/plugin/superset-notify.js`
 4. Restart both dev and prod apps to regenerate hooks

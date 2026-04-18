@@ -4,9 +4,9 @@ import { join } from "node:path";
 import {
 	CONFIG_FILE_NAME,
 	LOCAL_CONFIG_FILE_NAME,
-	PROJECT_SUPERSET_DIR_NAME,
+	PROJECT_SPECTRALSET_DIR_NAME,
 	PROJECTS_DIR_NAME,
-	SUPERSET_DIR_NAME,
+	SPECTRALSET_DIR_NAME,
 } from "shared/constants";
 import type { LocalSetupConfig, SetupConfig } from "shared/types";
 
@@ -18,15 +18,15 @@ export function copySupersetConfigToWorktree(
 	mainRepoPath: string,
 	worktreePath: string,
 ): void {
-	const mainSupersetDir = join(mainRepoPath, PROJECT_SUPERSET_DIR_NAME);
-	const worktreeSupersetDir = join(worktreePath, PROJECT_SUPERSET_DIR_NAME);
+	const mainSupersetDir = join(mainRepoPath, PROJECT_SPECTRALSET_DIR_NAME);
+	const worktreeSupersetDir = join(worktreePath, PROJECT_SPECTRALSET_DIR_NAME);
 
 	if (existsSync(mainSupersetDir) && !existsSync(worktreeSupersetDir)) {
 		try {
 			cpSync(mainSupersetDir, worktreeSupersetDir, { recursive: true });
 		} catch (error) {
 			console.error(
-				`Failed to copy ${PROJECT_SUPERSET_DIR_NAME} to worktree: ${error instanceof Error ? error.message : String(error)}`,
+				`Failed to copy ${PROJECT_SPECTRALSET_DIR_NAME} to worktree: ${error instanceof Error ? error.message : String(error)}`,
 			);
 		}
 	}
@@ -64,7 +64,7 @@ function readConfigFile(configPath: string): SetupConfig | null {
 
 function readConfigFromPath(basePath: string): SetupConfig | null {
 	return readConfigFile(
-		join(basePath, PROJECT_SUPERSET_DIR_NAME, CONFIG_FILE_NAME),
+		join(basePath, PROJECT_SPECTRALSET_DIR_NAME, CONFIG_FILE_NAME),
 	);
 }
 
@@ -109,7 +109,7 @@ function readLocalConfigFile(filePath: string): LocalSetupConfig | null {
 
 function readLocalConfigFromPath(basePath: string): LocalSetupConfig | null {
 	return readLocalConfigFile(
-		join(basePath, PROJECT_SUPERSET_DIR_NAME, LOCAL_CONFIG_FILE_NAME),
+		join(basePath, PROJECT_SPECTRALSET_DIR_NAME, LOCAL_CONFIG_FILE_NAME),
 	);
 }
 
@@ -192,7 +192,7 @@ export function loadSetupConfig({
 	if (projectId && !projectId.includes("/") && !projectId.includes("\\")) {
 		const userConfigPath = join(
 			homedir(),
-			SUPERSET_DIR_NAME,
+			SPECTRALSET_DIR_NAME,
 			PROJECTS_DIR_NAME,
 			projectId,
 			CONFIG_FILE_NAME,

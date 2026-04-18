@@ -43,5 +43,5 @@ export function deriveWorkspaceNameFromWorktreeSegments(
 }
 
 export function getWorkspaceName(): string | undefined {
-	return normalizeWorkspaceName(process.env.SUPERSET_WORKSPACE_NAME);
+	return normalizeWorkspaceName(process.env.SPECTRALSET_WORKSPACE_NAME);
 }

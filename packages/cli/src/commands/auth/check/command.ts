@@ -21,7 +21,7 @@ export default command({
 		} else if (ctx.authSource === "flag") {
 			authLine = "API key (from --api-key flag)";
 		} else {
-			authLine = "API key (from SUPERSET_API_KEY env)";
+			authLine = "API key (from SPECTRALSET_API_KEY env)";
 		}
 
 		return {

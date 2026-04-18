@@ -9,7 +9,7 @@ export default command({
 	description: "Authenticate with Superset. Re-run to switch organizations.",
 	skipMiddleware: true,
 	options: {
-		apiUrl: string().env("SUPERSET_API_URL").desc("Override API URL"),
+		apiUrl: string().env("SPECTRALSET_API_URL").desc("Override API URL"),
 	},
 	run: async (opts) => {
 		const config = readConfig();

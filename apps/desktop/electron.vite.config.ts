@@ -93,8 +93,8 @@ export default defineConfig({
 				process.env.DESKTOP_NOTIFICATIONS_PORT,
 			),
 			"process.env.ELECTRIC_PORT": defineEnv(process.env.ELECTRIC_PORT),
-			"process.env.SUPERSET_WORKSPACE_NAME": defineEnv(
-				process.env.SUPERSET_WORKSPACE_NAME,
+			"process.env.SPECTRALSET_WORKSPACE_NAME": defineEnv(
+				process.env.SPECTRALSET_WORKSPACE_NAME,
 			),
 		},
 
@@ -207,8 +207,8 @@ export default defineConfig({
 				process.env.DESKTOP_NOTIFICATIONS_PORT,
 			),
 			"process.env.ELECTRIC_PORT": defineEnv(process.env.ELECTRIC_PORT),
-			"process.env.SUPERSET_WORKSPACE_NAME": defineEnv(
-				process.env.SUPERSET_WORKSPACE_NAME,
+			"process.env.SPECTRALSET_WORKSPACE_NAME": defineEnv(
+				process.env.SPECTRALSET_WORKSPACE_NAME,
 			),
 		},
 

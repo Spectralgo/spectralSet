@@ -111,7 +111,7 @@ The desktop app has a dynamic port scanning system:
 
 The existing `config.json` setup/teardown feature provides a pattern to follow:
 
-- Constants defined in `apps/desktop/src/shared/constants.ts`: `PROJECT_SUPERSET_DIR_NAME = ".superset"`, `CONFIG_FILE_NAME = "config.json"`
+- Constants defined in `apps/desktop/src/shared/constants.ts`: `PROJECT_SPECTRALSET_DIR_NAME = ".superset"`, `CONFIG_FILE_NAME = "config.json"`
 - Loading logic in `apps/desktop/src/lib/trpc/routers/workspaces/utils/setup.ts`: `loadSetupConfig(mainRepoPath)` reads and validates JSON
 - Tests in `apps/desktop/src/lib/trpc/routers/workspaces/utils/setup.test.ts`
 
@@ -155,7 +155,7 @@ Create a new module to load and validate `ports.json`.
 
 Create a function `loadStaticPorts(worktreePath: string)` that:
 
-1. Constructs path: `join(worktreePath, PROJECT_SUPERSET_DIR_NAME, PORTS_FILE_NAME)`
+1. Constructs path: `join(worktreePath, PROJECT_SPECTRALSET_DIR_NAME, PORTS_FILE_NAME)`
 2. Checks if file exists using `existsSync`
 3. If not exists, returns `{ exists: false, ports: null, error: null }`
 4. If exists, reads the file with `readFileSync`

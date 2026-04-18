@@ -35,10 +35,10 @@ const STRIP_PREFIXES = [
 	"HOST_",
 ];
 
-const SUPERSET_KEEP_KEYS = new Set([
-	"SUPERSET_HOME_DIR",
-	"SUPERSET_AGENT_HOOK_PORT",
-	"SUPERSET_AGENT_HOOK_VERSION",
+const SPECTRALSET_KEEP_KEYS = new Set([
+	"SPECTRALSET_HOME_DIR",
+	"SPECTRALSET_AGENT_HOOK_PORT",
+	"SPECTRALSET_AGENT_HOOK_VERSION",
 ]);
 
 export function stripTerminalRuntimeEnv(
@@ -50,7 +50,8 @@ export function stripTerminalRuntimeEnv(
 		if (HOST_SERVICE_RUNTIME_KEYS.has(key)) continue;
 		if (NODE_APP_KEYS.has(key)) continue;
 		if (STRIP_PREFIXES.some((prefix) => key.startsWith(prefix))) continue;
-		if (key.startsWith("SUPERSET_") && !SUPERSET_KEEP_KEYS.has(key)) continue;
+		if (key.startsWith("SPECTRALSET_") && !SPECTRALSET_KEEP_KEYS.has(key))
+			continue;
 
 		result[key] = value;
 	}

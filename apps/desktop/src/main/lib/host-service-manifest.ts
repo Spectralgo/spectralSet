@@ -7,7 +7,7 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
-import { SUPERSET_HOME_DIR } from "./app-environment";
+import { SPECTRALSET_HOME_DIR } from "./app-environment";
 
 export interface HostServiceManifest {
 	pid: number;
@@ -18,7 +18,7 @@ export interface HostServiceManifest {
 }
 
 export function manifestDir(organizationId: string): string {
-	return join(SUPERSET_HOME_DIR, "host", organizationId);
+	return join(SPECTRALSET_HOME_DIR, "host", organizationId);
 }
 
 function manifestPath(organizationId: string): string {
@@ -68,7 +68,7 @@ export function readManifest(
 
 /** Scan the host directory for all valid manifests on disk. */
 export function listManifests(): HostServiceManifest[] {
-	const hostDir = join(SUPERSET_HOME_DIR, "host");
+	const hostDir = join(SPECTRALSET_HOME_DIR, "host");
 	if (!existsSync(hostDir)) return [];
 
 	const manifests: HostServiceManifest[] = [];

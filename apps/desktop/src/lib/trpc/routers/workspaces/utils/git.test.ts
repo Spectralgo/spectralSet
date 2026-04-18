@@ -367,7 +367,7 @@ describe("Shell Environment", () => {
 		const tmpDir = mkdtempSync(join(realpathSync(tmpdir()), "shell-env-test-"));
 		writeFileSync(
 			join(tmpDir, ".zshrc"),
-			'export __SUPERSET_SHELL_ENV_TEST__="interactive"\n',
+			'export __SPECTRALSET_SHELL_ENV_TEST__="interactive"\n',
 		);
 
 		const origZDOTDIR = process.env.ZDOTDIR;
@@ -378,7 +378,7 @@ describe("Shell Environment", () => {
 
 		try {
 			const env = await getShellEnvironment();
-			expect(env.__SUPERSET_SHELL_ENV_TEST__).toBe("interactive");
+			expect(env.__SPECTRALSET_SHELL_ENV_TEST__).toBe("interactive");
 		} finally {
 			if (origZDOTDIR !== undefined) process.env.ZDOTDIR = origZDOTDIR;
 			else delete process.env.ZDOTDIR;
