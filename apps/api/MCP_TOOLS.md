@@ -1,6 +1,6 @@
 # MCP Server Tools
 
-Superset MCP server exposing tools for task management and device orchestration.
+SpectralSet MCP server exposing tools for task management and device orchestration.
 
 ## Authentication
 

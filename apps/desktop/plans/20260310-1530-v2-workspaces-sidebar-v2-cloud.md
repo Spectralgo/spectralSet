@@ -296,9 +296,9 @@ Checklist:
   - [ ] either a small `V2WorkspaceSidebar/local-meta/` module
   - [ ] or a shared renderer helper under `renderer/lib/`
 - [ ] Add storage keys:
-  - [ ] `superset:project-local-meta`
-  - [ ] `superset:workspace-local-meta`
-  - [ ] `superset:section-local-meta`
+  - [ ] `spectralset:project-local-meta`
+  - [ ] `spectralset:workspace-local-meta`
+  - [ ] `spectralset:section-local-meta`
 - [ ] Define types for each local meta record
 - [ ] Implement read/parse with corrupted-data fallback
 - [ ] Implement write/update helpers
