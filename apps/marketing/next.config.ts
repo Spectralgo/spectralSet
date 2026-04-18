@@ -62,6 +62,16 @@ const config: NextConfig = {
 				permanent: true,
 			},
 			{
+				source: "/compare/superset-vs-:slug",
+				destination: "/compare/spectralset-vs-:slug",
+				permanent: true,
+			},
+			{
+				source: "/blog/working-with-worktrees-in-superset",
+				destination: "/blog/working-with-worktrees-in-spectralset",
+				permanent: true,
+			},
+			{
 				source: "/docs/:path*",
 				destination: `${docsUrl}/:path*`,
 				permanent: false,
