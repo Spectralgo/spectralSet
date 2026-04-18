@@ -1,5 +1,9 @@
 import { Button } from "@spectralset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { VscListFlat, VscListTree } from "react-icons/vsc";
 import type { ChangesViewMode } from "../../types";
 

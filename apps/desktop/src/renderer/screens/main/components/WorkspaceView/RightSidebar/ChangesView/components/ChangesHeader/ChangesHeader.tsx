@@ -14,8 +14,16 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@spectralset/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@spectralset/ui/popover";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
 	VscCheck,

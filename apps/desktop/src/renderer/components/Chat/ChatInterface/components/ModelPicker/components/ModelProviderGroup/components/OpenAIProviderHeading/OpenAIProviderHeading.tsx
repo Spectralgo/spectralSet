@@ -1,5 +1,9 @@
 import { Button } from "@spectralset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { KeyRoundIcon, Loader2Icon } from "lucide-react";
 
 interface OpenAIProviderHeadingProps {

@@ -4,7 +4,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@spectralset/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { cn } from "@spectralset/ui/utils";
 import {
 	LuArrowDown,

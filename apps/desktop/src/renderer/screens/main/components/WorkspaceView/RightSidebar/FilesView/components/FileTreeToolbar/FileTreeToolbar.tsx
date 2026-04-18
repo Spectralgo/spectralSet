@@ -1,6 +1,10 @@
 import { Button } from "@spectralset/ui/button";
 import { Input } from "@spectralset/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	LuChevronsDownUp,

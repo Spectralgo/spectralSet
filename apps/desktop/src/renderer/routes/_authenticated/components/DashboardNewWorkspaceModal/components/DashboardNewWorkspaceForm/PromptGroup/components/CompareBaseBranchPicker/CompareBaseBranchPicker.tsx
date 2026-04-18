@@ -5,7 +5,11 @@ import {
 	CommandItem,
 	CommandList,
 } from "@spectralset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@spectralset/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
 import {
 	Tooltip,

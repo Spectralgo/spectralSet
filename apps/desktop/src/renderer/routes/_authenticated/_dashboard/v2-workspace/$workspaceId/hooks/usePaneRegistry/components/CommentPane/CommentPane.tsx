@@ -1,6 +1,6 @@
-import { mermaid } from "@streamdown/mermaid";
 import type { RendererContext } from "@spectralset/panes";
 import { Avatar, AvatarFallback, AvatarImage } from "@spectralset/ui/avatar";
+import { mermaid } from "@streamdown/mermaid";
 import {
 	type ReactNode,
 	useCallback,

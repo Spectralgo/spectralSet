@@ -1,6 +1,10 @@
 import { Button } from "@spectralset/ui/button";
 import { Checkbox } from "@spectralset/ui/checkbox";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { cn } from "@spectralset/ui/utils";
 import { HiMiniMinus, HiMiniPlus } from "react-icons/hi2";
 import {

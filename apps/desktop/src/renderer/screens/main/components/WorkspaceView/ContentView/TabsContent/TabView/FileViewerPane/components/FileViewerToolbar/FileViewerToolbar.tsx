@@ -1,5 +1,9 @@
 import { ToggleGroup, ToggleGroupItem } from "@spectralset/ui/toggle-group";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { cn } from "@spectralset/ui/utils";
 
 import {

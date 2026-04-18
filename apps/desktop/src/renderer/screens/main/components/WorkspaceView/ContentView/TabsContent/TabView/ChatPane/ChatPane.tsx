@@ -2,7 +2,11 @@ import {
 	ChatRuntimeServiceProvider,
 	ChatServiceProvider,
 } from "@spectralset/chat/client";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { CopyIcon } from "lucide-react";
 import { useCallback } from "react";
 import type { MosaicBranch } from "react-mosaic-component";

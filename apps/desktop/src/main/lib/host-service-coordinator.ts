@@ -5,7 +5,10 @@ import * as fs from "node:fs";
 import { createServer } from "node:net";
 import path from "node:path";
 import { settings } from "@spectralset/local-db";
-import { getDeviceName, getHashedDeviceId } from "@spectralset/shared/device-info";
+import {
+	getDeviceName,
+	getHashedDeviceId,
+} from "@spectralset/shared/device-info";
 import { app } from "electron";
 import { env } from "main/env.main";
 import { env as sharedEnv } from "shared/env.shared";

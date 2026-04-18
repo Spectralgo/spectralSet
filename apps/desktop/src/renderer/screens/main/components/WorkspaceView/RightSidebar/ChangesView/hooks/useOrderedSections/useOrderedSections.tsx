@@ -1,5 +1,9 @@
 import { Button } from "@spectralset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import type { ReactNode } from "react";
 import { VscAdd, VscDiscard, VscRemove } from "react-icons/vsc";
 import { getOrderedChangeSectionIds } from "renderer/stores/changes/section-order";

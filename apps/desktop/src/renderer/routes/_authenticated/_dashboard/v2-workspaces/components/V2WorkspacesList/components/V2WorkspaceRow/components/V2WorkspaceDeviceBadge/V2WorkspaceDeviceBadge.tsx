@@ -1,5 +1,9 @@
 import { Badge } from "@spectralset/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { cn } from "@spectralset/ui/utils";
 import { LuCloud, LuLaptop, LuMonitor } from "react-icons/lu";
 import type { V2WorkspaceHostType } from "renderer/routes/_authenticated/_dashboard/v2-workspaces/hooks/useAccessibleV2Workspaces";

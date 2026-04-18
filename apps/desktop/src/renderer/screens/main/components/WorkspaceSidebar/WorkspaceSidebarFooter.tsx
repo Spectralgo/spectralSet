@@ -6,7 +6,11 @@ import {
 	DropdownMenuTrigger,
 } from "@spectralset/ui/dropdown-menu";
 import { toast } from "@spectralset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
 import { LuFolderGit, LuFolderOpen, LuFolderPlus } from "react-icons/lu";
 import { useOpenProject } from "renderer/react-query/projects";

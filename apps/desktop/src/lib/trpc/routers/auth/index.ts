@@ -1,7 +1,10 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import { AUTH_PROVIDERS } from "@spectralset/shared/constants";
-import { getDeviceName, getHashedDeviceId } from "@spectralset/shared/device-info";
+import {
+	getDeviceName,
+	getHashedDeviceId,
+} from "@spectralset/shared/device-info";
 import { observable } from "@trpc/server/observable";
 import { shell } from "electron";
 import { env } from "main/env.main";

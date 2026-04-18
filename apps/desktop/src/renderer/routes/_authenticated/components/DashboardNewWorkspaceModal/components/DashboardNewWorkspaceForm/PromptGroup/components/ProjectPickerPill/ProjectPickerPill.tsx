@@ -7,7 +7,11 @@ import {
 	CommandItem,
 	CommandList,
 } from "@spectralset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@spectralset/ui/popover";
 import { useState } from "react";
 import { HiCheck, HiChevronUpDown } from "react-icons/hi2";
 import { ProjectThumbnail } from "renderer/routes/_authenticated/components/ProjectThumbnail";

@@ -10,7 +10,11 @@ import {
 	CommandList,
 	CommandSeparator,
 } from "@spectralset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@spectralset/ui/popover";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HiCheck, HiChevronDown, HiOutlineUserCircle } from "react-icons/hi2";

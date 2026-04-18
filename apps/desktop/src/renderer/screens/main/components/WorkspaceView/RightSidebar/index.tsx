@@ -1,5 +1,9 @@
 import { Button } from "@spectralset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useParams } from "@tanstack/react-router";
 import { useCallback } from "react";
 import {

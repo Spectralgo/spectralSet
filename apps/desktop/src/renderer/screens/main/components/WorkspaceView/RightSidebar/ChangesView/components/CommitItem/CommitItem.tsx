@@ -4,7 +4,11 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from "@spectralset/ui/context-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { VscClippy } from "react-icons/vsc";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
 import type { ChangedFile, CommitInfo } from "shared/changes-types";

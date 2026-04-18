@@ -1,6 +1,9 @@
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname, join, resolve, sep } from "node:path";
-import { getDeviceName, getHashedDeviceId } from "@spectralset/shared/device-info";
+import {
+	getDeviceName,
+	getHashedDeviceId,
+} from "@spectralset/shared/device-info";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import simpleGit from "simple-git";

@@ -10,7 +10,11 @@ import { Button } from "@spectralset/ui/button";
 import { Checkbox } from "@spectralset/ui/checkbox";
 import { Label } from "@spectralset/ui/label";
 import { toast } from "@spectralset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import {

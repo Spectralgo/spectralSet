@@ -5,7 +5,11 @@ import {
 	ContextMenuTrigger,
 } from "@spectralset/ui/context-menu";
 import { toast } from "@spectralset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { cn } from "@spectralset/ui/utils";
 import {
 	LuArrowRight,

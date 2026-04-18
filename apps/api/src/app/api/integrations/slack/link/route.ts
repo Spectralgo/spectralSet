@@ -1,7 +1,10 @@
 import { createHmac } from "node:crypto";
 import { auth } from "@spectralset/auth/server";
 import { db } from "@spectralset/db/client";
-import { integrationConnections, usersSlackUsers } from "@spectralset/db/schema";
+import {
+	integrationConnections,
+	usersSlackUsers,
+} from "@spectralset/db/schema";
 import { findOrgMembership } from "@spectralset/db/utils";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";

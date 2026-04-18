@@ -7,7 +7,11 @@ import {
 	AlertDialogTitle,
 } from "@spectralset/ui/alert-dialog";
 import { Button } from "@spectralset/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { useDeleteWorktree } from "renderer/react-query/workspaces/useDeleteWorktree";
 import { deleteWithToast } from "renderer/routes/_authenticated/components/TeardownLogsDialog";

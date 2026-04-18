@@ -7,7 +7,11 @@ import {
 	CommandItem,
 	CommandList,
 } from "@spectralset/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@spectralset/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@spectralset/ui/popover";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { parsePrimaryFamily } from "../../font-utils";

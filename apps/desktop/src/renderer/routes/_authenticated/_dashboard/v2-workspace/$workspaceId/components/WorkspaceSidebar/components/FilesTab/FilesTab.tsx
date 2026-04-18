@@ -3,7 +3,11 @@ import type { ExternalApp } from "@spectralset/local-db";
 import { alert } from "@spectralset/ui/atoms/Alert";
 import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { workspaceTrpc } from "@spectralset/workspace-client";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";

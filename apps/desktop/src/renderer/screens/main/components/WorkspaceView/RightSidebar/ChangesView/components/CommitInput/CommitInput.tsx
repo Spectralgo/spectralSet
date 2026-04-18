@@ -10,7 +10,11 @@ import {
 } from "@spectralset/ui/dropdown-menu";
 import { toast } from "@spectralset/ui/sonner";
 import { Textarea } from "@spectralset/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useState } from "react";
 import {
 	VscArrowDown,

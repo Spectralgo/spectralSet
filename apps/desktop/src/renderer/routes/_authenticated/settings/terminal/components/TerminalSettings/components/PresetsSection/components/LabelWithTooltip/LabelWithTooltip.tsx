@@ -1,5 +1,9 @@
 import { Label } from "@spectralset/ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 
 interface LabelWithTooltipProps {

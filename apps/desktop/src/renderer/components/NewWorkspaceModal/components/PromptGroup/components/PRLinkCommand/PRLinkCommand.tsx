@@ -6,7 +6,11 @@ import {
 	CommandItem,
 	CommandList,
 } from "@spectralset/ui/command";
-import { Popover, PopoverAnchor, PopoverContent } from "@spectralset/ui/popover";
+import {
+	Popover,
+	PopoverAnchor,
+	PopoverContent,
+} from "@spectralset/ui/popover";
 import type React from "react";
 import type { RefObject } from "react";
 import { useMemo, useState } from "react";

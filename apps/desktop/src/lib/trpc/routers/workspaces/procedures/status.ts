@@ -1,4 +1,8 @@
-import { workspaceSections, workspaces, worktrees } from "@spectralset/local-db";
+import {
+	workspaceSections,
+	workspaces,
+	worktrees,
+} from "@spectralset/local-db";
 import { and, eq, isNull, not } from "drizzle-orm";
 import { localDb } from "main/lib/local-db";
 import { z } from "zod";

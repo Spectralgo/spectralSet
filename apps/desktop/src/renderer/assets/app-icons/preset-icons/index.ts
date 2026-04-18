@@ -1,4 +1,7 @@
-import { getPresetIcon, PRESET_ICONS } from "@spectralset/ui/icons/preset-icons";
+import {
+	getPresetIcon,
+	PRESET_ICONS,
+} from "@spectralset/ui/icons/preset-icons";
 import { useThemeStore } from "renderer/stores/theme/store";
 
 export { PRESET_ICONS, getPresetIcon };

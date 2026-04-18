@@ -1,5 +1,8 @@
 import { db } from "@spectralset/db/client";
-import { integrationConnections, usersSlackUsers } from "@spectralset/db/schema";
+import {
+	integrationConnections,
+	usersSlackUsers,
+} from "@spectralset/db/schema";
 import { and, eq } from "drizzle-orm";
 import { generateConnectUrl } from "../utils/generate-connect-url";
 import { createSlackClient } from "../utils/slack-client";

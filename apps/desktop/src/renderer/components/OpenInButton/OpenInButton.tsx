@@ -6,7 +6,11 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from "@spectralset/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { useState } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import {

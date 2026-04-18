@@ -8,7 +8,10 @@ import {
 } from "@spectralset/db/schema/auth";
 import { seedDefaultStatuses } from "@spectralset/db/seed-default-statuses";
 import { findOrgMembership } from "@spectralset/db/utils";
-import { canRemoveMember, type OrganizationRole } from "@spectralset/shared/auth";
+import {
+	canRemoveMember,
+	type OrganizationRole,
+} from "@spectralset/shared/auth";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";

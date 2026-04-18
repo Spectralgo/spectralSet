@@ -10,7 +10,11 @@ import {
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@spectralset/ui/hover-card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spectralset/ui/tooltip";
 import { cn } from "@spectralset/ui/utils";
 import { type RefObject, useMemo, useState } from "react";
 import { LuCopy, LuX } from "react-icons/lu";
