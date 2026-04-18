@@ -1,0 +1,1 @@
+ALTER TABLE "auth"."users" ADD COLUMN "gastown_enabled" boolean DEFAULT false NOT NULL;

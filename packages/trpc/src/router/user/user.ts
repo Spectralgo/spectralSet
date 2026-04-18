@@ -52,6 +52,25 @@ export const userRouter = {
 			return updatedUser;
 		}),
 
+	getGastownEnabled: protectedProcedure.query(async ({ ctx }) => {
+		const user = await db.query.users.findFirst({
+			where: eq(users.id, ctx.session.user.id),
+			columns: { gastownEnabled: true },
+		});
+		return { enabled: user?.gastownEnabled ?? false };
+	}),
+
+	setGastownEnabled: protectedProcedure
+		.input(z.object({ enabled: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const [updatedUser] = await db
+				.update(users)
+				.set({ gastownEnabled: input.enabled })
+				.where(eq(users.id, ctx.session.user.id))
+				.returning({ gastownEnabled: users.gastownEnabled });
+			return { enabled: updatedUser?.gastownEnabled ?? input.enabled };
+		}),
+
 	uploadAvatar: protectedProcedure
 		.input(
 			z.object({

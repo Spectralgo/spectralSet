@@ -1,0 +1,1 @@
+export { GastownRigList } from "./GastownRigList";

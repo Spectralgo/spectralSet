@@ -24,6 +24,7 @@ import {
 	SETTING_ITEM_ID,
 	type SettingItemId,
 } from "../../../utils/settings-search";
+import { GastownCard } from "../GastownCard";
 
 interface IntegrationsSettingsProps {
 	visibleItems?: SettingItemId[] | null;
@@ -70,6 +71,10 @@ export function IntegrationsSettings({
 	);
 	const showGithub = isItemVisible(
 		SETTING_ITEM_ID.INTEGRATIONS_GITHUB,
+		visibleItems,
+	);
+	const showGastown = isItemVisible(
+		SETTING_ITEM_ID.INTEGRATIONS_GASTOWN,
 		visibleItems,
 	);
 
@@ -119,8 +124,13 @@ export function IntegrationsSettings({
 						Connect external services to sync data
 					</p>
 				</div>
+				{showGastown && (
+					<div className="mb-6 grid gap-4">
+						<GastownCard />
+					</div>
+				)}
 				<p className="text-muted-foreground">
-					You need to be part of an organization to use integrations.
+					Join or create an organization to enable workspace-level integrations.
 				</p>
 			</div>
 		);
@@ -136,6 +146,8 @@ export function IntegrationsSettings({
 			</div>
 
 			<div className="grid gap-4">
+				{showGastown && <GastownCard />}
+
 				{showLinear && (
 					<IntegrationCard
 						name="Linear"
