@@ -7,13 +7,13 @@ export default defineConfig({
 	outfile: "./dist/superset",
 	define: {
 		"process.env.RELAY_URL": JSON.stringify(
-			process.env.RELAY_URL ?? "https://relay.superset.sh",
+			process.env.RELAY_URL ?? "https://relay.spectralset.dev",
 		),
 		"process.env.CLOUD_API_URL": JSON.stringify(
-			process.env.CLOUD_API_URL ?? "https://api.superset.sh",
+			process.env.CLOUD_API_URL ?? "https://api.spectralset.dev",
 		),
 		"process.env.SUPERSET_WEB_URL": JSON.stringify(
-			process.env.SUPERSET_WEB_URL ?? "https://app.superset.sh",
+			process.env.SUPERSET_WEB_URL ?? "https://app.spectralset.dev",
 		),
 	},
 	globals: {

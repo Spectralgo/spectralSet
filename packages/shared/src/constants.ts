@@ -9,24 +9,27 @@ export const PROTOCOL_SCHEMES = {
 } as const;
 
 // Company
+// TODO: spectralset.dev is a placeholder — replace with the final provisioned
+// domain once external DNS/hosting is set up. Tracked in the rebrand epic.
+const MARKETING_URL =
+	process.env.NEXT_PUBLIC_MARKETING_URL || "https://spectralset.dev";
+
 export const COMPANY = {
-	NAME: "Superset",
-	DOMAIN: "superset.sh",
-	EMAIL_DOMAIN: "@superset.sh",
-	GITHUB_URL: "https://github.com/superset-sh/superset",
-	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.superset.sh",
-	MARKETING_URL: process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh",
-	TERMS_URL: `${process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh"}/terms`,
-	PRIVACY_URL:
-		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh") +
-		"/privacy",
-	CHANGELOG_URL:
-		(process.env.NEXT_PUBLIC_MARKETING_URL || "https://superset.sh") +
-		"/changelog",
-	X_URL: "https://x.com/superset_sh",
-	MAIL_TO: "mailto:founders@superset.sh",
-	REPORT_ISSUE_URL: "https://github.com/superset-sh/superset/issues/new",
-	DISCORD_URL: "https://discord.gg/cZeD9WYcV7",
+	NAME: "SpectralSet",
+	DOMAIN: "spectralset.dev",
+	EMAIL_DOMAIN: "@spectralset.dev",
+	GITHUB_URL: "https://github.com/Spectralgo/spectralSet",
+	DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.spectralset.dev",
+	MARKETING_URL,
+	TERMS_URL: `${MARKETING_URL}/terms`,
+	PRIVACY_URL: `${MARKETING_URL}/privacy`,
+	CHANGELOG_URL: `${MARKETING_URL}/changelog`,
+	PRICING_URL: `${MARKETING_URL}/pricing`,
+	X_URL: "https://x.com/spectralset",
+	MAIL_TO: "mailto:founders@spectralset.dev",
+	REPORT_ISSUE_URL: "https://github.com/Spectralgo/spectralSet/issues/new",
+	// TODO: External provisioning deferred — replace with real Discord invite.
+	DISCORD_URL: "https://discord.gg/TBD",
 } as const;
 
 // Theme

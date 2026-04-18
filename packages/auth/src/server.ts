@@ -244,7 +244,7 @@ export const auth = betterAuth({
 				});
 
 				await resend.emails.send({
-					from: "Superset <noreply@superset.sh>",
+					from: "SpectralSet <noreply@spectralset.dev>",
 					to: data.email,
 					subject: `${data.inviter.user.name} invited you to join ${data.organization.name}`,
 					react: OrganizationInvitationEmail({
@@ -389,7 +389,7 @@ export const auth = betterAuth({
 
 					if (acceptedInvitation) {
 						await resend.emails.send({
-							from: "Superset <noreply@superset.sh>",
+							from: "SpectralSet <noreply@spectralset.dev>",
 							to: user.email,
 							subject: `You've been added to ${organization.name}`,
 							react: MemberAddedEmail({
@@ -437,7 +437,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "SpectralSet <noreply@spectralset.dev>",
 							to: owner.email,
 							subject: `Billing update: New member added to ${organization.name}`,
 							react: MemberAddedBillingEmail({
@@ -474,7 +474,7 @@ export const auth = betterAuth({
 
 				afterRemoveMember: async ({ user, organization }) => {
 					await resend.emails.send({
-						from: "Superset <noreply@superset.sh>",
+						from: "SpectralSet <noreply@spectralset.dev>",
 						to: user.email,
 						subject: `You've been removed from ${organization.name}`,
 						react: MemberRemovedEmail({
@@ -526,7 +526,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "SpectralSet <noreply@spectralset.dev>",
 							to: owner.email,
 							subject: `Billing update: Member removed from ${organization.name}`,
 							react: MemberRemovedBillingEmail({
@@ -655,7 +655,7 @@ export const auth = betterAuth({
 				getCheckoutSessionParams: async ({ user, plan, subscription }) => {
 					if (plan.name === "enterprise") {
 						throw new Error(
-							"Enterprise subscriptions are managed by admins. Contact founders@superset.sh.",
+							"Enterprise subscriptions are managed by admins. Contact founders@spectralset.dev.",
 						);
 					}
 
@@ -706,7 +706,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "SpectralSet <noreply@spectralset.dev>",
 							to: owner.email,
 							subject: `Welcome to Superset ${plan.name}!`,
 							react: SubscriptionStartedEmail({
@@ -755,7 +755,7 @@ export const auth = betterAuth({
 
 					await resend.batch.send(
 						owners.map((owner) => ({
-							from: "Superset <noreply@superset.sh>",
+							from: "SpectralSet <noreply@spectralset.dev>",
 							to: owner.email,
 							subject: `Your ${subscription.plan} subscription has been cancelled`,
 							react: SubscriptionCancelledEmail({
@@ -817,7 +817,7 @@ export const auth = betterAuth({
 
 						await resend.batch.send(
 							owners.map((owner) => ({
-								from: "Superset <noreply@superset.sh>",
+								from: "SpectralSet <noreply@spectralset.dev>",
 								to: owner.email,
 								subject: `Payment failed for ${org.name}`,
 								react: PaymentFailedEmail({

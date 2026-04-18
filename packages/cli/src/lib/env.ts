@@ -5,6 +5,6 @@
  */
 
 export const env = {
-	RELAY_URL: process.env.RELAY_URL || "https://relay.superset.sh",
-	CLOUD_API_URL: process.env.CLOUD_API_URL || "https://api.superset.sh",
+	RELAY_URL: process.env.RELAY_URL || "https://relay.spectralset.dev",
+	CLOUD_API_URL: process.env.CLOUD_API_URL || "https://api.spectralset.dev",
 };

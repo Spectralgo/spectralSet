@@ -57,5 +57,5 @@ export function readDeviceConfig(): DeviceConfig | null {
 }
 
 export function getApiUrl(config: SupersetConfig): string {
-	return config.apiUrl ?? "https://api.superset.sh";
+	return config.apiUrl ?? "https://api.spectralset.dev";
 }

@@ -128,15 +128,15 @@ function waitForCallback({
 
 export function getWebUrl(config: SupersetConfig): string {
 	if (process.env.SUPERSET_WEB_URL) return process.env.SUPERSET_WEB_URL;
-	const apiUrl = config.apiUrl ?? "https://api.superset.sh";
-	return apiUrl.replace("api.superset.sh", "app.superset.sh");
+	const apiUrl = config.apiUrl ?? "https://api.spectralset.dev";
+	return apiUrl.replace("api.spectralset.dev", "app.spectralset.dev");
 }
 
 export async function login(
 	config: SupersetConfig,
 	signal: AbortSignal,
 ): Promise<LoginResult> {
-	const apiUrl = config.apiUrl ?? "https://api.superset.sh";
+	const apiUrl = config.apiUrl ?? "https://api.spectralset.dev";
 	const webUrl = getWebUrl(config);
 
 	const { server, port } = await bindLoopbackServer();

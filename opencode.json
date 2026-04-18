@@ -4,9 +4,9 @@
 		"external_directory": "allow"
 	},
 	"mcp": {
-		"superset": {
+		"spectralset": {
 			"type": "remote",
-			"url": "https://api.superset.sh/api/agent/mcp",
+			"url": "https://api.spectralset.dev/api/agent/mcp",
 			"oauth": {}
 		},
 		"expo-mcp": {

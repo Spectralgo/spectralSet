@@ -1,8 +1,8 @@
 {
 	"mcpServers": {
-		"superset": {
+		"spectralset": {
 			"command": "npx",
-			"args": ["-y", "mcp-remote", "https://api.superset.sh/api/agent/mcp"]
+			"args": ["-y", "mcp-remote", "https://api.spectralset.dev/api/agent/mcp"]
 		},
 		"maestro": {
 			"command": "maestro",
