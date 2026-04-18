@@ -16,7 +16,7 @@ import { listExternalWorktrees } from "../utils/git";
  *
  * These tests verify that:
  * 1. External worktrees are automatically detected and imported
- * 2. The createdBySuperset flag is correctly set
+ * 2. The createdBySpectralset flag is correctly set
  * 3. External worktrees are not deleted from disk when workspace is removed
  */
 
@@ -153,7 +153,7 @@ describe("External worktree detection and import", () => {
 
 		// This test verifies that external worktrees are NOT deleted
 		// In the actual implementation, the delete procedure will check
-		// the createdBySuperset flag and skip disk deletion for external worktrees
+		// the createdBySpectralset flag and skip disk deletion for external worktrees
 
 		// Verify data still exists (would be deleted if we didn't have protection)
 		expect(existsSync(join(externalWorktreePath, "important-data.txt"))).toBe(

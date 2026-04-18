@@ -88,7 +88,7 @@ export interface CreateWorkspaceFromExternalWorktreeResult {
  * 1. Searches for external worktrees matching the branch
  * 2. Filters out invalid candidates (main repo, bare, detached)
  * 3. Selects the best match (exact path match or single candidate)
- * 4. Imports the worktree into the database with createdBySuperset=false
+ * 4. Imports the worktree into the database with createdBySpectralset=false
  * 5. Creates a workspace and configures it
  * 6. Implements transaction rollback on failure
  */
@@ -177,7 +177,7 @@ export async function createWorkspaceFromExternalWorktree({
 					branch,
 					baseBranch: compareBaseBranch,
 					gitStatus: null, // Will be populated by refresh pipeline
-					createdBySuperset: false, // Mark as external
+					createdBySpectralset: false, // Mark as external
 				})
 				.returning()
 				.get();
@@ -404,7 +404,7 @@ export async function openExternalWorktree({
 				behind: 0,
 				lastRefreshed: Date.now(),
 			},
-			createdBySuperset: false, // External worktree
+			createdBySpectralset: false, // External worktree
 		})
 		.returning()
 		.get();

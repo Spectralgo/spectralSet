@@ -196,7 +196,7 @@ async function handleNewWorktree({
 			branch: localBranchName,
 			baseBranch: compareBaseBranch,
 			gitStatus: null,
-			createdBySuperset: true,
+			createdBySpectralset: true,
 		})
 		.returning()
 		.get();
@@ -472,7 +472,7 @@ export const createCreateProcedures = () => {
 						branch,
 						baseBranch: compareBaseBranch,
 						gitStatus: null,
-						createdBySuperset: true,
+						createdBySpectralset: true,
 					})
 					.returning()
 					.get();
@@ -896,7 +896,7 @@ export const createCreateProcedures = () => {
 								behind: 0,
 								lastRefreshed: Date.now(),
 							},
-							createdBySuperset: false, // External worktree
+							createdBySpectralset: false, // External worktree
 						})
 						.returning()
 						.get();
