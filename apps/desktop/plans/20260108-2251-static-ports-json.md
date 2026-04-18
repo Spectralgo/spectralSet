@@ -12,7 +12,7 @@ Users will see: ports configured in `ports.json` appear as clickable badges in t
 
 ## Assumptions
 
-1. The `.spectralset` directory already exists in repositories using Superset (same location as `config.json` for setup/teardown scripts).
+1. The `.spectralset` directory already exists in repositories using SpectralSet (same location as `config.json` for setup/teardown scripts).
 2. Static ports should completely replace dynamic port discovery when `ports.json` is present (not merge with dynamic ports).
 3. Each workspace reads from its own worktree's `.spectralset/ports.json` file (workspace-scoped, not project-scoped).
 
@@ -37,7 +37,7 @@ None remaining - all questions resolved in Decision Log below.
 
 ## Surprises & Discoveries
 
-- Observation: Toast import path is `@superset/ui/sonner`, not `sonner` directly
+- Observation: Toast import path is `@spectralset/ui/sonner`, not `sonner` directly
   Evidence: Other components in the codebase use this import path
 
 - Observation: File watching needed additional logic to handle both file and directory watching
@@ -121,7 +121,7 @@ Workspaces store their worktree path. The workspaces tRPC router (`apps/desktop/
 
 ### Toast Notifications
 
-The app uses `sonner` for toast notifications. Import `toast` from `@superset/ui/sonner` and call `toast.error("message")` to show an error toast.
+The app uses `sonner` for toast notifications. Import `toast` from `@spectralset/ui/sonner` and call `toast.error("message")` to show an error toast.
 
 ## Plan of Work
 
@@ -234,7 +234,7 @@ Create a new page with:
 1. Title: "Static Port Configuration"
 2. Subtitle: "Define custom ports for your workspace with ports.json"
 
-3. **Overview section**: Explain that Superset normally auto-discovers ports from running processes, but you can override this with a static configuration file.
+3. **Overview section**: Explain that SpectralSet normally auto-discovers ports from running processes, but you can override this with a static configuration file.
 
 4. **Configuration section**: Show path `.spectralset/ports.json`
 
@@ -386,4 +386,4 @@ No new npm dependencies required. Uses existing:
 - `node:fs` for file operations (main process only)
 - `node:path` for path construction
 - `zod` for input validation in tRPC
-- `@superset/ui/sonner` for toast notifications (already used in app)
+- `@spectralset/ui/sonner` for toast notifications (already used in app)

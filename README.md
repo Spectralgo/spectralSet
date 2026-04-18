@@ -1,13 +1,13 @@
 <div align="center">
 
-<img width="full" alt="Superset" src="apps/marketing/public/images/readme-hero.png" />
+<img width="full" alt="SpectralSet" src="apps/marketing/public/images/readme-hero.png" />
 
 ### The Code Editor for AI Agents
 
-[![GitHub stars](https://img.shields.io/github/stars/superset-sh/superset?style=flat&logo=github)](https://github.com/superset-sh/superset/stargazers)
-[![GitHub release](https://img.shields.io/github/v/release/superset-sh/superset?style=flat&logo=github)](https://github.com/superset-sh/superset/releases)
-[![License](https://img.shields.io/github/license/superset-sh/superset?style=flat)](LICENSE.md)
-[![Twitter](https://img.shields.io/badge/@superset__sh-555?logo=x)](https://x.com/superset_sh)
+[![GitHub stars](https://img.shields.io/github/stars/Spectralgo/spectralSet?style=flat&logo=github)](https://github.com/Spectralgo/spectralSet/stargazers)
+[![GitHub release](https://img.shields.io/github/v/release/Spectralgo/spectralSet?style=flat&logo=github)](https://github.com/Spectralgo/spectralSet/releases)
+[![License](https://img.shields.io/github/license/Spectralgo/spectralSet?style=flat)](LICENSE.md)
+[![Twitter](https://img.shields.io/badge/@spectralset-555?logo=x)](https://x.com/spectralset)
 [![Discord](https://img.shields.io/badge/Discord-555?logo=discord)](https://discord.gg/cZeD9WYcV7)
 
 <br />
@@ -17,7 +17,7 @@ Works with any CLI agent. Built for local worktree-based development.
 
 <br />
 
-[**Download for macOS**](https://github.com/superset-sh/superset/releases/latest) &nbsp;&bull;&nbsp; [Documentation](https://docs.superset.sh) &nbsp;&bull;&nbsp; [Changelog](https://github.com/superset-sh/superset/releases) &nbsp;&bull;&nbsp; [Discord](https://discord.gg/cZeD9WYcV7)
+[**Download for macOS**](https://github.com/Spectralgo/spectralSet/releases/latest) &nbsp;&bull;&nbsp; [Documentation](https://docs.spectralset.dev) &nbsp;&bull;&nbsp; [Changelog](https://github.com/Spectralgo/spectralSet/releases) &nbsp;&bull;&nbsp; [Discord](https://discord.gg/cZeD9WYcV7)
 
 <br />
 
@@ -26,7 +26,7 @@ Works with any CLI agent. Built for local worktree-based development.
 
 ## Code 10x Faster With No Switching Cost
 
-Superset orchestrates CLI-based coding agents across isolated git worktrees, with built-in terminal, review, and open-in-editor workflows.
+SpectralSet orchestrates CLI-based coding agents across isolated git worktrees, with built-in terminal, review, and open-in-editor workflows.
 
 - **Run multiple agents simultaneously** without context switching overhead
 - **Isolate each task** in its own git worktree so agents don't interfere with each other
@@ -51,7 +51,7 @@ Wait less, ship more.
 
 ## Supported Agents
 
-Superset works with any CLI-based coding agent, including:
+SpectralSet works with any CLI-based coding agent, including:
 
 | Agent | Status |
 |:------|:-------|
@@ -65,7 +65,7 @@ Superset works with any CLI-based coding agent, including:
 | [Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) | Fully supported |
 | Any CLI agent | Will work |
 
-If it runs in a terminal, it runs on Superset
+If it runs in a terminal, it runs on SpectralSet
 
 ## Requirements
 
@@ -81,7 +81,7 @@ If it runs in a terminal, it runs on Superset
 
 ### Quick Start (Pre-built)
 
-**[Download Superset for macOS](https://github.com/superset-sh/superset/releases/latest)**
+**[Download SpectralSet for macOS](https://github.com/Spectralgo/spectralSet/releases/latest)**
 
 ### Build from Source
 
@@ -91,8 +91,8 @@ If it runs in a terminal, it runs on Superset
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/superset-sh/superset.git
-cd superset
+git clone https://github.com/Spectralgo/spectralSet.git
+cd spectralSet
 ```
 
 **2. Set up environment variables** (choose one):
@@ -134,7 +134,7 @@ open apps/desktop/release
 
 ## Keyboard Shortcuts
 
-All shortcuts are customizable via **Settings > Keyboard Shortcuts** (`⌘/`). See [full documentation](https://docs.superset.sh/keyboard-shortcuts).
+All shortcuts are customizable via **Settings > Keyboard Shortcuts** (`⌘/`). See [full documentation](https://docs.spectralset.dev/keyboard-shortcuts).
 
 ### Workspace Navigation
 
@@ -170,7 +170,7 @@ All shortcuts are customizable via **Settings > Keyboard Shortcuts** (`⌘/`). S
 
 ## Configuration
 
-Configure workspace setup and teardown in `.spectralset/config.json`. See [full documentation](https://docs.superset.sh/setup-teardown-scripts).
+Configure workspace setup and teardown in `.spectralset/config.json`. See [full documentation](https://docs.spectralset.dev/setup-teardown-scripts).
 
 ```json
 {
@@ -230,7 +230,7 @@ This repo uses the published upstream `mastracode` and `@mastra/*` packages dire
 
 ## Contributing
 
-We welcome contributions! If you have a suggestion that would make Superset better:
+We welcome contributions! If you have a suggestion that would make SpectralSet better:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -238,22 +238,22 @@ We welcome contributions! If you have a suggestion that would make Superset bett
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-You can also [open issues](https://github.com/superset-sh/superset/issues) for bugs or feature requests.
+You can also [open issues](https://github.com/Spectralgo/spectralSet/issues) for bugs or feature requests.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions and code of conduct.
 
-<a href="https://github.com/superset-sh/superset/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=superset-sh/superset" />
+<a href="https://github.com/Spectralgo/spectralSet/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Spectralgo/spectralSet" />
 </a>
 
 ## Community
 
-Join the Superset community to get help, share feedback, and connect with other users:
+Join the SpectralSet community to get help, share feedback, and connect with other users:
 
 - **[Discord](https://discord.gg/cZeD9WYcV7)** — Chat with the team and community
-- **[Twitter](https://x.com/superset_sh)** — Follow for updates and announcements
-- **[GitHub Issues](https://github.com/superset-sh/superset/issues)** — Report bugs and request features
-- **[GitHub Discussions](https://github.com/superset-sh/superset/discussions)** — Ask questions and share ideas
+- **[Twitter](https://x.com/spectralset)** — Follow for updates and announcements
+- **[GitHub Issues](https://github.com/Spectralgo/spectralSet/issues)** — Report bugs and request features
+- **[GitHub Discussions](https://github.com/Spectralgo/spectralSet/discussions)** — Ask questions and share ideas
 
 ### Team
 

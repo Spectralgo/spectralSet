@@ -65,7 +65,7 @@ Observable outcomes:
 
 ## Context / Orientation (Repository Map)
 
-Superset Desktop is an Electron app. In this repo:
+SpectralSet Desktop is an Electron app. In this repo:
 
 1. “Main process” code runs in Node.js and can import Node modules. It lives under `apps/desktop/src/main/`.
 2. “Renderer” code runs in a browser-like environment and must not import Node modules. It lives under `apps/desktop/src/renderer/`.
@@ -136,7 +136,7 @@ This refactor is intentionally conservative to avoid regressions:
 
 ## Future Backend: Remote Runner / Cloud Terminals
 
-This plan intentionally does not implement cloud terminals, but the abstraction boundary should be compatible with adding a backend that runs terminal sessions inside a remote “runner” (a background agent on a server) while preserving Superset Desktop concepts like worktrees, “changes” (diff/status), and agent lifecycle indicators.
+This plan intentionally does not implement cloud terminals, but the abstraction boundary should be compatible with adding a backend that runs terminal sessions inside a remote “runner” (a background agent on a server) while preserving SpectralSet Desktop concepts like worktrees, “changes” (diff/status), and agent lifecycle indicators.
 
 ### Direction for this rewrite (so we don’t paint ourselves into a corner)
 
@@ -238,7 +238,7 @@ This plan can be executed across multiple PRs. To make handoff safe and reduce r
 
 ### PR1 Acceptance Gates (Must Pass)
 
-1. `bun run lint`, `bun run typecheck --filter=@superset/desktop`, and `bun test --filter=@superset/desktop` all pass.
+1. `bun run lint`, `bun run typecheck --filter=@spectralset/desktop`, and `bun test --filter=@spectralset/desktop` all pass.
 2. Manual smoke (minimum):
    - persistence disabled: open terminal, type, exit; Settings “Manage sessions” shows unavailable
    - persistence enabled: warm attach + cold restore still works; Settings “Manage sessions” works
@@ -853,8 +853,8 @@ Acceptance:
 Run these commands from the repo root:
 
     bun run lint
-    bun run typecheck --filter=@superset/desktop
-    bun run test --filter=@superset/desktop
+    bun run typecheck --filter=@spectralset/desktop
+    bun run test --filter=@spectralset/desktop
 
 Expected results:
 
@@ -926,14 +926,14 @@ Mitigation: Keep the “stream does not complete on exit” regression test as P
 - [x] Implement session management as `terminal.management: TerminalManagement | null` (no no-op admin methods)
 - [ ] (Follow-up) Add event cursor + bounded replay ring buffer at provider boundary
 - [ ] (Follow-up) Normalize error codes (`TerminalErrorCode`) and enforce resize sequencing (`seq`)
-- [x] Run `bun run typecheck --filter=@superset/desktop`
+- [x] Run `bun run typecheck --filter=@spectralset/desktop`
 
 ### Milestone 3
 
 - [x] Migrate `apps/desktop/src/lib/trpc/routers/terminal/terminal.ts` to `getWorkspaceRuntimeRegistry()`
 - [x] Remove `instanceof DaemonTerminalManager` checks
 - [ ] (Follow-up / Milestone 4) Add `terminal.streamV2` (identity + since cursor) and migrate router internals to `subscribeSession`
-- [x] Run `bun test --filter=@superset/desktop`
+- [x] Run `bun test --filter=@spectralset/desktop`
 
 ### Milestone 4
 

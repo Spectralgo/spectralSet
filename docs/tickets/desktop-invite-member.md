@@ -39,7 +39,7 @@ interface OrganizationInvitationEmailProps {
 export function OrganizationInvitationEmail({
   organizationName = "Acme Inc",
   inviterName = "John Doe",
-  inviteLink = "https://app.superset.sh/accept-invitation/123",
+  inviteLink = "https://app.spectralset.dev/accept-invitation/123",
   role = "member",
 }: OrganizationInvitationEmailProps) {
   const roleDisplay = role.charAt(0).toUpperCase() + role.slice(1);
@@ -49,12 +49,12 @@ export function OrganizationInvitationEmail({
       <Heading>You've been invited to join {organizationName}</Heading>
 
       <Text>
-        {inviterName} has invited you to join <strong>{organizationName}</strong> on Superset as a{" "}
+        {inviterName} has invited you to join <strong>{organizationName}</strong> on SpectralSet as a{" "}
         <strong>{roleDisplay}</strong>.
       </Text>
 
       <Text>
-        Superset helps teams automate workflows and boost productivity with AI-powered task management.
+        SpectralSet helps teams automate workflows and boost productivity with AI-powered task management.
       </Text>
 
       <Button href={inviteLink}>Accept Invitation</Button>
@@ -104,8 +104,8 @@ export const invitationRateLimit = new Ratelimit({
 ### 4. `apps/desktop/src/renderer/routes/_authenticated/settings/team/types.ts`
 
 ```typescript
-import type { SelectInvitation, SelectMember, SelectUser } from "@superset/db/schema/auth";
-import type { OrganizationRole } from "@superset/shared/auth";
+import type { SelectInvitation, SelectMember, SelectUser } from "@spectralset/db/schema/auth";
+import type { OrganizationRole } from "@spectralset/shared/auth";
 
 export type TeamMember = SelectUser &
   SelectMember & {
@@ -123,14 +123,14 @@ export type InvitationRow = SelectInvitation & {
 Replace entire file:
 
 ```typescript
-import { canInvite, getInvitableRoles, ORGANIZATION_ROLES, type OrganizationRole } from "@superset/shared/auth";
-import { Button } from "@superset/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@superset/ui/dialog";
-import { Input } from "@superset/ui/input";
-import { Label } from "@superset/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@superset/ui/select";
-import { toast } from "@superset/ui/sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { canInvite, getInvitableRoles, ORGANIZATION_ROLES, type OrganizationRole } from "@spectralset/shared/auth";
+import { Button } from "@spectralset/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@spectralset/ui/dialog";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@spectralset/ui/select";
+import { toast } from "@spectralset/ui/sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spectralset/ui/tooltip";
 import { useState } from "react";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { authClient } from "renderer/lib/auth-client";
@@ -263,11 +263,11 @@ export * from "./InviteMemberButton";
 ### 7. `apps/desktop/src/renderer/routes/_authenticated/settings/team/components/InvitationActions/InvitationActions.tsx`
 
 ```typescript
-import type { SelectInvitation } from "@superset/db/schema";
-import type { OrganizationRole } from "@superset/shared/auth";
-import { Button } from "@superset/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@superset/ui/dropdown-menu";
-import { toast } from "@superset/ui/sonner";
+import type { SelectInvitation } from "@spectralset/db/schema";
+import type { OrganizationRole } from "@spectralset/shared/auth";
+import { Button } from "@spectralset/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@spectralset/ui/dropdown-menu";
+import { toast } from "@spectralset/ui/sonner";
 import { useState } from "react";
 import { HiEllipsisVertical, HiOutlineEnvelope, HiOutlineXMark } from "react-icons/hi2";
 import { authClient } from "renderer/lib/auth-client";
@@ -351,10 +351,10 @@ import {
 	canRemoveMember,
 	getRoleSortPriority,
 	type OrganizationRole,
-} from "@superset/shared/auth";
-import { Avatar } from "@superset/ui/atoms/Avatar";
-import { Badge } from "@superset/ui/badge";
-import { Skeleton } from "@superset/ui/skeleton";
+} from "@spectralset/shared/auth";
+import { Avatar } from "@spectralset/ui/atoms/Avatar";
+import { Badge } from "@spectralset/ui/badge";
+import { Skeleton } from "@spectralset/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -362,7 +362,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@superset/ui/table";
+} from "@spectralset/ui/table";
 import { eq } from "@tanstack/db";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -715,9 +715,9 @@ describe("canInvite", () => {
 
 Add imports at top:
 ```typescript
-import { OrganizationInvitationEmail } from "@superset/email/emails/organization-invitation";
-import { resend } from "@superset/email/lib/resend";
-import { canInvite, type OrganizationRole } from "@superset/shared/auth";
+import { OrganizationInvitationEmail } from "@spectralset/email/emails/organization-invitation";
+import { resend } from "@spectralset/email/lib/resend";
+import { canInvite, type OrganizationRole } from "@spectralset/shared/auth";
 import { and } from "drizzle-orm";
 import { invitationRateLimit } from "./lib/rate-limit";
 ```
@@ -732,7 +732,7 @@ plugins: [
       const inviteLink = `${env.NEXT_PUBLIC_WEB_URL}/accept-invitation/${data.id}`;
 
       await resend.emails.send({
-        from: "Superset <noreply@superset.sh>",
+        from: "SpectralSet <noreply@spectralset.dev>",
         to: data.email,
         subject: `${data.inviter.user.name} invited you to join ${data.organization.name}`,
         react: OrganizationInvitationEmail({
@@ -784,7 +784,7 @@ import type {
   SelectTaskStatus,
   SelectUser,
   SelectInvitation,
-} from "@superset/db/schema";
+} from "@spectralset/db/schema";
 ```
 
 Update `OrgCollections` interface (around line 22):
@@ -843,7 +843,7 @@ Add to dependencies:
 Add to dependencies:
 ```json
 "dependencies": {
-  "@superset/email": "workspace:*",
+  "@spectralset/email": "workspace:*",
   "@upstash/ratelimit": "^2.0.4",
   "@upstash/redis": "^1.34.3"
 }
@@ -868,7 +868,7 @@ bun install
 
 2. Set up Resend API key in `.env`:
    - Get API key from https://resend.com
-   - Verify sender domain `noreply@superset.sh`
+   - Verify sender domain `noreply@spectralset.dev`
 
 ## Acceptance Tests
 

@@ -409,7 +409,7 @@ Checklist:
   - [ ] active/selected states
   - [ ] context menu
   - [ ] keyboard shortcut badges if current sidebar shows them
-- [ ] Reuse shared primitives from `@superset/ui` where practical
+- [ ] Reuse shared primitives from `@spectralset/ui` where practical
 
 Acceptance:
 

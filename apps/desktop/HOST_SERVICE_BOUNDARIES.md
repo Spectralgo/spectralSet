@@ -249,7 +249,7 @@ Host Service (N)
 ├── <another org>
 │   └── ...
 ├── ─────────
-├── Open Superset
+├── Open SpectralSet
 ├── Settings
 ├── Check for Updates
 ├── ─────────
@@ -349,9 +349,9 @@ Lives at `~/.spectralset/host/<organizationId>/manifest.json`. The coordinator w
 
 ```ts
 // apps/desktop/src/main/host-service/index.ts
-import { createApp, PskHostAuthProvider, JwtApiAuthProvider } from "@superset/host-service";
-import { LocalGitCredentialProvider } from "@superset/host-service/providers/desktop";
-import { LocalModelProvider } from "@superset/host-service/providers/desktop";
+import { createApp, PskHostAuthProvider, JwtApiAuthProvider } from "@spectralset/host-service";
+import { LocalGitCredentialProvider } from "@spectralset/host-service/providers/desktop";
+import { LocalModelProvider } from "@spectralset/host-service/providers/desktop";
 
 createApp({
   config: {

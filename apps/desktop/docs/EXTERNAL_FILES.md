@@ -1,6 +1,6 @@
-# External Files Written by Superset Desktop
+# External Files Written by SpectralSet Desktop
 
-This document lists all files written by the Superset desktop app outside of user projects.
+This document lists all files written by the SpectralSet desktop app outside of user projects.
 Understanding these files is critical for maintaining workspace isolation and avoiding conflicts.
 
 ## Workspace-Specific Directories
@@ -17,14 +17,14 @@ This separation prevents multiple instances from interfering with each other.
 
 | File | Purpose |
 |------|---------|
-| `amp` | Wrapper for Amp CLI that preserves Superset terminal context |
+| `amp` | Wrapper for Amp CLI that preserves SpectralSet terminal context |
 | `claude` | Wrapper for Claude Code CLI that injects notification hooks |
 | `codex` | Wrapper for Codex CLI that injects notification hooks |
-| `droid` | Wrapper for Factory Droid CLI that preserves Superset hook integration |
+| `droid` | Wrapper for Factory Droid CLI that preserves SpectralSet hook integration |
 | `opencode` | Wrapper for OpenCode CLI that sets `OPENCODE_CONFIG_DIR` |
 
 These wrappers are added to `PATH` via shell integration, allowing them to intercept
-agent commands and inject Superset-specific configuration.
+agent commands and inject SpectralSet-specific configuration.
 
 ### `hooks/` - Notification Hook Scripts
 
@@ -36,7 +36,7 @@ agent commands and inject Superset-specific configuration.
 
 ## Global Tool Settings Files
 
-Some CLIs only support global user settings for hook registration. Superset merges
+Some CLIs only support global user settings for hook registration. SpectralSet merges
 its hook entries into these files while preserving user-defined entries:
 
 | File | Purpose |
@@ -45,11 +45,11 @@ its hook entries into these files while preserving user-defined entries:
 | `~/.codex/hooks.json` | Codex hook registration merge (`SessionStart`, `UserPromptSubmit`, `Stop`) |
 | `~/.factory/settings.json` | Factory Droid hook registration (`UserPromptSubmit`, `Notification`, `PostToolUse`, `Stop`) |
 
-For Codex specifically, Superset now relies on native `~/.codex/hooks.json`
+For Codex specifically, SpectralSet now relies on native `~/.codex/hooks.json`
 registration for durable prompt/tool lifecycle events, while the wrapper in
 `~/.spectralset[-{workspace}]/bin/codex` still injects `notify` and keeps the
 session-log watcher as a best-effort compatibility bridge for older Codex
-releases. On startup, Superset rewrites only its own managed entries in
+releases. On startup, SpectralSet rewrites only its own managed entries in
 `~/.codex/hooks.json` to point at the current environment's `notify.sh`, while
 preserving any user-defined Codex hooks.
 
@@ -62,7 +62,7 @@ preserving any user-defined Codex hooks.
 
 Shell integration keeps interactive startup close to native shell behavior:
 - Interactive startup applies idempotent PATH prepend only (no persistent command interception functions).
-- App-owned non-interactive `-c` command execution still routes managed binaries through absolute Superset wrapper paths.
+- App-owned non-interactive `-c` command execution still routes managed binaries through absolute SpectralSet wrapper paths.
 
 ## Global Files (AVOID ADDING NEW ONES)
 
@@ -82,7 +82,7 @@ with our marker is deleted to prevent conflicts from older versions.
 
 ## Shell RC File Modifications
 
-The app modifies shell RC files to add the Superset bin directory to PATH:
+The app modifies shell RC files to add the SpectralSet bin directory to PATH:
 
 | Shell | RC File | Modification |
 |-------|---------|--------------|

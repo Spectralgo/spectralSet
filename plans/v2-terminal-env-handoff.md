@@ -11,7 +11,7 @@ Define and implement a v2 terminal env contract that:
 - includes explicit shell integration behavior for common shells
 - uses only a shell-derived base env for PTYs
 - avoids leaking desktop, Electron, and host-service runtime env into PTYs
-- keeps the useful parts of the v1 Superset notification contract, but renames
+- keeps the useful parts of the v1 SpectralSet notification contract, but renames
   the v2-specific keys to make the contract clearer
 
 This doc is meant to be handed to another agent to implement directly.
@@ -89,11 +89,11 @@ Concrete VS Code pattern to follow:
   stripping Electron and VS Code runtime keys like `ELECTRON_*` and most
   `VSCODE_*`
 
-Superset v2 should follow the same shape:
+SpectralSet v2 should follow the same shape:
 
 - shell-derived env is the base
-- Superset adds a small explicit public contract
-- Superset strips its own runtime env before PTY launch instead of inheriting it
+- SpectralSet adds a small explicit public contract
+- SpectralSet strips its own runtime env before PTY launch instead of inheriting it
   by default
 
 ## Refined v2 contract
@@ -160,7 +160,7 @@ Inject this stable terminal surface by default:
 
 ```sh
 TERM=xterm-256color
-TERM_PROGRAM=Superset
+TERM_PROGRAM=SpectralSet
 TERM_PROGRAM_VERSION=<app version>
 COLORTERM=truecolor
 LANG=<utf8 locale>
@@ -169,7 +169,7 @@ PWD=<cwd>
 
 Notes:
 
-- keep `TERM=xterm-256color` unless Superset ships and maintains terminfo
+- keep `TERM=xterm-256color` unless SpectralSet ships and maintains terminfo
 - `TERM_PROGRAM_VERSION` should come from the app/host-service version, not
   `npm_package_version`
 - `PWD` should reflect the resolved launch cwd
@@ -178,9 +178,9 @@ Notes:
   should come from the shell-derived base env rather than being redefined as
   part of the public contract
 
-### 4. Superset-specific metadata retained in v2
+### 4. SpectralSet-specific metadata retained in v2
 
-We do want to keep a trimmed, explicit Superset contract for v2 notification
+We do want to keep a trimmed, explicit SpectralSet contract for v2 notification
 and integration flows.
 
 Keep these explicit vars in v2:
@@ -195,7 +195,7 @@ SPECTRALSET_AGENT_HOOK_PORT=<desktop local agent hook server port>
 SPECTRALSET_AGENT_HOOK_VERSION=<agent hook protocol version>
 ```
 
-Legacy v1 aliases (dropped during SUPERSET_* → SPECTRALSET_* rebrand):
+Legacy v1 aliases (dropped during SPECTRALSET_* → SPECTRALSET_* rebrand):
 
 - `SPECTRALSET_PANE_ID` -> dropped (use `SPECTRALSET_TERMINAL_ID`)
 - `SPECTRALSET_PORT` -> dropped (use `SPECTRALSET_AGENT_HOOK_PORT`)
@@ -244,7 +244,7 @@ Supported shells for the first v2 implementation:
 - `fish`
 - `sh` and `ksh` as reduced-functionality login-shell fallbacks
 
-Unsupported shells should still launch natively, but without Superset-specific
+Unsupported shells should still launch natively, but without SpectralSet-specific
 shell bootstrap beyond the base env contract.
 
 Per-shell integration design:
@@ -254,11 +254,11 @@ Per-shell integration design:
   - set `SPECTRALSET_ORIG_ZDOTDIR` and temporary `ZDOTDIR`
   - launch as a login shell
 - `bash`
-  - use the generated Superset rcfile when available
+  - use the generated SpectralSet rcfile when available
   - launch with `--rcfile <path>`
 - `fish`
   - use `-l --init-command ...`
-  - prepend Superset bin dir idempotently after fish config loads
+  - prepend SpectralSet bin dir idempotently after fish config loads
   - emit the shell-ready marker using fish-native event hooks
 - `sh` and `ksh`
   - launch as login shells
@@ -272,7 +272,7 @@ it should reuse the proven shell integration behavior and path conventions.
 - safe env filtering
 - shell wrapper bootstrap
 - theme hints like `COLORFGBG`
-- legacy Superset notification metadata
+- legacy SpectralSet notification metadata
 
 That builder should remain v1-oriented.
 
@@ -430,7 +430,7 @@ Secondary follow-up targets:
 
    - `resolveLaunchShell(baseEnv: Record<string, string>): string`
    - `normalizeUtf8Locale(baseEnv: Record<string, string>): string`
-   - `getSupersetShellPaths(supersetHomeDir: string): { BIN_DIR: string; ZSH_DIR: string; BASH_DIR: string }`
+   - `getSpectralSetShellPaths(spectralSetHomeDir: string): { BIN_DIR: string; ZSH_DIR: string; BASH_DIR: string }`
    - `getShellBootstrapEnv(params): Record<string, string>`
    - `getShellLaunchArgs(params): string[]`
    - `stripTerminalRuntimeEnv(baseEnv: Record<string, string>): Record<string, string>`
@@ -523,7 +523,7 @@ Secondary follow-up targets:
    - `DEVICE_*`
    - non-kept `SPECTRALSET_*`
 
-   Keep these explicit Superset support keys when present:
+   Keep these explicit SpectralSet support keys when present:
 
    - `SPECTRALSET_HOME_DIR`
    - `SPECTRALSET_AGENT_HOOK_PORT`
@@ -539,7 +539,7 @@ Secondary follow-up targets:
    - merge private shell bootstrap env from `getShellBootstrapEnv(...)`
    - inject or override:
      - `TERM=xterm-256color`
-     - `TERM_PROGRAM=Superset`
+     - `TERM_PROGRAM=SpectralSet`
      - `TERM_PROGRAM_VERSION=<HOST_SERVICE_VERSION>`
      - `COLORTERM=truecolor`
      - `LANG=<normalized utf8 locale>`
@@ -584,8 +584,8 @@ Secondary follow-up targets:
 - v2 terminal creation fails closed when a real shell snapshot cannot be
   resolved
 - user-needed shell env still works for normal tools and version managers
-- zsh, bash, and fish launch with Superset shell integration behavior
-- v2 PTY env includes `TERM_PROGRAM=Superset`
+- zsh, bash, and fish launch with SpectralSet shell integration behavior
+- v2 PTY env includes `TERM_PROGRAM=SpectralSet`
 - v2 PTY env includes `SPECTRALSET_TERMINAL_ID`
 - v2 PTY env includes `SPECTRALSET_WORKSPACE_ID`
 - v2 PTY env includes `SPECTRALSET_WORKSPACE_PATH`
@@ -624,11 +624,11 @@ Required test coverage:
     `SPECTRALSET_HOOK_VERSION`
 
 - retained contract behavior
-  - the minimal v2 Superset metadata needed by real consumers is present:
+  - the minimal v2 SpectralSet metadata needed by real consumers is present:
     `SPECTRALSET_TERMINAL_ID`, `SPECTRALSET_WORKSPACE_ID`,
     `SPECTRALSET_WORKSPACE_PATH`, `SPECTRALSET_AGENT_HOOK_PORT`,
     `SPECTRALSET_AGENT_HOOK_VERSION`
-  - `TERM_PROGRAM=Superset` and a UTF-8 locale are present
+  - `TERM_PROGRAM=SpectralSet` and a UTF-8 locale are present
 
 - shell launch behavior
   - zsh launch config applies wrapper bootstrap only when wrapper files exist
@@ -636,7 +636,7 @@ Required test coverage:
   - bash launch config uses rcfile when present and login-shell fallback when
     absent
   - fish launch config uses the expected init-command path and does not crash
-  - unsupported shells launch natively without Superset-specific bootstrap
+  - unsupported shells launch natively without SpectralSet-specific bootstrap
 
 - workspace-derived metadata
   - `SPECTRALSET_ROOT_PATH` is populated when project data is available

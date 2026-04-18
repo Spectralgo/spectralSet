@@ -1,4 +1,4 @@
-# Superset CLI Spec
+# SpectralSet CLI Spec
 
 Two types of commands: **cloud** (hits API directly) and **device** (routes to API, which emits a websocket event to the specific host service).
 
@@ -34,13 +34,13 @@ Opens browser to authenticate and store API key.
 
 **Human output:**
 ```
-Logged in as Satya Patel (satya@superset.sh)
-Organization: Superset
+Logged in as Satya Patel (satya@spectralset.dev)
+Organization: SpectralSet
 ```
 
 **`--json`:**
 ```json
-{ "userId": "...", "email": "satya@superset.sh", "name": "Satya Patel", "organizationId": "...", "organizationName": "Superset" }
+{ "userId": "...", "email": "satya@spectralset.dev", "name": "Satya Patel", "organizationId": "...", "organizationName": "SpectralSet" }
 ```
 
 ### `superset auth logout`
@@ -60,13 +60,13 @@ Logged out.
 
 **Human output:**
 ```
-Satya Patel (satya@superset.sh)
-Organization: Superset
+Satya Patel (satya@spectralset.dev)
+Organization: SpectralSet
 ```
 
 **`--json`:**
 ```json
-{ "userId": "...", "email": "satya@superset.sh", "name": "Satya Patel", "organizationId": "...", "organizationName": "Superset" }
+{ "userId": "...", "email": "satya@spectralset.dev", "name": "Satya Patel", "organizationId": "...", "organizationName": "SpectralSet" }
 ```
 
 ---
@@ -240,8 +240,8 @@ Input:  --device <deviceId>    optional, auto-detected
 **Human output:**
 ```
 NAME              SLUG              REPO
-superset          superset          superset-sh/superset
-marketing         marketing         superset-sh/marketing
+spectralset       spectralset       Spectralgo/spectralSet
+marketing         marketing         Spectralgo/marketing
 ```
 
 **`--json`:**
@@ -249,8 +249,8 @@ marketing         marketing         superset-sh/marketing
 {
   "data": [{
     "id": "...",
-    "name": "superset",
-    "slug": "superset",
+    "name": "spectralset",
+    "slug": "spectralset",
     "githubRepositoryId": "..."
   }]
 }
@@ -268,7 +268,7 @@ Input:  --device <deviceId>    optional, auto-detected
 **Human output:**
 ```
 NAME                BRANCH              PROJECT
-fix-auth            fix-auth-redirect   superset
+fix-auth            fix-auth-redirect   spectralset
 main                main                marketing
 ```
 
@@ -280,7 +280,7 @@ main                main                marketing
     "name": "fix-auth",
     "branch": "fix-auth-redirect",
     "projectId": "...",
-    "projectName": "superset"
+    "projectName": "spectralset"
   }]
 }
 ```
@@ -295,7 +295,7 @@ Input:
 **Human output:**
 ```
 Workspace: fix-auth (branch: fix-auth-redirect)
-Project:   superset
+Project:   spectralset
 
 TABS & PANES:
   Tab 1:
@@ -466,9 +466,9 @@ Input:
 **Human output:**
 ```
 SECTION         WORKSPACE           PROJECT
-Active          fix-auth            superset
+Active          fix-auth            spectralset
 Active          main                marketing
-Archived        old-experiment      superset
+Archived        old-experiment      spectralset
 ```
 
 **`--json`:**
@@ -478,7 +478,7 @@ Archived        old-experiment      superset
     "section": "Active",
     "workspaceId": "...",
     "workspaceName": "fix-auth",
-    "projectName": "superset"
+    "projectName": "spectralset"
   }]
 }
 ```
@@ -1062,7 +1062,7 @@ checkbox      { type: "checkbox", items: { id: string, label: string, checked: b
 
 ### Staged action blocks
 
-Notifications can embed staged actions from external providers. When a human approves in the UI, Superset executes the action via the provider's API.
+Notifications can embed staged actions from external providers. When a human approves in the UI, SpectralSet executes the action via the provider's API.
 
 ```
 draft_email   { type: "draft_email", provider: "gmail", draftId: string,
@@ -1090,7 +1090,7 @@ List organizations you belong to.
 **Human output:**
 ```
 NAME          ROLE      ACTIVE
-Superset      owner     ✓
+SpectralSet      owner     ✓
 Acme Corp     member
 ```
 
@@ -1099,7 +1099,7 @@ Acme Corp     member
 {
   "data": [{
     "id": "...",
-    "name": "Superset",
+    "name": "SpectralSet",
     "role": "owner",
     "active": true
   }]

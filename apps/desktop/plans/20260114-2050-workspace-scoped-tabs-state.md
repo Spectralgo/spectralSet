@@ -16,7 +16,7 @@ This work is intended as a follow-up refactor (separate PR) after the bug fix th
 
 ## Assumptions
 
-1. A “workspace” is a Superset concept representing a git worktree; routes use `/workspace/$workspaceId`.
+1. A “workspace” is a SpectralSet concept representing a git worktree; routes use `/workspace/$workspaceId`.
 2. Tabs and panes are conceptually workspace-local. A tab should never render while viewing another workspace route.
 3. UI state persistence is local-only (lowdb JSON) at `~/.spectralset/app-state.json` (see `apps/desktop/src/main/lib/app-environment.ts`), not the production database.
 4. It is acceptable to migrate existing persisted tabs state in-place so users keep their open tabs and panes after upgrade.
@@ -170,7 +170,7 @@ Scope:
 
 Acceptance:
 
-    bun run typecheck --filter=@superset/desktop
+    bun run typecheck --filter=@spectralset/desktop
 
 Expected: no TypeScript errors in main-process files referencing `TabsState`.
 
@@ -207,8 +207,8 @@ Implementation guidance:
 
 Acceptance:
 
-    bun run typecheck --filter=@superset/desktop
-    bun run lint:check-node-imports --filter=@superset/desktop
+    bun run typecheck --filter=@spectralset/desktop
+    bun run lint:check-node-imports --filter=@spectralset/desktop
 
 
 ### Milestone 5: Update renderer UI components to use workspace slices and remove legacy guards
@@ -254,7 +254,7 @@ Implementation guidance:
 
 Acceptance:
 
-    bun run typecheck --filter=@superset/desktop
+    bun run typecheck --filter=@spectralset/desktop
 
 
 ### Milestone 7: Validation and cleanup
@@ -263,9 +263,9 @@ Run automated checks and clean up any leftover legacy fields, types, or tests.
 
 Validation commands (run from repo root):
 
-    bun run typecheck --filter=@superset/desktop
+    bun run typecheck --filter=@spectralset/desktop
     bun run lint
-    bun test --filter=@superset/desktop
+    bun test --filter=@spectralset/desktop
 
 If repo-wide `bun test` has unrelated failures, explicitly note them in the PR description and ensure desktop tests are green.
 

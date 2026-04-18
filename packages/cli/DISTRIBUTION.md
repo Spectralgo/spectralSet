@@ -7,7 +7,7 @@ How we ship `superset` as a standalone, downloadable bundle.
 1. User downloads a single tarball for their platform
 2. `superset auth login` authenticates via browser (works headless too)
 3. `superset host start` runs the host service, connects to relay
-4. The host machine is now accessible from any Superset client (web, mobile, desktop)
+4. The host machine is now accessible from any SpectralSet client (web, mobile, desktop)
 
 ## Architecture
 
@@ -141,7 +141,7 @@ jobs:
 ### curl | sh (planned)
 
 ```bash
-curl -fsSL https://get.superset.sh | sh
+curl -fsSL https://get.spectralset.dev | sh
 ```
 
 Detects platform/arch, downloads tarball from GitHub Releases, extracts to `~/.spectralset/bin/`, prints PATH instructions.
