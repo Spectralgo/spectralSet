@@ -20,6 +20,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { GastownSidebarSection } from "renderer/components/Gastown/GastownSidebarSection";
 import { useDashboardSidebarState } from "renderer/routes/_authenticated/hooks/useDashboardSidebarState";
 import { DashboardSidebarHeader } from "./components/DashboardSidebarHeader";
 import { DashboardSidebarProjectSection } from "./components/DashboardSidebarProjectSection";
@@ -183,6 +184,7 @@ export function DashboardSidebar({
 						document.body,
 					)}
 				</DndContext>
+				{!isCollapsed && <GastownSidebarSection />}
 			</div>
 		</div>
 	);

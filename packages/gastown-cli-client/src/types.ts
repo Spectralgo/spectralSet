@@ -16,3 +16,30 @@ export const probeResultSchema = z.object({
 });
 
 export type ProbeResult = z.infer<typeof probeResultSchema>;
+
+export const polecatStateSchema = z.enum([
+	"working",
+	"stalled",
+	"zombie",
+	"idle",
+	"done",
+	"nuked",
+]);
+
+export type PolecatState = z.infer<typeof polecatStateSchema>;
+
+export const polecatSchema = z.object({
+	rig: z.string(),
+	name: z.string(),
+	state: polecatStateSchema,
+	currentBead: z.string().optional(),
+	currentBeadTitle: z.string().optional(),
+});
+
+export type Polecat = z.infer<typeof polecatSchema>;
+
+export const peekResultSchema = z.object({
+	output: z.string(),
+});
+
+export type PeekResult = z.infer<typeof peekResultSchema>;

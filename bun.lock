@@ -159,6 +159,7 @@
         "@spectralset/chat": "workspace:*",
         "@spectralset/db": "workspace:*",
         "@spectralset/desktop-mcp": "workspace:*",
+        "@spectralset/gastown-cli-client": "workspace:*",
         "@spectralset/host-service": "workspace:*",
         "@spectralset/local-db": "workspace:*",
         "@spectralset/macos-process-metrics": "workspace:*",
