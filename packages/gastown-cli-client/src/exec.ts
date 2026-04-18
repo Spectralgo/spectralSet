@@ -6,6 +6,7 @@ export interface ExecGtOptions {
 	timeoutMs?: number;
 	cwd?: string;
 	env?: NodeJS.ProcessEnv;
+	stdin?: string;
 }
 
 export interface ExecGtResult {
@@ -64,27 +65,31 @@ export interface ExecGtDeps {
 	spawn?: SpawnLike;
 }
 
-export async function execGt(
+function execBin(
+	bin: string,
 	argv: readonly string[],
-	options: ExecGtOptions = {},
-	deps: ExecGtDeps = {},
+	options: ExecGtOptions,
+	deps: ExecGtDeps,
 ): Promise<ExecGtResult> {
 	const spawnFn = deps.spawn ?? spawn;
 	const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+	const hasStdin = typeof options.stdin === "string";
 
 	const spawnOptions: SpawnOptions = {
 		cwd: options.cwd,
 		env: options.env ?? process.env,
-		stdio: ["ignore", "pipe", "pipe"],
+		stdio: [hasStdin ? "pipe" : "ignore", "pipe", "pipe"],
 	};
 
 	return new Promise<ExecGtResult>((resolve, reject) => {
 		let child: ReturnType<SpawnLike>;
 		try {
-			child = spawnFn("gt", [...argv], spawnOptions);
+			child = spawnFn(bin, [...argv], spawnOptions);
 		} catch (err) {
 			if (isEnoent(err)) {
-				reject(new GastownCliNotInstalledError());
+				reject(
+					new GastownCliNotInstalledError(`${bin} binary not found on PATH`),
+				);
 				return;
 			}
 			reject(err instanceof Error ? err : new Error(String(err)));
@@ -113,7 +118,9 @@ export async function execGt(
 			settled = true;
 			clearTimeout(timer);
 			if (isEnoent(err)) {
-				reject(new GastownCliNotInstalledError());
+				reject(
+					new GastownCliNotInstalledError(`${bin} binary not found on PATH`),
+				);
 				return;
 			}
 			reject(err);
@@ -130,7 +137,30 @@ export async function execGt(
 			const exitCode = code ?? -1;
 			resolve({ stdout, stderr, exitCode });
 		});
+
+		if (hasStdin && child.stdin) {
+			child.stdin.on("error", () => {
+				// Ignore EPIPE when the child exits before consuming stdin.
+			});
+			child.stdin.end(options.stdin ?? "");
+		}
 	});
+}
+
+export function execGt(
+	argv: readonly string[],
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<ExecGtResult> {
+	return execBin("gt", argv, options, deps);
+}
+
+export function execBd(
+	argv: readonly string[],
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<ExecGtResult> {
+	return execBin("bd", argv, options, deps);
 }
 
 function isEnoent(err: unknown): boolean {

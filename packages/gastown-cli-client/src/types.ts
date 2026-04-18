@@ -43,3 +43,40 @@ export const peekResultSchema = z.object({
 });
 
 export type PeekResult = z.infer<typeof peekResultSchema>;
+
+export const beadStatusSchema = z.enum([
+	"open",
+	"in_progress",
+	"blocked",
+	"deferred",
+	"closed",
+	"pinned",
+	"hooked",
+]);
+
+export type BeadStatus = z.infer<typeof beadStatusSchema>;
+
+export const beadSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	type: z.string(),
+	priority: z.number().int(),
+	status: z.string(),
+	labels: z.array(z.string()).optional(),
+	assignee: z.string().optional(),
+});
+
+export type Bead = z.infer<typeof beadSchema>;
+
+export const beadListSchema = z.array(beadSchema);
+
+export const mergeStrategySchema = z.enum(["direct", "mr", "local"]);
+
+export type MergeStrategy = z.infer<typeof mergeStrategySchema>;
+
+export const slingResultSchema = z.object({
+	wispId: z.string(),
+	polecat: z.string(),
+});
+
+export type SlingResult = z.infer<typeof slingResultSchema>;

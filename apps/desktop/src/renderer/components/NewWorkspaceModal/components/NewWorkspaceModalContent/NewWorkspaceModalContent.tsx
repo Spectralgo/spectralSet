@@ -1,7 +1,14 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import { useCloseNewWorkspaceModal } from "renderer/stores/new-workspace-modal";
 import { useNewWorkspaceModalDraft } from "../../NewWorkspaceModalDraftContext";
+import { GastownTab } from "../GastownTab";
 import { PromptGroup } from "../PromptGroup";
+
+const GASTOWN_ENABLED_QUERY_KEY = ["user", "gastownEnabled"] as const;
 
 interface NewWorkspaceModalContentProps {
 	isOpen: boolean;
@@ -18,9 +25,16 @@ export function NewWorkspaceModalContent({
 	onNewProject,
 }: NewWorkspaceModalContentProps) {
 	const { draft, updateDraft } = useNewWorkspaceModalDraft();
+	const closeModal = useCloseNewWorkspaceModal();
 	const { data: recentProjects = [], isFetched: areRecentProjectsFetched } =
 		electronTrpc.projects.getRecents.useQuery();
 	const utils = electronTrpc.useUtils();
+
+	const gastownEnabledQuery = useQuery({
+		queryKey: GASTOWN_ENABLED_QUERY_KEY,
+		queryFn: () => apiTrpcClient.user.getGastownEnabled.query(),
+	});
+	const gastownEnabled = gastownEnabledQuery.data?.enabled ?? false;
 
 	// Refetch branches (and other data) when the modal opens to avoid stale data
 	useEffect(() => {
@@ -79,18 +93,40 @@ export function NewWorkspaceModalContent({
 		(project) => project.id === draft.selectedProjectId,
 	);
 
+	const workspacePanel = (
+		<PromptGroup
+			projectId={draft.selectedProjectId}
+			selectedProject={selectedProject}
+			recentProjects={recentProjects.filter((project) => Boolean(project.id))}
+			onSelectProject={(selectedProjectId) =>
+				updateDraft({ selectedProjectId })
+			}
+			onImportRepo={onImportRepo}
+			onNewProject={onNewProject}
+		/>
+	);
+
+	if (!gastownEnabled) {
+		return <div className="flex-1 overflow-y-auto">{workspacePanel}</div>;
+	}
+
 	return (
 		<div className="flex-1 overflow-y-auto">
-			<PromptGroup
-				projectId={draft.selectedProjectId}
-				selectedProject={selectedProject}
-				recentProjects={recentProjects.filter((project) => Boolean(project.id))}
-				onSelectProject={(selectedProjectId) =>
-					updateDraft({ selectedProjectId })
-				}
-				onImportRepo={onImportRepo}
-				onNewProject={onNewProject}
-			/>
+			<Tabs defaultValue="workspace" className="gap-0">
+				<TabsList className="mx-3 mt-3 w-[calc(100%-1.5rem)] justify-start bg-muted/60">
+					<TabsTrigger value="workspace">Workspace</TabsTrigger>
+					<TabsTrigger value="gastown" className="gap-1.5">
+						<span className="font-mono text-[10px] font-semibold tracking-tight">
+							GT
+						</span>
+						Gas Town
+					</TabsTrigger>
+				</TabsList>
+				<TabsContent value="workspace">{workspacePanel}</TabsContent>
+				<TabsContent value="gastown">
+					<GastownTab onSlung={closeModal} />
+				</TabsContent>
+			</Tabs>
 		</div>
 	);
 }
