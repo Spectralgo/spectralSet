@@ -56,7 +56,7 @@ export function Header() {
 				<Link href="/" aria-label="Go to home">
 					<Image
 						src="/title.svg"
-						alt="Superset"
+						alt="SpectralSet"
 						width={150}
 						height={25}
 						priority
