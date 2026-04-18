@@ -747,6 +747,19 @@
         "typescript": "^5.9.3",
       },
     },
+    "packages/gastown-cli-client": {
+      "name": "@spectralset/gastown-cli-client",
+      "version": "0.1.0",
+      "dependencies": {
+        "zod": "^4.3.5",
+      },
+      "devDependencies": {
+        "@spectralset/typescript": "workspace:*",
+        "@types/node": "^24.9.1",
+        "bun-types": "^1.3.1",
+        "typescript": "^5.9.3",
+      },
+    },
     "packages/host-service": {
       "name": "@spectralset/host-service",
       "version": "0.1.0",
@@ -755,6 +768,7 @@
         "@hono/node-ws": "^1.3.0",
         "@hono/trpc-server": "^0.3.4",
         "@octokit/rest": "^22.0.1",
+        "@spectralset/gastown-cli-client": "workspace:*",
         "@spectralset/shared": "workspace:*",
         "@spectralset/trpc": "workspace:*",
         "@spectralset/workspace-fs": "workspace:*",
@@ -2395,6 +2409,8 @@
     "@spectralset/docs": ["@spectralset/docs@workspace:apps/docs"],
 
     "@spectralset/email": ["@spectralset/email@workspace:packages/email"],
+
+    "@spectralset/gastown-cli-client": ["@spectralset/gastown-cli-client@workspace:packages/gastown-cli-client"],
 
     "@spectralset/host-service": ["@spectralset/host-service@workspace:packages/host-service"],
 

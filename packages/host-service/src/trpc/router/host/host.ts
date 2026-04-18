@@ -6,6 +6,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import type { ApiClient } from "../../../types";
 import { protectedProcedure, router } from "../../index";
+import { gastownRouter } from "../gastown";
 
 const HOST_SERVICE_VERSION = "0.1.0";
 const ORGANIZATION_CACHE_TTL_MS = 60 * 60 * 1000;
@@ -38,6 +39,7 @@ async function getOrganization(
 }
 
 export const hostRouter = router({
+	gastown: gastownRouter,
 	info: protectedProcedure.query(async ({ ctx }) => {
 		const api = (ctx as { api: ApiClient }).api;
 		const organization = await getOrganization(api);
