@@ -35,11 +35,11 @@ export default function EnterprisePage() {
 						Enterprise
 					</span>
 					<h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground mt-4">
-						Superset for your team
+						SpectralSet for your team
 					</h1>
 					<p className="text-muted-foreground mt-3 max-w-lg">
-						Interested in bringing Superset to your organization? Reach out and
-						we&apos;ll work with you to find the right setup for your team.
+						Interested in bringing SpectralSet to your organization? Reach out
+						and we&apos;ll work with you to find the right setup for your team.
 					</p>
 
 					<GridCross className="bottom-0 left-0" />

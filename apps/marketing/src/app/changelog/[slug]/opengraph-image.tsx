@@ -56,7 +56,7 @@ export default async function Image({
 					fontFamily: "Inter",
 				}}
 			>
-				Superset Changelog
+				SpectralSet Changelog
 			</div>,
 			{
 				...size,

@@ -49,7 +49,7 @@ const config: NextConfig = {
 
 	async redirects() {
 		const docsUrl =
-			process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.superset.sh";
+			process.env.NEXT_PUBLIC_DOCS_URL || "https://docs.spectralset.dev";
 		return [
 			{
 				source: "/about",

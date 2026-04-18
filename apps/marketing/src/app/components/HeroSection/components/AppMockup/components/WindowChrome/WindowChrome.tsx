@@ -9,7 +9,7 @@ export function WindowChrome() {
 				<div className="h-3 w-3 rounded-full bg-[#28c840]" />
 			</div>
 			<span className="text-[12px] font-medium text-muted-foreground/55">
-				superset
+				spectralset
 			</span>
 			<div className="w-12" />
 		</div>

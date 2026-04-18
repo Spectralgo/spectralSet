@@ -84,7 +84,7 @@ export const metadata: Metadata = {
 		description:
 			"Run 10+ parallel coding agents on your machine. Spin up new coding tasks while waiting for your current agent to finish.",
 		images: ["/og-image.png"],
-		creator: "@superset_sh",
+		creator: "@spectralset",
 	},
 	robots: {
 		index: true,

@@ -306,13 +306,14 @@ export async function generateMetadata({
 
 	return {
 		title: `${person.name} — ${person.role}`,
-		description: person.bio ?? `${person.name}, ${person.role} at Superset`,
+		description: person.bio ?? `${person.name}, ${person.role} at SpectralSet`,
 		alternates: {
 			canonical: url,
 		},
 		openGraph: {
-			title: `${person.name} — ${person.role} at Superset`,
-			description: person.bio ?? `${person.name}, ${person.role} at Superset`,
+			title: `${person.name} — ${person.role} at SpectralSet`,
+			description:
+				person.bio ?? `${person.name}, ${person.role} at SpectralSet`,
 			type: "profile",
 			url,
 			siteName: COMPANY.NAME,
@@ -322,8 +323,9 @@ export async function generateMetadata({
 		},
 		twitter: {
 			card: "summary",
-			title: `${person.name} — ${person.role} at Superset`,
-			description: person.bio ?? `${person.name}, ${person.role} at Superset`,
+			title: `${person.name} — ${person.role} at SpectralSet`,
+			description:
+				person.bio ?? `${person.name}, ${person.role} at SpectralSet`,
 			...(person.avatar && {
 				images: [`${COMPANY.MARKETING_URL}${person.avatar}`],
 			}),

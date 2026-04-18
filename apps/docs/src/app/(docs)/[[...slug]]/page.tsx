@@ -20,8 +20,8 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
 				header: <div className="w-10 h-4"></div>,
 			}}
 			editOnGithub={{
-				owner: "superset-sh",
-				repo: "superset",
+				owner: "Spectralgo",
+				repo: "spectralSet",
 				path: `apps/docs/content/docs/${page.path}`,
 			}}
 		>
@@ -30,7 +30,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
 				<LLMCopyButton markdownUrl={`${page.url}.mdx`} />
 				<ViewOptions
 					markdownUrl={`${page.url}.mdx`}
-					githubUrl={`https://github.com/superset-sh/superset/blob/main/apps/docs/content/docs/${page.path}`}
+					githubUrl={`https://github.com/Spectralgo/spectralSet/blob/main/apps/docs/content/docs/${page.path}`}
 				/>
 			</div>
 			<DocsBody>

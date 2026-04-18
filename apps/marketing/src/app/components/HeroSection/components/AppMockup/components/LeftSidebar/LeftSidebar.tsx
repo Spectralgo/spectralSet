@@ -27,7 +27,7 @@ export function LeftSidebar({ activeDemo }: LeftSidebarProps) {
 			<div className="flex cursor-pointer items-center justify-between border-b border-white/[0.06] px-4 py-3 hover:bg-white/[0.04]">
 				<div className="flex items-center gap-2">
 					<span className="text-[12px] font-medium text-foreground/72">
-						superset
+						spectralset
 					</span>
 					<span className="text-[10px] text-muted-foreground/28">(5)</span>
 				</div>

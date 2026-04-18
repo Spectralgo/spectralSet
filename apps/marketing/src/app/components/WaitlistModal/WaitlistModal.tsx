@@ -101,7 +101,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 								Join the waitlist
 							</h2>
 							<p className="text-muted-foreground text-sm mb-6">
-								Get notified when Superset is available on Windows & Linux.
+								Get notified when SpectralSet is available on Windows & Linux.
 							</p>
 							<form onSubmit={handleSubmit} className="flex flex-col gap-3">
 								<input

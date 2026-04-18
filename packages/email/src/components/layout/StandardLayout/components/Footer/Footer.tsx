@@ -21,7 +21,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 			<Section className="pb-4">
 				<Img
 					src={`${env.NEXT_PUBLIC_MARKETING_URL}/assets/emails/logo-full.png`}
-					alt="Superset"
+					alt="SpectralSet"
 					width="160"
 				/>
 			</Section>
@@ -29,7 +29,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 			{/* Social Icons */}
 			{showSocial && (
 				<Section className="mb-6">
-					<Link href="https://x.com/superset_sh" className="inline-block mr-4">
+					<Link href="https://x.com/spectralset" className="inline-block mr-4">
 						<Img
 							src={socialIcons.x}
 							alt="X (Twitter)"
@@ -39,7 +39,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 						/>
 					</Link>
 					<Link
-						href="https://instagram.com/superset"
+						href="https://instagram.com/spectralset"
 						className="inline-block mr-4"
 					>
 						<Img
@@ -51,7 +51,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 						/>
 					</Link>
 					<Link
-						href="https://www.linkedin.com/company/superset-sh"
+						href="https://www.linkedin.com/company/spectralset"
 						className="inline-block"
 					>
 						<Img
@@ -73,21 +73,21 @@ export function Footer({ showSocial = true }: FooterProps) {
 			{/* Legal Links */}
 			<Text className="text-muted text-xs leading-none m-0 mb-4">
 				<Link
-					href="https://superset.sh/privacy"
+					href="https://spectralset.dev/privacy"
 					className="text-muted no-underline"
 				>
 					Privacy
 				</Link>
 				{" • "}
 				<Link
-					href="https://superset.sh/terms"
+					href="https://spectralset.dev/terms"
 					className="text-muted no-underline"
 				>
 					Terms
 				</Link>
 				{" • "}
 				<Link
-					href="https://superset.sh/contact"
+					href="https://spectralset.dev/contact"
 					className="text-muted no-underline"
 				>
 					Contact
@@ -96,7 +96,7 @@ export function Footer({ showSocial = true }: FooterProps) {
 
 			{/* Company Info */}
 			<Text className="text-muted text-xs leading-none m-0">
-				© 2026 Superset. All rights reserved.
+				© 2026 SpectralSet. All rights reserved.
 			</Text>
 		</Section>
 	);

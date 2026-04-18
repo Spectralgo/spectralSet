@@ -12,22 +12,22 @@ import { getAllPeople } from "@/lib/people";
 export const metadata: Metadata = {
 	title: "About",
 	description:
-		"Meet the team behind Superset — building parallel coding agents for developers.",
+		"Meet the team behind SpectralSet — building parallel coding agents for developers.",
 	alternates: {
 		canonical: "/team",
 	},
 	openGraph: {
-		title: "About | Superset",
+		title: "About | SpectralSet",
 		description:
-			"Meet the team behind Superset — building parallel coding agents for developers.",
+			"Meet the team behind SpectralSet — building parallel coding agents for developers.",
 		url: "/team",
 		images: ["/opengraph-image"],
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "About | Superset",
+		title: "About | SpectralSet",
 		description:
-			"Meet the team behind Superset — building parallel coding agents for developers.",
+			"Meet the team behind SpectralSet — building parallel coding agents for developers.",
 		images: ["/opengraph-image"],
 	},
 };
@@ -51,8 +51,8 @@ export default function TeamPage() {
 					</h1>
 
 					<p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mb-8">
-						Superset is built by a team of 3 ex YC CTOs. We want to create the
-						best team that has fun working together.
+						SpectralSet is built by a team of 3 ex YC CTOs. We want to create
+						the best team that has fun working together.
 						<br />
 						Success will be a lagging indicator.
 					</p>

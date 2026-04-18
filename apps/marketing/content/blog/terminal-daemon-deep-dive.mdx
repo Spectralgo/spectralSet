@@ -9,11 +9,11 @@ relatedSlugs:
   - how-to-get-hit
 ---
 
-One of the slickest features of Superset is how our terminal survives app restarts. This is a deep dive on how we built it. Huge credits to [Andreas Asprou](https://x.com/andyasprou) who spearheaded this entire effort.
+One of the slickest features of SpectralSet is how our terminal survives app restarts. This is a deep dive on how we built it. Huge credits to [Andreas Asprou](https://x.com/andyasprou) who spearheaded this entire effort.
 
 ---
 
-When you're building an integrated terminal for Superset, we ran into an inconvenient issue: **terminals are ephemeral processes**. This is inconvenient for many reasons. We like to update a lot. Losing progress across 10 worktrees everytime you update is a big deterrent for updating. Or if the app crashes, you lose all your processes.
+When you're building an integrated terminal for SpectralSet, we ran into an inconvenient issue: **terminals are ephemeral processes**. This is inconvenient for many reasons. We like to update a lot. Losing progress across 10 worktrees everytime you update is a big deterrent for updating. Or if the app crashes, you lose all your processes.
 
 Using on Tmux as an existence proof, we knew ephemeral terminals were possible.  
 
@@ -372,4 +372,4 @@ Today, `LocalTerminalRuntime` wraps our daemon. Tomorrow, `CloudTerminalRuntime`
 
 ---
 
-*Want to dive deeper? Check out the [Superset desktop source](https://github.com/superset-sh/superset) for the full implementation.*
+*Want to dive deeper? Check out the [SpectralSet desktop source](https://github.com/Spectralgo/spectralSet) for the full implementation.*

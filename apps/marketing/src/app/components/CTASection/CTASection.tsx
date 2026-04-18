@@ -15,7 +15,7 @@ export function CTASection() {
 						className="text-[32px] lg:text-[40px] font-normal tracking-normal leading-[1.3em] text-foreground mb-8"
 						style={{ fontFamily: "var(--font-ibm-plex-mono)" }}
 					>
-						Get Superset Today
+						Get SpectralSet Today
 					</h2>
 					<div>
 						<DownloadButton onJoinWaitlist={() => setIsWaitlistOpen(true)} />

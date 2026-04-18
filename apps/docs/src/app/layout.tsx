@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 		card: "summary_large_image",
 		title: `${COMPANY.NAME} Documentation`,
 		description: `Official documentation for ${COMPANY.NAME} - the terminal for coding agents.`,
-		creator: "@superset_sh",
+		creator: "@spectralset",
 	},
 	robots: {
 		index: true,

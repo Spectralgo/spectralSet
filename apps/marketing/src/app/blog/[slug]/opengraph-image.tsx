@@ -182,7 +182,7 @@ export default async function Image({
 					</div>
 				</div>
 
-				{/* Superset logo */}
+				{/* SpectralSet logo */}
 				{logoDataUri ? (
 					// biome-ignore lint/a11y/useAltText: ImageResponse requires native <img>
 					// biome-ignore lint/performance/noImgElement: ImageResponse requires native <img>
@@ -195,7 +195,7 @@ export default async function Image({
 							color: "#ffffff",
 						}}
 					>
-						Superset
+						SpectralSet
 					</div>
 				)}
 			</div>

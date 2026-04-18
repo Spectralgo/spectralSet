@@ -7,11 +7,11 @@ interface WelcomeEmailProps {
 
 export function WelcomeEmail({ userName = "there" }: WelcomeEmailProps) {
 	return (
-		<StandardLayout preview="Welcome to Superset! Let's get you started.">
-			<Heading style={heading}>Welcome to Superset, {userName}!</Heading>
+		<StandardLayout preview="Welcome to SpectralSet! Let's get you started.">
+			<Heading style={heading}>Welcome to SpectralSet, {userName}!</Heading>
 
 			<Text style={paragraph}>
-				Thanks for joining Superset. We're excited to help you automate your
+				Thanks for joining SpectralSet. We're excited to help you automate your
 				workflows and boost your productivity with AI-powered task management.
 			</Text>
 
@@ -25,15 +25,15 @@ export function WelcomeEmail({ userName = "there" }: WelcomeEmailProps) {
 			</Text>
 			<Text style={listItem}>✓ Set up your first automated workflow</Text>
 
-			<Button href="https://app.superset.sh/onboarding">Get Started</Button>
+			<Button href="https://app.spectralset.dev/onboarding">Get Started</Button>
 
 			<Text style={footer}>
 				Need help getting started? Check out our{" "}
-				<a href="https://superset.sh/docs" style={link}>
+				<a href="https://spectralset.dev/docs" style={link}>
 					documentation
 				</a>{" "}
 				or reach out to our{" "}
-				<a href="https://superset.sh/support" style={link}>
+				<a href="https://spectralset.dev/support" style={link}>
 					support team
 				</a>
 				.

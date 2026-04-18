@@ -12,7 +12,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "1",
 		content:
-			"Just realized that I have done all my work in @superset_sh since Dec 26.",
+			"Just realized that I have done all my work in @spectralset since Dec 26.",
 		author: "Abhi Aiyer",
 		handle: "@abhiaiyer",
 		avatar: "https://unavatar.io/twitter/abhiaiyer",
@@ -21,7 +21,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "2",
 		content:
-			"Oh snap @superset_sh is soooooo damn good!\n\nNow THIS is the experience I've been wanting for CLI agents!",
+			"Oh snap @spectralset is soooooo damn good!\n\nNow THIS is the experience I've been wanting for CLI agents!",
 		author: "Chris Laupama",
 		handle: "@chrislaupama",
 		avatar: "https://unavatar.io/twitter/chrislaupama",
@@ -30,7 +30,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "3",
 		content:
-			"Damn @superset_sh is really cool. You should try it.\n\nworktrees are a breeze\ncmd + t auto opens Claude Code\nyou can view git changes within itself\nclosing a laptop doesn't kill the sessions",
+			"Damn @spectralset is really cool. You should try it.\n\nworktrees are a breeze\ncmd + t auto opens Claude Code\nyou can view git changes within itself\nclosing a laptop doesn't kill the sessions",
 		author: "Gregor Zunic",
 		handle: "@gregpr07",
 		avatar: "https://unavatar.io/twitter/gregpr07",
@@ -39,7 +39,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "4",
 		content:
-			"if you're not using @superset_sh, you're getting left behind in 2026",
+			"if you're not using @spectralset, you're getting left behind in 2026",
 		author: "Zach Dive",
 		handle: "@zachdive",
 		avatar: "https://unavatar.io/twitter/zachdive",
@@ -48,7 +48,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "5",
 		content:
-			"Was using Warp, but now @superset_sh has become my primary terminal",
+			"Was using Warp, but now @spectralset has become my primary terminal",
 		author: "Eric Clemmons",
 		handle: "@ericclemmons",
 		avatar: "https://unavatar.io/twitter/ericclemmons",
@@ -57,7 +57,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "6",
 		content:
-			"If you prefer a more GUI-oriented approach to multiple agents in parallel, it seems like @superset_sh is doing a tremendous job.",
+			"If you prefer a more GUI-oriented approach to multiple agents in parallel, it seems like @spectralset is doing a tremendous job.",
 		author: "Felipe Coury",
 		handle: "@fcoury",
 		avatar: "https://unavatar.io/twitter/fcoury",
@@ -66,7 +66,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "8",
 		content:
-			"@superset_sh is a sick product - love OS since I don't have to wait for someone else to fix bugs",
+			"@spectralset is a sick product - love OS since I don't have to wait for someone else to fix bugs",
 		author: "Chase McDougall",
 		handle: "@ChaseMcDou",
 		avatar: "https://unavatar.io/twitter/ChaseMcDou",
@@ -75,7 +75,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "9",
 		content:
-			"hasn't been a day i haven't used superset since onboarding\n\ncomplete paradigm shift on how i use ai to code",
+			"hasn't been a day i haven't used spectralset since onboarding\n\ncomplete paradigm shift on how i use ai to code",
 		author: "Leo",
 		handle: "@LeosReal",
 		avatar: "https://unavatar.io/twitter/LeosReal",
@@ -84,9 +84,9 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "10",
 		content:
-			"Tested various GUI tools for git worktree and agents - Conductor, Vibe Kanban, Agentastic, Crystal, FleetCode, Emdash, Sculptor - but Superset suits my taste the best",
+			"Tested various GUI tools for git worktree and agents - Conductor, Vibe Kanban, Agentastic, Crystal, FleetCode, Emdash, Sculptor - but SpectralSet suits my taste the best",
 		originalContent:
-			"试了各种 GUI 的 git worktree + agent 工具，Conductor、Vibe Kanban、Agentastic、Crystal、FleetCode、Emdash、Sculptor，还是 Superset 最合我的胃口",
+			"试了各种 GUI 的 git worktree + agent 工具，Conductor、Vibe Kanban、Agentastic、Crystal、FleetCode、Emdash、Sculptor，还是 SpectralSet 最合我的胃口",
 		author: "Iven",
 		handle: "@ivenvd",
 		avatar: "https://unavatar.io/twitter/ivenvd",
@@ -106,7 +106,7 @@ export const TESTIMONIALS: Testimonial[] = [
 	{
 		id: "12",
 		content:
-			"just started using remote desktop instead of ssh just to be able to use @superset_sh on my mac mini from my macbook pro\n\ngenerational product in the making, mark my words",
+			"just started using remote desktop instead of ssh just to be able to use @spectralset on my mac mini from my macbook pro\n\ngenerational product in the making, mark my words",
 		author: "Elias Ståvik",
 		handle: "@eliasstravik",
 		avatar: "https://unavatar.io/twitter/eliasstravik",

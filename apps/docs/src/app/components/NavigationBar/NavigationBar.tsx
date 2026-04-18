@@ -65,9 +65,9 @@ export default function NavigationBar() {
 					<SidebarTrigger />
 					<ul className="navbar:flex items-center gap-6 hidden shrink-0">
 						<NavLink
-							href="https://github.com/superset-sh/superset"
+							href="https://github.com/Spectralgo/spectralSet"
 							external
-							aria-label="View Superset repository on GitHub"
+							aria-label="View SpectralSet repository on GitHub"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

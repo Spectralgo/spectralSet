@@ -1,15 +1,15 @@
 #!/bin/sh
-# Superset CLI installer
+# SpectralSet CLI installer
 #
 # Usage:
-#   curl -fsSL https://superset.sh/cli/install.sh | sh
+#   curl -fsSL https://spectralset.dev/cli/install.sh | sh
 #
-# Installs the Superset CLI and host-service to ~/superset/.
+# Installs the SpectralSet CLI and host-service to ~/superset/.
 # Adds ~/superset/bin to PATH via your shell profile.
 
 set -eu
 
-REPO="superset-sh/superset"
+REPO="Spectralgo/spectralSet"
 INSTALL_DIR="${SPECTRALSET_HOME:-$HOME/superset}"
 TAG="${SPECTRALSET_VERSION:-latest}"
 
@@ -120,13 +120,13 @@ update_path() {
     info "Adding $bin_dir to PATH in $profile"
     mkdir -p "$(dirname "$profile")"
     {
-        printf "\n# Superset CLI\n"
+        printf "\n# SpectralSet CLI\n"
         printf "%s\n" "$export_line"
     } >> "$profile"
 }
 
 main() {
-    printf "${BOLD}Installing Superset CLI${RESET}\n\n"
+    printf "${BOLD}Installing SpectralSet CLI${RESET}\n\n"
 
     target="$(detect_target)"
     info "Platform: $target"

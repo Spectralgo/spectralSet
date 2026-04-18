@@ -5,7 +5,7 @@ description: View and manage active ports per workspace
 
 ## Overview
 
-Superset does not assign per-workspace port ranges. It discovers listening ports from processes running in each workspace and lets you manage them from the UI.
+SpectralSet does not assign per-workspace port ranges. It discovers listening ports from processes running in each workspace and lets you manage them from the UI.
 
 ![Port Panel](/images/ports.png)
 
@@ -54,4 +54,4 @@ If `ports.json` is malformed:
 
 **Tips:**
 - Commit `.spectralset/ports.json` to share port labels with your team
-- **Pro tip:** If you want deterministic per-workspace port ranges, implement it in setup/teardown scripts by reserving a range in a shared file (for example `~/.spectralset/port-allocations.json`) during setup and releasing it during teardown. See this repo's examples: [`.spectralset/setup.sh`](https://github.com/superset-sh/superset/blob/main/.spectralset/setup.sh) and [`.spectralset/teardown.sh`](https://github.com/superset-sh/superset/blob/main/.spectralset/teardown.sh).
+- **Pro tip:** If you want deterministic per-workspace port ranges, implement it in setup/teardown scripts by reserving a range in a shared file (for example `~/.spectralset/port-allocations.json`) during setup and releasing it during teardown. See this repo's examples: [`.spectralset/setup.sh`](https://github.com/Spectralgo/spectralSet/blob/main/.spectralset/setup.sh) and [`.spectralset/teardown.sh`](https://github.com/Spectralgo/spectralSet/blob/main/.spectralset/teardown.sh).
