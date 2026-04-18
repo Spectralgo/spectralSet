@@ -100,7 +100,7 @@ describe("stripTerminalRuntimeEnv", () => {
 		PATH: "/usr/bin:/usr/local/bin",
 		SHELL: "/bin/zsh",
 		EDITOR: "vim",
-		SPECTRALSET_HOME_DIR: "/Users/test/.superset",
+		SPECTRALSET_HOME_DIR: "/Users/test/.spectralset",
 		SPECTRALSET_AGENT_HOOK_PORT: "51741",
 		SPECTRALSET_AGENT_HOOK_VERSION: "2",
 	};
@@ -195,7 +195,7 @@ describe("stripTerminalRuntimeEnv", () => {
 
 	test("explicit Superset support keys are kept", () => {
 		const result = stripTerminalRuntimeEnv(secretsEnv);
-		expect(result.SPECTRALSET_HOME_DIR).toBe("/Users/test/.superset");
+		expect(result.SPECTRALSET_HOME_DIR).toBe("/Users/test/.spectralset");
 		expect(result.SPECTRALSET_AGENT_HOOK_PORT).toBe("51741");
 		expect(result.SPECTRALSET_AGENT_HOOK_VERSION).toBe("2");
 	});
@@ -374,10 +374,10 @@ describe("buildV2TerminalEnv", () => {
 			HOME: "/Users/test",
 			PATH: "/usr/bin",
 			SHELL: "/bin/zsh",
-			SPECTRALSET_HOME_DIR: "/Users/test/.superset",
+			SPECTRALSET_HOME_DIR: "/Users/test/.spectralset",
 		},
 		shell: "/bin/zsh",
-		supersetHomeDir: "/Users/test/.superset",
+		supersetHomeDir: "/Users/test/.spectralset",
 		cwd: "/tmp/workspace",
 		terminalId: "term-1",
 		workspaceId: "ws-1",
@@ -479,7 +479,7 @@ describe("v2 env contract boundary", () => {
 				ELECTRON_IS_DEV: "1",
 			},
 			shell: "/bin/zsh",
-			supersetHomeDir: "/Users/test/.superset",
+			supersetHomeDir: "/Users/test/.spectralset",
 			cwd: "/tmp/ws",
 			terminalId: "t-1",
 			workspaceId: "w-1",

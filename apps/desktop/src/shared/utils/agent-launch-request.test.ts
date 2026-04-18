@@ -213,7 +213,7 @@ describe("buildTaskAgentLaunchRequest", () => {
 			throw new Error("Expected terminal launch request");
 		}
 		expect(request.terminal.command).toBe(
-			"amp < '.superset/task-demo-task.md'",
+			"amp < '.spectralset/task-demo-task.md'",
 		);
 	});
 

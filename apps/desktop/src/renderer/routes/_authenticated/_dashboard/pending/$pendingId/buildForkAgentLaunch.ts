@@ -96,7 +96,7 @@ export type PendingLaunchBuild =
 			kind: "terminal";
 			launch: PendingTerminalLaunch;
 			/**
-			 * Binary payloads to write to `<worktree>/.superset/attachments/`
+			 * Binary payloads to write to `<worktree>/.spectralset/attachments/`
 			 * via workspaceTrpc.filesystem before setting `row.terminalLaunch`.
 			 * Already named with collision-safe filenames matching
 			 * `launch.attachmentNames` and any inline refs in `launch.command`.
@@ -208,7 +208,7 @@ function flattenUserContentForTerminal(
 		}
 		const filename = inlineByIndex.get(index);
 		if (!filename) return;
-		out.push(`![${filename}](.superset/attachments/${filename})`);
+		out.push(`![${filename}](.spectralset/attachments/${filename})`);
 	});
 	return out.join("").trim();
 }

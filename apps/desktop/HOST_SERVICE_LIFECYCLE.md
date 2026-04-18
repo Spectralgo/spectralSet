@@ -33,7 +33,7 @@ Electron main owns app lifecycle, tray, and host-service management. Host-servic
    └────────────┘ └────────────┘ └────────────┘
         │              │              │
         ▼              ▼              ▼
-   ~/.superset/host/{orgId}/manifest.json
+   ~/.spectralset/host/{orgId}/manifest.json
 ```
 
 ### Quit modes
@@ -46,7 +46,7 @@ All quit paths use a single `QuitMode` (`"release" | "stop"`):
 
 ### Manifest adoption
 
-Each host-service child writes `~/.superset/host/{orgId}/manifest.json` on startup (pid, endpoint, authToken, version). It's a pidfile extended with connection info.
+Each host-service child writes `~/.spectralset/host/{orgId}/manifest.json` on startup (pid, endpoint, authToken, version). It's a pidfile extended with connection info.
 
 - **Release quit** — children keep running, manifests stay on disk
 - **Next launch** — `discoverAndAdoptAll()` scans manifests, health-checks each pid/endpoint, reconnects if healthy, removes and respawns if not

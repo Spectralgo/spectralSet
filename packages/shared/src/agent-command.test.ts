@@ -43,11 +43,11 @@ describe("buildAgentPromptCommand", () => {
 
 	it("uses Amp interactive stdin mode for file launches", () => {
 		const command = buildAgentFileCommand({
-			filePath: ".superset/task-demo.md",
+			filePath: ".spectralset/task-demo.md",
 			agent: "amp",
 		});
 
-		expect(command).toBe("amp < '.superset/task-demo.md'");
+		expect(command).toBe("amp < '.spectralset/task-demo.md'");
 	});
 
 	it("uses pi interactive mode for prompt launches", () => {

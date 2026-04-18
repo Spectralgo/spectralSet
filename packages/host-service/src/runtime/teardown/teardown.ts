@@ -10,7 +10,7 @@ import {
 
 export { TEARDOWN_TIMEOUT_MS };
 
-export const TEARDOWN_SCRIPT_REL_PATH = ".superset/teardown.sh";
+export const TEARDOWN_SCRIPT_REL_PATH = ".spectralset/teardown.sh";
 const OUTPUT_TAIL_BYTES = 4096;
 const KILL_GRACE_MS = 2_000;
 
@@ -35,7 +35,7 @@ interface RunTeardownOptions {
 }
 
 /**
- * Runs `.superset/teardown.sh` inside the workspace, reusing the same
+ * Runs `.spectralset/teardown.sh` inside the workspace, reusing the same
  * terminal primitive v2 uses for interactive sessions. This gives the
  * script full environment parity with the user's terminals (login shell
  * rcfiles, PATH, nvm/rbenv, etc.), matching how setup.sh runs.

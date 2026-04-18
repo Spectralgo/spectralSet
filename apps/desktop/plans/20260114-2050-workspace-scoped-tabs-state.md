@@ -18,7 +18,7 @@ This work is intended as a follow-up refactor (separate PR) after the bug fix th
 
 1. A “workspace” is a Superset concept representing a git worktree; routes use `/workspace/$workspaceId`.
 2. Tabs and panes are conceptually workspace-local. A tab should never render while viewing another workspace route.
-3. UI state persistence is local-only (lowdb JSON) at `~/.superset/app-state.json` (see `apps/desktop/src/main/lib/app-environment.ts`), not the production database.
+3. UI state persistence is local-only (lowdb JSON) at `~/.spectralset/app-state.json` (see `apps/desktop/src/main/lib/app-environment.ts`), not the production database.
 4. It is acceptable to migrate existing persisted tabs state in-place so users keep their open tabs and panes after upgrade.
 
 
@@ -74,7 +74,7 @@ Relevant files and how they fit together:
 - `apps/desktop/src/renderer/stores/tabs/store.ts` is the Zustand tabs store. Today it persists a single top-level structure containing `tabs`, `panes`, and maps keyed by workspace.
 - `apps/desktop/src/shared/tabs-types.ts` defines the shared data model (`Tab`, `Pane`, and the persisted tabs state shape) and is imported by both main and renderer code. Shared code must not import Node.js modules.
 - `apps/desktop/src/lib/trpc/routers/ui-state/index.ts` is the main-process tRPC router that validates and stores UI state in lowdb (`appState.data.tabsState`). It uses Zod to validate `uiState.tabs.set` input.
-- `apps/desktop/src/main/lib/app-state/index.ts` loads and stores the lowdb file at `APP_STATE_PATH`, which is defined in `apps/desktop/src/main/lib/app-environment.ts` as `~/.superset/app-state.json`.
+- `apps/desktop/src/main/lib/app-state/index.ts` loads and stores the lowdb file at `APP_STATE_PATH`, which is defined in `apps/desktop/src/main/lib/app-environment.ts` as `~/.spectralset/app-state.json`.
 
 This plan changes the persisted tabs state shape from “global” to “workspace-scoped”:
 
@@ -162,7 +162,7 @@ Update the main process to consistently store and serve the new workspace-scoped
 Scope:
 
 1. Update `apps/desktop/src/main/lib/app-state/schemas.ts` so `tabsState` uses the new `BaseTabsState` shape and `defaultAppState.tabsState` is `{ byWorkspace: {} }`.
-2. Update `apps/desktop/src/main/lib/app-state/index.ts` so `ensureValidShape` normalizes `data.tabsState` via `normalizeTabsState` (imported from the shared helper). This ensures old `~/.superset/app-state.json` files are reshaped on startup.
+2. Update `apps/desktop/src/main/lib/app-state/index.ts` so `ensureValidShape` normalizes `data.tabsState` via `normalizeTabsState` (imported from the shared helper). This ensures old `~/.spectralset/app-state.json` files are reshaped on startup.
 3. Update `apps/desktop/src/lib/trpc/routers/ui-state/index.ts`:
 
    - Replace `tabsStateSchema` with a Zod schema for the new shape.
@@ -279,7 +279,7 @@ Recovery if migration goes wrong during local development:
 1. Quit the desktop app.
 2. Move the local lowdb file out of the way (do not delete immediately):
 
-    mv ~/.superset/app-state.json ~/.superset/app-state.json.bak
+    mv ~/.spectralset/app-state.json ~/.spectralset/app-state.json.bak
 
 3. Restart the app to regenerate defaults.
 

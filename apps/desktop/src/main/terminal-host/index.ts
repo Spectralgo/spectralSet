@@ -8,8 +8,8 @@
  *
  * IPC Protocol:
  * - Uses NDJSON (newline-delimited JSON) over Unix domain socket
- * - Socket: ~/.superset/terminal-host.sock
- * - Auth token: ~/.superset/terminal-host.token
+ * - Socket: ~/.spectralset/terminal-host.sock
+ * - Auth token: ~/.spectralset/terminal-host.token
  */
 
 import { randomBytes } from "node:crypto";
@@ -56,7 +56,7 @@ import { TerminalHost } from "./terminal-host";
 const DAEMON_VERSION = "1.0.0";
 
 // SPECTRALSET_DIR_NAME is imported from shared/constants for multi-worktree support
-// This allows workspace-specific home directories (e.g., ~/.superset-my-feature)
+// This allows workspace-specific home directories (e.g., ~/.spectralset-my-feature)
 const SPECTRALSET_HOME_DIR = join(homedir(), SPECTRALSET_DIR_NAME);
 
 // Socket and token paths

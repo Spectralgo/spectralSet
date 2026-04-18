@@ -308,13 +308,13 @@ step_start_electric() {
 }
 
 allocate_port_base() {
-  local alloc_file="$HOME/.superset/port-allocations.json"
-  local lock_dir="$HOME/.superset/port-allocations.lock"
+  local alloc_file="$HOME/.spectralset/port-allocations.json"
+  local lock_dir="$HOME/.spectralset/port-allocations.lock"
   local start=3000
   local range=20
 
   # Ensure directory and file exist
-  mkdir -p "$HOME/.superset"
+  mkdir -p "$HOME/.spectralset"
   if [ ! -f "$alloc_file" ]; then
     echo '{}' > "$alloc_file"
   fi
@@ -500,7 +500,7 @@ step_write_env() {
 	CADDYEOF
   success "Caddyfile written"
 
-  # Generate .superset/ports.json for static port name mapping in the desktop app
+  # Generate .spectralset/ports.json for static port name mapping in the desktop app
   local superset_dir
   superset_dir="${SPECTRALSET_SCRIPT_DIR:-$(dirname "$0")}"
   cat > "$superset_dir/ports.json" <<PORTSJSON
@@ -522,7 +522,7 @@ step_write_env() {
   ]
 }
 PORTSJSON
-  success "Port name mapping written to .superset/ports.json"
+  success "Port name mapping written to .spectralset/ports.json"
 
   cat > apps/electric-proxy/.dev.vars <<DEVVARS
 AUTH_URL=http://localhost:$API_PORT
@@ -574,7 +574,7 @@ step_setup_local_mcp() {
 step_seed_auth_token() {
   echo "🔑 Seeding auth token into superset-dev-data/..."
 
-  local source_token="$HOME/.superset/auth-token.enc"
+  local source_token="$HOME/.spectralset/auth-token.enc"
   local dev_data_dir="superset-dev-data"
   local dest_token="$dev_data_dir/auth-token.enc"
 
@@ -606,7 +606,7 @@ step_seed_auth_token() {
 step_seed_local_db() {
   echo "💾 Seeding local DB into superset-dev-data/..."
 
-  local source_db="$HOME/.superset/local.db"
+  local source_db="$HOME/.spectralset/local.db"
   local dev_data_dir="superset-dev-data"
   local dest_db="$dev_data_dir/local.db"
   local force_overwrite="$FORCE_OVERWRITE_DATA"

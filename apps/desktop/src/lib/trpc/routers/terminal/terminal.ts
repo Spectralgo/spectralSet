@@ -37,7 +37,7 @@ const SAFE_ID = z
  * Sessions are keyed by paneId and linked to workspaces for cwd resolution
  *
  * Environment variables set for terminal sessions:
- * - PATH: Prepends ~/.superset/bin so wrapper scripts intercept agent commands
+ * - PATH: Prepends ~/.spectralset/bin so wrapper scripts intercept agent commands
  * - SPECTRALSET_TERMINAL_ID: The terminal/pane ID (used by notification hooks, session key)
  * - SPECTRALSET_TAB_ID: The tab ID (parent of pane, used by notification hooks)
  * - SPECTRALSET_WORKSPACE_ID: The workspace ID (used by notification hooks)

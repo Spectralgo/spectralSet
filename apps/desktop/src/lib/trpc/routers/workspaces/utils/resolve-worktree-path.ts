@@ -4,7 +4,7 @@ import { type SelectProject, settings } from "@spectralset/local-db";
 import { localDb } from "main/lib/local-db";
 import { SPECTRALSET_DIR_NAME, WORKTREES_DIR_NAME } from "shared/constants";
 
-/** Resolves base dir: project override > global setting > default (~/.superset/worktrees) */
+/** Resolves base dir: project override > global setting > default (~/.spectralset/worktrees) */
 export function resolveWorktreePath(
 	project: Pick<SelectProject, "name" | "worktreeBaseDir">,
 	branch: string,

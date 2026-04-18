@@ -339,15 +339,15 @@ async function detectSetupDefaults(
 }
 
 function getConfigPath(mainRepoPath: string): string {
-	return join(mainRepoPath, ".superset", "config.json");
+	return join(mainRepoPath, ".spectralset", "config.json");
 }
 
 function ensureConfigExists(mainRepoPath: string): string {
 	const configPath = getConfigPath(mainRepoPath);
-	const supersetDir = join(mainRepoPath, ".superset");
+	const supersetDir = join(mainRepoPath, ".spectralset");
 
 	if (!existsSync(configPath)) {
-		// Create .superset directory if it doesn't exist
+		// Create .spectralset directory if it doesn't exist
 		if (!existsSync(supersetDir)) {
 			mkdirSync(supersetDir, { recursive: true });
 		}

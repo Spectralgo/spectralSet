@@ -23,7 +23,7 @@ Override automatic port discovery with a static configuration file. Useful for:
 - Providing meaningful labels for your team
 - Projects where dynamic scanning doesn't work well
 
-Create `.superset/ports.json` in your repository:
+Create `.spectralset/ports.json` in your repository:
 
 ```json
 {
@@ -53,5 +53,5 @@ If `ports.json` is malformed:
 - Dynamic detection is NOT used as fallback
 
 **Tips:**
-- Commit `.superset/ports.json` to share port labels with your team
-- **Pro tip:** If you want deterministic per-workspace port ranges, implement it in setup/teardown scripts by reserving a range in a shared file (for example `~/.superset/port-allocations.json`) during setup and releasing it during teardown. See this repo's examples: [`.superset/setup.sh`](https://github.com/superset-sh/superset/blob/main/.superset/setup.sh) and [`.superset/teardown.sh`](https://github.com/superset-sh/superset/blob/main/.superset/teardown.sh).
+- Commit `.spectralset/ports.json` to share port labels with your team
+- **Pro tip:** If you want deterministic per-workspace port ranges, implement it in setup/teardown scripts by reserving a range in a shared file (for example `~/.spectralset/port-allocations.json`) during setup and releasing it during teardown. See this repo's examples: [`.spectralset/setup.sh`](https://github.com/superset-sh/superset/blob/main/.spectralset/setup.sh) and [`.spectralset/teardown.sh`](https://github.com/superset-sh/superset/blob/main/.spectralset/teardown.sh).

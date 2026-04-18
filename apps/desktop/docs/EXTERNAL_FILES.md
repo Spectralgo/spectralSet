@@ -6,12 +6,12 @@ Understanding these files is critical for maintaining workspace isolation and av
 ## Workspace-Specific Directories
 
 The app uses different home directories based on workspace:
-- **Default**: `~/.superset/`
-- **Named workspace**: `~/.superset-{workspace}/` (e.g. `~/.superset-my-feature/`)
+- **Default**: `~/.spectralset/`
+- **Named workspace**: `~/.spectralset-{workspace}/` (e.g. `~/.spectralset-my-feature/`)
 
 This separation prevents multiple instances from interfering with each other.
 
-## Files in `~/.superset[-{workspace}]/`
+## Files in `~/.spectralset[-{workspace}]/`
 
 ### `bin/` - Agent Wrapper Scripts
 
@@ -47,7 +47,7 @@ its hook entries into these files while preserving user-defined entries:
 
 For Codex specifically, Superset now relies on native `~/.codex/hooks.json`
 registration for durable prompt/tool lifecycle events, while the wrapper in
-`~/.superset[-{workspace}]/bin/codex` still injects `notify` and keeps the
+`~/.spectralset[-{workspace}]/bin/codex` still injects `notify` and keeps the
 session-log watcher as a best-effort compatibility bridge for older Codex
 releases. On startup, Superset rewrites only its own managed entries in
 `~/.codex/hooks.json` to point at the current environment's `notify.sh`, while
@@ -86,8 +86,8 @@ The app modifies shell RC files to add the Superset bin directory to PATH:
 
 | Shell | RC File | Modification |
 |-------|---------|--------------|
-| Zsh | `~/.zshrc` | Prepends `~/.superset[-{workspace}]/bin` to PATH |
-| Bash | `~/.bashrc` | Prepends `~/.superset[-{workspace}]/bin` to PATH |
+| Zsh | `~/.zshrc` | Prepends `~/.spectralset[-{workspace}]/bin` to PATH |
+| Bash | `~/.bashrc` | Prepends `~/.spectralset[-{workspace}]/bin` to PATH |
 
 ## Terminal Environment Variables
 
@@ -107,7 +107,7 @@ Each terminal session receives these environment variables:
 
 ## Adding New External Files
 
-Before adding new files outside of `~/.superset[-{workspace}]/`:
+Before adding new files outside of `~/.spectralset[-{workspace}]/`:
 
 1. **Consider if it's necessary** - Can you use the environment-specific directory instead?
 2. **Check for conflicts** - Will dev and prod overwrite each other?

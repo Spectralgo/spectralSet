@@ -29,7 +29,7 @@ async function writeTaskPromptFile(
 
 	const supersetDirectory = joinAbsolutePath(
 		workspace.worktreePath,
-		".superset",
+		".spectralset",
 	);
 	await electronTrpcClient.filesystem.createDirectory.mutate({
 		workspaceId,
@@ -109,7 +109,7 @@ async function writeAttachmentFiles(
 
 	const attachmentsDirectory = joinAbsolutePath(
 		workspace.worktreePath,
-		".superset/attachments",
+		".spectralset/attachments",
 	);
 	await electronTrpcClient.filesystem.createDirectory.mutate({
 		workspaceId,
@@ -173,7 +173,7 @@ async function writeAttachmentFiles(
 		});
 
 		// Return relative path from workspace root
-		writtenPaths.push(`.superset/attachments/${fileName}`);
+		writtenPaths.push(`.spectralset/attachments/${fileName}`);
 	}
 
 	return writtenPaths;

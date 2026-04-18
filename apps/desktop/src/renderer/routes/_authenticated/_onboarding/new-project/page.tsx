@@ -57,7 +57,7 @@ function NewProjectPage() {
 
 	useEffect(() => {
 		if (parentDir || !homeDir) return;
-		setParentDir(`${homeDir}/.superset/projects`);
+		setParentDir(`${homeDir}/.spectralset/projects`);
 	}, [homeDir, parentDir]);
 
 	return (

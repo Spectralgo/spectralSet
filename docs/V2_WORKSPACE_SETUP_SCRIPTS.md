@@ -2,7 +2,7 @@
 
 ## Problem
 
-1. V2 workspace creation returns `initialCommands` (from `.superset/setup.sh`) but never executes them.
+1. V2 workspace creation returns `initialCommands` (from `.spectralset/setup.sh`) but never executes them.
 2. Presets race with shell init — commands fire before the shell is ready.
 
 ## Approach
@@ -113,7 +113,7 @@ Replace command resolution (lines 462-469) with terminal creation. Return termin
 const terminals: Array<{ id: string; role: string; label: string }> = [];
 
 if (input.composer.runSetupScript) {
-  const setupScriptPath = join(worktreePath, ".superset", "setup.sh");
+  const setupScriptPath = join(worktreePath, ".spectralset", "setup.sh");
   if (existsSync(setupScriptPath)) {
     const terminalId = crypto.randomUUID();
     const result = createTerminalSessionInternal({

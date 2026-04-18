@@ -117,7 +117,7 @@ Terminal router:
 
 - remove `@superset/workspace-fs/host` imports
 - stop writing task prompt files inside `terminal.ts`
-- require caller to create `.superset/<file>` via `trpc.filesystem.*` before attach
+- require caller to create `.spectralset/<file>` via `trpc.filesystem.*` before attach
 - remove `taskPromptContent` and `taskPromptFileName` from terminal input
 
 

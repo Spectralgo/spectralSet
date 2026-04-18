@@ -170,12 +170,12 @@ All shortcuts are customizable via **Settings > Keyboard Shortcuts** (`⌘/`). S
 
 ## Configuration
 
-Configure workspace setup and teardown in `.superset/config.json`. See [full documentation](https://docs.superset.sh/setup-teardown-scripts).
+Configure workspace setup and teardown in `.spectralset/config.json`. See [full documentation](https://docs.superset.sh/setup-teardown-scripts).
 
 ```json
 {
-  "setup": ["./.superset/setup.sh"],
-  "teardown": ["./.superset/teardown.sh"]
+  "setup": ["./.spectralset/setup.sh"],
+  "teardown": ["./.spectralset/teardown.sh"]
 }
 ```
 
@@ -188,7 +188,7 @@ Configure workspace setup and teardown in `.superset/config.json`. See [full doc
 
 ```bash
 #!/bin/bash
-# .superset/setup.sh
+# .spectralset/setup.sh
 
 # Copy environment variables
 cp ../.env .env

@@ -40,7 +40,7 @@ export interface DispatchForkLaunchInputs {
  * useConsumePendingLaunch mount effect picks it up.
  *
  * For terminal launches we also write attachment bytes to
- * `<worktree>/.superset/attachments/` now — the worktree exists and
+ * `<worktree>/.spectralset/attachments/` now — the worktree exists and
  * workspaceTrpc.filesystem is available. Chat launches carry their
  * binaries as base64 data URLs inline (existing ChatLaunchConfig shape).
  */
@@ -184,7 +184,7 @@ async function writeAttachmentsToWorktree({
 		throw new Error("Workspace has no worktreePath");
 	}
 
-	const dir = joinPath(worktreePath, ".superset/attachments");
+	const dir = joinPath(worktreePath, ".spectralset/attachments");
 	try {
 		await client.filesystem.createDirectory.mutate({
 			workspaceId,

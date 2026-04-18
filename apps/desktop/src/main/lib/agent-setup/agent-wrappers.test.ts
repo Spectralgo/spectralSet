@@ -84,35 +84,35 @@ describe("reconcileManagedEntries", () => {
 		const result = reconcileManagedEntries({
 			current: [
 				"/usr/local/bin/custom-hook Start",
-				"/tmp/.superset-old/hooks/notify.sh Start",
+				"/tmp/.spectralset-old/hooks/notify.sh Start",
 			],
-			desired: ["/tmp/.superset-new/hooks/notify.sh Start"],
-			isManaged: (entry: string) => entry.includes("/.superset-"),
+			desired: ["/tmp/.spectralset-new/hooks/notify.sh Start"],
+			isManaged: (entry: string) => entry.includes("/.spectralset-"),
 			isEquivalent: (entry: string, desired: string) => entry === desired,
 		});
 
 		expect(result.entries).toEqual([
 			"/usr/local/bin/custom-hook Start",
-			"/tmp/.superset-new/hooks/notify.sh Start",
+			"/tmp/.spectralset-new/hooks/notify.sh Start",
 		]);
 		expect(result.replacedManagedEntries).toEqual([
-			"/tmp/.superset-old/hooks/notify.sh Start",
+			"/tmp/.spectralset-old/hooks/notify.sh Start",
 		]);
 	});
 
 	it("reconciles edited managed entries even when a managed hook already exists", () => {
 		const result = reconcileManagedEntries({
-			current: ["/tmp/.superset-current/hooks/notify.sh Start --debug"],
-			desired: ["/tmp/.superset-current/hooks/notify.sh Start"],
-			isManaged: (entry: string) => entry.includes("/.superset-"),
+			current: ["/tmp/.spectralset-current/hooks/notify.sh Start --debug"],
+			desired: ["/tmp/.spectralset-current/hooks/notify.sh Start"],
+			isManaged: (entry: string) => entry.includes("/.spectralset-"),
 			isEquivalent: (entry: string, desired: string) => entry === desired,
 		});
 
 		expect(result.entries).toEqual([
-			"/tmp/.superset-current/hooks/notify.sh Start",
+			"/tmp/.spectralset-current/hooks/notify.sh Start",
 		]);
 		expect(result.replacedManagedEntries).toEqual([
-			"/tmp/.superset-current/hooks/notify.sh Start --debug",
+			"/tmp/.spectralset-current/hooks/notify.sh Start --debug",
 		]);
 	});
 });
@@ -285,8 +285,8 @@ exit 0
 
 	it("replaces stale Cursor hook commands from old superset paths", () => {
 		const cursorHooksPath = path.join(mockedHomeDir, ".cursor", "hooks.json");
-		const staleHookPath = "/tmp/.superset-old/hooks/cursor-hook.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/cursor-hook.sh";
+		const staleHookPath = "/tmp/.spectralset-old/hooks/cursor-hook.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/cursor-hook.sh";
 
 		mkdirSync(path.dirname(cursorHooksPath), { recursive: true });
 		writeFileSync(
@@ -340,8 +340,8 @@ exit 0
 			".gemini",
 			"settings.json",
 		);
-		const staleHookPath = "/tmp/.superset-old/hooks/gemini-hook.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/gemini-hook.sh";
+		const staleHookPath = "/tmp/.spectralset-old/hooks/gemini-hook.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/gemini-hook.sh";
 
 		mkdirSync(path.dirname(geminiSettingsPath), { recursive: true });
 		writeFileSync(
@@ -447,8 +447,8 @@ exit 0
 			".mastracode",
 			"hooks.json",
 		);
-		const staleHookPath = "/tmp/.superset-old/hooks/notify.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/notify.sh";
+		const staleHookPath = "/tmp/.spectralset-old/hooks/notify.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/notify.sh";
 
 		mkdirSync(path.dirname(mastraHooksPath), { recursive: true });
 		writeFileSync(
@@ -508,8 +508,8 @@ exit 0
 			".factory",
 			"settings.json",
 		);
-		const staleHookPath = "/tmp/.superset-old/hooks/notify.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/notify.sh";
+		const staleHookPath = "/tmp/.spectralset-old/hooks/notify.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/notify.sh";
 
 		mkdirSync(path.dirname(droidSettingsPath), { recursive: true });
 		writeFileSync(
@@ -616,7 +616,7 @@ exit 0
 		writeFileSync(droidSettingsPath, invalidJson);
 
 		expect(
-			getDroidSettingsJsonContent("/tmp/.superset-new/hooks/notify.sh"),
+			getDroidSettingsJsonContent("/tmp/.spectralset-new/hooks/notify.sh"),
 		).toBeNull();
 
 		createDroidSettingsJson();
@@ -635,7 +635,7 @@ exit 0
 		writeFileSync(droidSettingsPath, JSON.stringify("not-an-object"));
 
 		expect(
-			getDroidSettingsJsonContent("/tmp/.superset-new/hooks/notify.sh"),
+			getDroidSettingsJsonContent("/tmp/.spectralset-new/hooks/notify.sh"),
 		).toBeNull();
 	});
 });
@@ -652,7 +652,7 @@ describe("agent-wrappers claude settings.json", () => {
 	});
 
 	it("creates Claude settings.json with hooks when no file exists", () => {
-		const notifyPath = "/tmp/.superset/hooks/notify.sh";
+		const notifyPath = "/tmp/.spectralset/hooks/notify.sh";
 		const content = getClaudeGlobalSettingsJsonContent(notifyPath);
 		expect(content).not.toBeNull();
 		if (content === null) throw new Error("Expected content");
@@ -715,7 +715,7 @@ describe("agent-wrappers claude settings.json", () => {
 			),
 		);
 
-		const notifyPath = "/tmp/.superset/hooks/notify.sh";
+		const notifyPath = "/tmp/.spectralset/hooks/notify.sh";
 		const content = getClaudeGlobalSettingsJsonContent(notifyPath);
 		expect(content).not.toBeNull();
 		if (content === null) throw new Error("Expected content");
@@ -754,8 +754,8 @@ describe("agent-wrappers claude settings.json", () => {
 			".claude",
 			"settings.json",
 		);
-		const staleHookPath = "/tmp/.superset-old/hooks/notify.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/notify.sh";
+		const staleHookPath = "/tmp/.spectralset-old/hooks/notify.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/notify.sh";
 
 		mkdirSync(path.dirname(claudeSettingsPath), { recursive: true });
 		writeFileSync(
@@ -852,7 +852,7 @@ describe("agent-wrappers claude settings.json", () => {
 		writeFileSync(claudeSettingsPath, invalidJson);
 
 		expect(
-			getClaudeGlobalSettingsJsonContent("/tmp/.superset/hooks/notify.sh"),
+			getClaudeGlobalSettingsJsonContent("/tmp/.spectralset/hooks/notify.sh"),
 		).toBeNull();
 
 		createClaudeSettingsJson();
@@ -872,7 +872,7 @@ describe("agent-wrappers claude settings.json", () => {
 		writeFileSync(claudeSettingsPath, JSON.stringify("not-an-object"));
 
 		expect(
-			getClaudeGlobalSettingsJsonContent("/tmp/.superset/hooks/notify.sh"),
+			getClaudeGlobalSettingsJsonContent("/tmp/.spectralset/hooks/notify.sh"),
 		).toBeNull();
 	});
 });
@@ -889,7 +889,7 @@ describe("agent-wrappers codex hooks.json", () => {
 	});
 
 	it("creates Codex hooks.json with prompt and lifecycle hooks when no file exists", () => {
-		const notifyPath = "/tmp/.superset/hooks/notify.sh";
+		const notifyPath = "/tmp/.spectralset/hooks/notify.sh";
 		const content = getCodexGlobalHooksJsonContent(notifyPath);
 		expect(content).not.toBeNull();
 		if (content === null) throw new Error("Expected content");
@@ -974,7 +974,7 @@ describe("agent-wrappers codex hooks.json", () => {
 			),
 		);
 
-		const notifyPath = "/tmp/.superset/hooks/notify.sh";
+		const notifyPath = "/tmp/.spectralset/hooks/notify.sh";
 		const content = getCodexGlobalHooksJsonContent(notifyPath);
 		expect(content).not.toBeNull();
 		if (content === null) throw new Error("Expected content");
@@ -1051,8 +1051,8 @@ describe("agent-wrappers codex hooks.json", () => {
 
 	it("replaces stale Codex hook commands from old superset paths", () => {
 		const codexHooksPath = path.join(mockedHomeDir, ".codex", "hooks.json");
-		const staleHookPath = "/tmp/.superset-old/hooks/notify.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/notify.sh";
+		const staleHookPath = "/tmp/.spectralset-old/hooks/notify.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/notify.sh";
 
 		mkdirSync(path.dirname(codexHooksPath), { recursive: true });
 		writeFileSync(
@@ -1132,8 +1132,8 @@ describe("agent-wrappers codex hooks.json", () => {
 	it("removes stale Superset-managed UserPromptSubmit hooks without touching user hooks", () => {
 		const codexHooksPath = path.join(mockedHomeDir, ".codex", "hooks.json");
 		const staleHookPath =
-			"/Users/test/.superset/worktrees/repo/superset-dev-data/hooks/notify.sh";
-		const currentHookPath = "/tmp/.superset-new/hooks/notify.sh";
+			"/Users/test/.spectralset/worktrees/repo/superset-dev-data/hooks/notify.sh";
+		const currentHookPath = "/tmp/.spectralset-new/hooks/notify.sh";
 
 		mkdirSync(path.dirname(codexHooksPath), { recursive: true });
 		writeFileSync(
@@ -1201,7 +1201,7 @@ describe("agent-wrappers codex hooks.json", () => {
 		writeFileSync(codexHooksPath, invalidJson);
 
 		expect(
-			getCodexGlobalHooksJsonContent("/tmp/.superset/hooks/notify.sh"),
+			getCodexGlobalHooksJsonContent("/tmp/.spectralset/hooks/notify.sh"),
 		).toBeNull();
 
 		createCodexHooksJson();
@@ -1216,7 +1216,7 @@ describe("agent-wrappers codex hooks.json", () => {
 		writeFileSync(codexHooksPath, JSON.stringify("not-an-object"));
 
 		expect(
-			getCodexGlobalHooksJsonContent("/tmp/.superset/hooks/notify.sh"),
+			getCodexGlobalHooksJsonContent("/tmp/.spectralset/hooks/notify.sh"),
 		).toBeNull();
 	});
 });

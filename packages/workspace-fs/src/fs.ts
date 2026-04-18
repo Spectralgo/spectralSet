@@ -342,7 +342,7 @@ async function writeAtomically({
 	content: string | Uint8Array;
 	encoding?: string;
 }): Promise<void> {
-	const tempPath = `${absolutePath}.superset-tmp-${randomUUID()}`;
+	const tempPath = `${absolutePath}.spectralset-tmp-${randomUUID()}`;
 	await assertParentWithinRoot(rootPath, tempPath);
 
 	let sourceMode: number | undefined;

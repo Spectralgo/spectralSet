@@ -289,13 +289,15 @@ describe("env", () => {
 
 			it("should include shell wrapper control vars", () => {
 				const env = {
-					ZDOTDIR: "/Users/test/.superset-dev/zsh",
-					BASH_ENV: "/Users/test/.superset-dev/bash/rcfile",
+					ZDOTDIR: "/Users/test/.spectralset-dev/zsh",
+					BASH_ENV: "/Users/test/.spectralset-dev/bash/rcfile",
 					PATH: "/usr/bin",
 				};
 				const result = buildSafeEnv(env);
-				expect(result.ZDOTDIR).toBe("/Users/test/.superset-dev/zsh");
-				expect(result.BASH_ENV).toBe("/Users/test/.superset-dev/bash/rcfile");
+				expect(result.ZDOTDIR).toBe("/Users/test/.spectralset-dev/zsh");
+				expect(result.BASH_ENV).toBe(
+					"/Users/test/.spectralset-dev/bash/rcfile",
+				);
 			});
 
 			it("should include proxy vars (both cases)", () => {

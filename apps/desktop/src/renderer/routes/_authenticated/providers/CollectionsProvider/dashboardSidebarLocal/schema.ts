@@ -121,7 +121,7 @@ const pendingLinkedPRSchema = z.object({
 const pendingTerminalLaunchSchema = z.object({
 	command: z.string(),
 	name: z.string().optional(),
-	// Attachment filenames, already written to .superset/attachments/
+	// Attachment filenames, already written to .spectralset/attachments/
 	// by the pending page via workspaceTrpc.filesystem.writeFile.
 	attachmentNames: z.array(z.string()).default([]),
 });

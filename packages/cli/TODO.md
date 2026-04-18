@@ -2,7 +2,7 @@
 
 ## Infrastructure changes (before CLI can be built)
 
-- [ ] **Host service writes `~/.superset/device.json`** on startup with `{ deviceId, deviceName }` for CLI auto-detection
+- [ ] **Host service writes `~/.spectralset/device.json`** on startup with `{ deviceId, deviceName }` for CLI auto-detection
 - [ ] **Move port scanner to host service** — currently lives in Electron (`apps/desktop/src/main/lib/terminal/port-manager.ts`). Host service needs its own port scanning so headless/CLI-driven terminals get port detection too
 - [ ] **Add `ports` table to host service SQLite** — track detected and claimed ports per workspace/terminal session
 - [ ] **Consolidate device identity** — `device_presence` (text `deviceId`) vs `v2_devices` (UUID `id`). CLI needs one consistent identifier. Decide which to retire

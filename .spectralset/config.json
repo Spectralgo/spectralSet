@@ -1,0 +1,5 @@
+{
+	"setup": ["./.spectralset/setup.sh"],
+	"teardown": ["./.spectralset/teardown.sh"],
+	"run": ["bun dev"]
+}

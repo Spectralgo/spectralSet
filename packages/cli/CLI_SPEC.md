@@ -6,7 +6,7 @@ Default output is human-friendly (text, tables). `--json` flag returns structure
 
 ### Device auto-detection
 
-The host service writes `~/.superset/device.json` on startup:
+The host service writes `~/.spectralset/device.json` on startup:
 ```json
 { "deviceId": "47e890a2...", "deviceName": "Satyas-MacBook-Pro" }
 ```
@@ -20,7 +20,7 @@ All device commands use this as the default. `--device` overrides it for remote 
 ```
 --json        Structured JSON output
 --quiet       IDs only (for piping)
---device      Override device (default: auto-detected from ~/.superset/device.json)
+--device      Override device (default: auto-detected from ~/.spectralset/device.json)
 --api-url     Override API URL
 --org         Override active org
 ```

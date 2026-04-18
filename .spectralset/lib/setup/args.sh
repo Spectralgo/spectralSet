@@ -5,7 +5,7 @@ SETUP_LOCAL_MCP=0
 
 setup_print_usage() {
   cat <<EOT
-Usage: .superset/setup.sh [options]
+Usage: .spectralset/setup.sh [options]
 
 Options:
   -f, --force              Reset superset-dev-data/ before seeding local DB

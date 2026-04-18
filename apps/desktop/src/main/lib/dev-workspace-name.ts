@@ -9,8 +9,8 @@ import { deriveWorkspaceNameFromWorktreeSegments } from "shared/worktree-id";
 import { localDb } from "./local-db";
 
 const IS_DEV = process.env.NODE_ENV === "development";
-const WORKTREE_BASE = path.resolve(homedir(), ".superset/worktrees");
-const PROD_LOCAL_DB_PATH = path.join(homedir(), ".superset", "local.db");
+const WORKTREE_BASE = path.resolve(homedir(), ".spectralset/worktrees");
+const PROD_LOCAL_DB_PATH = path.join(homedir(), ".spectralset", "local.db");
 
 function getWorktreeSegmentsFromCwd(cwd: string): string[] | undefined {
 	const cwdRelative = path.relative(WORKTREE_BASE, cwd);

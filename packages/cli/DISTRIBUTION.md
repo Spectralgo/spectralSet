@@ -38,7 +38,7 @@ superset-darwin-arm64/
 
 ```
 superset host start
-  └─ reads ~/.superset/config.json (auth token, org ID, API URL)
+  └─ reads ~/.spectralset/config.json (auth token, org ID, API URL)
   └─ resolves superset-host binary (sibling in bin/)
   └─ spawns: superset-host (which runs: lib/node lib/host-service.js)
   └─ passes env: AUTH_TOKEN, CLOUD_API_URL, HOST_DB_PATH, RELAY_URL, etc.
@@ -47,7 +47,7 @@ superset host start
   └─ prints "Host service running on port XXXXX"
 
 superset host start --daemon
-  └─ same but detached, writes manifest to ~/.superset/host/<orgId>/manifest.json
+  └─ same but detached, writes manifest to ~/.spectralset/host/<orgId>/manifest.json
   └─ manifest: { pid, port, secret, startedAt }
 ```
 
@@ -144,7 +144,7 @@ jobs:
 curl -fsSL https://get.superset.sh | sh
 ```
 
-Detects platform/arch, downloads tarball from GitHub Releases, extracts to `~/.superset/bin/`, prints PATH instructions.
+Detects platform/arch, downloads tarball from GitHub Releases, extracts to `~/.spectralset/bin/`, prints PATH instructions.
 
 ### Manual
 
@@ -153,11 +153,11 @@ Detects platform/arch, downloads tarball from GitHub Releases, extracts to `~/.s
 curl -LO https://github.com/user/superset/releases/latest/download/superset-darwin-arm64.tar.gz
 
 # Extract
-mkdir -p ~/.superset/bin
-tar -xzf superset-darwin-arm64.tar.gz -C ~/.superset/bin
+mkdir -p ~/.spectralset/bin
+tar -xzf superset-darwin-arm64.tar.gz -C ~/.spectralset/bin
 
 # Add to PATH
-export PATH="$HOME/.superset/bin/bin:$PATH"
+export PATH="$HOME/.spectralset/bin/bin:$PATH"
 
 # Login
 superset auth login
@@ -215,7 +215,7 @@ superset host install   # writes systemd unit or launchd plist
 | `packages/cli/src/commands/host/status/command.ts` | Host status command (stub) |
 | `packages/cli/src/commands/host/install/command.ts` | Host install command (stub) |
 | `packages/cli/src/lib/auth.ts` | OAuth device flow |
-| `packages/cli/src/lib/config.ts` | ~/.superset/config.json read/write |
+| `packages/cli/src/lib/config.ts` | ~/.spectralset/config.json read/write |
 | `packages/cli/package.json` | Build scripts, cross-compile targets |
 | `packages/host-service/src/serve.ts` | Standalone host service entry point |
 | `packages/host-service/src/app.ts` | createApp() — core setup |

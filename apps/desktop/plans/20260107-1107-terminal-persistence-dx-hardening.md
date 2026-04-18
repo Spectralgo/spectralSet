@@ -5,7 +5,7 @@
 
 When “Terminal persistence” is enabled, Superset should never freeze or spin at startup, even if the user has accumulated dozens of terminal panes over time. The user should be able to switch between recent terminal tabs with near‑instant feedback, without keeping every terminal renderer and stream active.
 
-This work matters because today a user can get their desktop app into a broken state where a large restored terminal set causes 99% CPU usage and an infinite macOS spinner. The goal is to make persistence robust by default and to make failure modes recoverable from within the UI (no manual edits to `~/.superset/app-state.json`).
+This work matters because today a user can get their desktop app into a broken state where a large restored terminal set causes 99% CPU usage and an infinite macOS spinner. The goal is to make persistence robust by default and to make failure modes recoverable from within the UI (no manual edits to `~/.spectralset/app-state.json`).
 
 
 ## Context

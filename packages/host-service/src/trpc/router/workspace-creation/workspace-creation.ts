@@ -415,7 +415,7 @@ async function finishCheckout(
 	const warnings: string[] = [...args.extraWarnings];
 
 	if (args.runSetupScript) {
-		const setupScriptPath = join(args.worktreePath, ".superset", "setup.sh");
+		const setupScriptPath = join(args.worktreePath, ".spectralset", "setup.sh");
 		if (existsSync(setupScriptPath)) {
 			const terminalId = crypto.randomUUID();
 			const result = createTerminalSessionInternal({
@@ -708,7 +708,12 @@ export const workspaceCreationRouter = router({
 				}
 
 				const homeDir = process.env.HOME || process.env.USERPROFILE || "/tmp";
-				const repoPath = join(homeDir, ".superset", "repos", input.projectId);
+				const repoPath = join(
+					homeDir,
+					".spectralset",
+					"repos",
+					input.projectId,
+				);
 
 				if (!existsSync(repoPath)) {
 					mkdirSync(dirname(repoPath), { recursive: true });
@@ -924,7 +929,7 @@ export const workspaceCreationRouter = router({
 			const warnings: string[] = [];
 
 			if (input.composer.runSetupScript) {
-				const setupScriptPath = join(worktreePath, ".superset", "setup.sh");
+				const setupScriptPath = join(worktreePath, ".spectralset", "setup.sh");
 				if (existsSync(setupScriptPath)) {
 					const terminalId = crypto.randomUUID();
 					const result = createTerminalSessionInternal({
@@ -1033,7 +1038,12 @@ export const workspaceCreationRouter = router({
 					});
 				}
 				const homeDir = process.env.HOME || process.env.USERPROFILE || "/tmp";
-				const repoPath = join(homeDir, ".superset", "repos", input.projectId);
+				const repoPath = join(
+					homeDir,
+					".spectralset",
+					"repos",
+					input.projectId,
+				);
 				if (!existsSync(repoPath)) {
 					mkdirSync(dirname(repoPath), { recursive: true });
 					await simpleGit().clone(cloudProject.repoCloneUrl, repoPath);

@@ -12,7 +12,7 @@ export const workspaceCleanupRouter = router({
 	 * Destroy a workspace in three phases:
 	 *
 	 *   0. Preflight     — dirty-worktree check (skip if force)
-	 *   1. Teardown      — run .superset/teardown.sh (skip if force)
+	 *   1. Teardown      — run .spectralset/teardown.sh (skip if force)
 	 *   2. Cloud delete  ← COMMIT POINT — throws if it fails
 	 *   3. Local cleanup — PTYs, worktree, branch, host sqlite (best-effort)
 	 *

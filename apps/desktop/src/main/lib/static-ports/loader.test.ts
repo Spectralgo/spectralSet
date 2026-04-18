@@ -6,7 +6,7 @@ import { hasStaticPortsConfig, loadStaticPorts } from "./loader";
 
 const TEST_DIR = join(tmpdir(), `superset-test-loader-${process.pid}`);
 const WORKTREE_PATH = join(TEST_DIR, "worktree");
-const SPECTRALSET_DIR = join(WORKTREE_PATH, ".superset");
+const SPECTRALSET_DIR = join(WORKTREE_PATH, ".spectralset");
 const PORTS_FILE = join(SPECTRALSET_DIR, "ports.json");
 
 describe("loadStaticPorts", () => {

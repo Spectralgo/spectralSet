@@ -6,7 +6,8 @@ import { BIN_DIR } from "./paths";
 export const WRAPPER_MARKER = "# Superset agent-wrapper v1";
 export { SPECTRALSET_MANAGED_BINARIES };
 
-const SPECTRALSET_MANAGED_HOOK_PATH_PATTERN = /\/\.superset(?:-[^/'"\s\\]+)?\//;
+const SPECTRALSET_MANAGED_HOOK_PATH_PATTERN =
+	/\/\.spectralset(?:-[^/'"\s\\]+)?\//;
 
 export function writeFileIfChanged(
 	filePath: string,
@@ -85,7 +86,7 @@ function buildRealBinaryResolver(): string {
     [ -z "$dir" ] && continue
     dir="\${dir%/}"
     case "$dir" in
-      "${BIN_DIR}"|"$HOME"/.superset/bin|"$HOME"/.superset-*/bin) continue ;;
+      "${BIN_DIR}"|"$HOME"/.spectralset/bin|"$HOME"/.spectralset-*/bin) continue ;;
     esac
     if [ -x "$dir/$name" ] && [ ! -d "$dir/$name" ]; then
       printf "%s\\n" "$dir/$name"

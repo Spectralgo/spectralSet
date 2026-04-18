@@ -111,7 +111,7 @@ async function downloadAndExtractNode(
 	target: Target,
 	destDir: string,
 ): Promise<string> {
-	const cacheDir = join(homedir(), ".superset-build-cache");
+	const cacheDir = join(homedir(), ".spectralset-build-cache");
 	if (!existsSync(cacheDir)) mkdirSync(cacheDir, { recursive: true });
 
 	const archiveName = nodeArchiveName(target);
@@ -249,7 +249,7 @@ async function fixNativeBinariesForNode(
 		`https://github.com/WiseLibs/better-sqlite3/releases/download/` +
 		`v${bsqVersion}/better-sqlite3-v${bsqVersion}-node-v${NODE_ABI}-${target}.tar.gz`;
 	console.log(`[build-dist] fetching Node-ABI better-sqlite3: ${bsqUrl}`);
-	const tmp = join(homedir(), ".superset-build-cache", `bsq-${target}`);
+	const tmp = join(homedir(), ".spectralset-build-cache", `bsq-${target}`);
 	rmSync(tmp, { recursive: true, force: true });
 	mkdirSync(tmp, { recursive: true });
 	const tarball = join(tmp, "bsq.tar.gz");

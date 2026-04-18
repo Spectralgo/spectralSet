@@ -38,7 +38,7 @@ export function getPreviewTaskCommand(preset: ResolvedAgentConfig): string {
 
 	return (
 		buildFileCommandFromAgentConfig({
-			filePath: `.superset/task-${SAMPLE_TASK.slug}.md`,
+			filePath: `.spectralset/task-${SAMPLE_TASK.slug}.md`,
 			config: preset,
 		}) ?? "No prompt-capable command configured."
 	);

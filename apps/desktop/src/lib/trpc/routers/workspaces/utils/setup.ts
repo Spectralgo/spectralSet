@@ -11,8 +11,8 @@ import {
 import type { LocalSetupConfig, SetupConfig } from "shared/types";
 
 /**
- * Worktrees don't include gitignored files, so copy .superset from main repo
- * if it's missing — ensures setup scripts like "./.superset/setup.sh" work.
+ * Worktrees don't include gitignored files, so copy .spectralset from main repo
+ * if it's missing — ensures setup scripts like "./.spectralset/setup.sh" work.
  */
 export function copySupersetConfigToWorktree(
 	mainRepoPath: string,
@@ -159,16 +159,16 @@ export function mergeConfigs(
 
 /**
  * Resolves setup/teardown/run config with a three-tier priority:
- *   1. User override:  ~/.superset/projects/<projectId>/config.json
- *   2. Worktree:       <worktreePath>/.superset/config.json
- *   3. Main repo:      <mainRepoPath>/.superset/config.json
+ *   1. User override:  ~/.spectralset/projects/<projectId>/config.json
+ *   2. Worktree:       <worktreePath>/.spectralset/config.json
+ *   3. Main repo:      <mainRepoPath>/.spectralset/config.json
  *
  * Higher-priority configs override only the keys they explicitly define.
  * Missing keys inherit from lower-priority sources, so stale copied worktree
  * configs do not mask newly added project-level commands like `run`.
  *
  * After resolving the base config, a local overlay is applied if
- * `.superset/config.local.json` exists in the workspace (worktree or main repo).
+ * `.spectralset/config.local.json` exists in the workspace (worktree or main repo).
  * The local config can prepend (before), append (after), or override each key.
  */
 export function loadSetupConfig({
