@@ -457,7 +457,7 @@ jobs:
           flyctl secrets set \
             DATABASE_URL="${{ secrets.DATABASE_URL_UNPOOLED }}" \
             ELECTRIC_SECRET="${{ secrets.ELECTRIC_SECRET }}" \
-            --app superset-electric \
+            --app spectralset-electric \
             --stage
 
       - name: Deploy to Fly.io

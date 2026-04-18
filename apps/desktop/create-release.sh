@@ -439,8 +439,8 @@ else
         echo -e "${BLUE}Latest URL:${NC}  ${LATEST_URL}"
         echo ""
         echo -e "${BLUE}Direct download:${NC}"
-        echo "  • ${LATEST_URL}/download/Superset-arm64.dmg"
-        echo "  • ${LATEST_URL}/download/Superset-x64.AppImage"
+        echo "  • ${LATEST_URL}/download/SpectralSet-arm64.dmg"
+        echo "  • ${LATEST_URL}/download/SpectralSet-x64.AppImage"
         echo ""
     else
         success "Draft release created!"

@@ -1,4 +1,6 @@
-app = "superset-relay"
+# TODO: spectralset-relay Fly app not yet provisioned; first deploy run
+# will require external `flyctl apps create spectralset-relay`.
+app = "spectralset-relay"
 primary_region = "sjc"
 
 [build]

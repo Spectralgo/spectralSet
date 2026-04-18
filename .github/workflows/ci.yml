@@ -85,7 +85,7 @@ jobs:
 
       - name: Test
         env:
-          RELAY_URL: https://relay.superset.sh
+          RELAY_URL: https://relay.spectralset.dev
         run: bun run test
 
   typecheck:
@@ -141,5 +141,5 @@ jobs:
 
       - name: Build Desktop
         env:
-          RELAY_URL: https://relay.superset.sh
-        run: bun turbo run build --filter=@superset/desktop
+          RELAY_URL: https://relay.spectralset.dev
+        run: bun turbo run build --filter=@spectralset/desktop

@@ -38,14 +38,18 @@ jobs:
       - name: Build distribution
         working-directory: packages/cli
         env:
-          RELAY_URL: https://relay.superset.sh
-          CLOUD_API_URL: https://api.superset.sh
+          # TODO: relay.spectralset.dev / api.spectralset.dev are placeholder
+          # domains pending Fly app provisioning (see ss-bj5 constants).
+          RELAY_URL: https://relay.spectralset.dev
+          CLOUD_API_URL: https://api.spectralset.dev
         run: bun run build:dist --target=${{ matrix.target }}
 
       - name: Upload tarball
         uses: actions/upload-artifact@v5
         with:
-          name: superset-${{ matrix.target }}
+          name: spectralset-${{ matrix.target }}
+          # File name still emitted as superset-*.tar.gz by packages/cli
+          # build-dist.ts until the CLI binary itself is renamed.
           path: packages/cli/dist/superset-${{ matrix.target }}.tar.gz
           if-no-files-found: error
 
@@ -65,7 +69,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           path: release-artifacts
-          pattern: superset-*
+          pattern: spectralset-*
           merge-multiple: true
 
       - name: Create Release
@@ -74,6 +78,6 @@ jobs:
         run: |
           gh release create "${{ github.ref_name }}" \
             release-artifacts/*.tar.gz \
-            --title "Superset CLI ${{ github.ref_name }}" \
+            --title "SpectralSet CLI ${{ github.ref_name }}" \
             --generate-notes \
             --draft

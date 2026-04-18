@@ -1,4 +1,7 @@
-app = "superset-electric"
+# TODO: spectralset-electric Fly app not yet provisioned; update matches
+# deploy-production.yml and cleanup-preview.yml. First prod deploy run
+# after this rebrand requires the new app to be created externally.
+app = "spectralset-electric"
 primary_region = "iad"
 
 [build]

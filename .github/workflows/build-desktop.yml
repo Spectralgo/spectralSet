@@ -105,7 +105,7 @@ jobs:
           SENTRY_DSN_DESKTOP: ${{ secrets.SENTRY_DSN_DESKTOP }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           RELAY_URL: ${{ secrets.RELAY_URL }}
-          SPECTRALSET_WORKSPACE_NAME: superset
+          SPECTRALSET_WORKSPACE_NAME: spectralset
         run: bun run compile:app
 
       - name: Build Electron app
@@ -228,7 +228,7 @@ jobs:
           SENTRY_DSN_DESKTOP: ${{ secrets.SENTRY_DSN_DESKTOP }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           RELAY_URL: ${{ secrets.RELAY_URL }}
-          SPECTRALSET_WORKSPACE_NAME: superset
+          SPECTRALSET_WORKSPACE_NAME: spectralset
         run: bun run compile:app
 
       - name: Build Electron app

@@ -2,7 +2,10 @@ name: Bump Homebrew Formula
 
 # Triggers when a CLI release (tag matching cli-v*) is published, computes
 # SHA256 for each platform tarball, and pushes an updated formula to the
-# superset-sh/homebrew-tap repository.
+# Spectralgo/homebrew-tap repository.
+#
+# TODO: the Spectralgo/homebrew-tap repo does not yet exist. First bump run
+# will fail on checkout until the tap repo is provisioned externally.
 
 on:
   release:
@@ -40,7 +43,10 @@ jobs:
         run: |
           set -euo pipefail
           for target in darwin-arm64 linux-x64; do
-            url="https://github.com/superset-sh/superset/releases/download/${TAG}/superset-${target}.tar.gz"
+            # Tarball file name stays superset-*.tar.gz because
+            # packages/cli/scripts/build-dist.ts still emits that name;
+            # the CLI binary rename is a follow-up bead.
+            url="https://github.com/Spectralgo/spectralSet/releases/download/${TAG}/superset-${target}.tar.gz"
             echo "Fetching SHA for $url"
             tmp=$(mktemp)
             if ! curl -fsSL -o "$tmp" "$url"; then
@@ -56,7 +62,7 @@ jobs:
       - name: Checkout homebrew-tap
         uses: actions/checkout@v5
         with:
-          repository: superset-sh/homebrew-tap
+          repository: Spectralgo/homebrew-tap
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           path: homebrew-tap
 
@@ -67,24 +73,27 @@ jobs:
           LINUX_X64_SHA: ${{ steps.shas.outputs.linux_x64_sha }}
         run: |
           set -euo pipefail
-          python3 - <<'PYEOF' > homebrew-tap/Formula/superset.rb
+          python3 - <<'PYEOF' > homebrew-tap/Formula/spectralset.rb
           import os
-          template = '''class Superset < Formula
-            desc "CLI and host-service for Superset"
-            homepage "https://superset.sh"
+          # Formula class + file name renamed to SpectralSet; the installed
+          # binary stays `superset` because packages/cli still ships it under
+          # that name (rename is a follow-up bead).
+          template = '''class Spectralset < Formula
+            desc "CLI and host-service for SpectralSet"
+            homepage "https://spectralset.dev"
             version "{version}"
             license "MIT"
 
             on_macos do
               on_arm do
-                url "https://github.com/superset-sh/superset/releases/download/cli-v#{{version}}/superset-darwin-arm64.tar.gz"
+                url "https://github.com/Spectralgo/spectralSet/releases/download/cli-v#{{version}}/superset-darwin-arm64.tar.gz"
                 sha256 "{darwin_arm64}"
               end
             end
 
             on_linux do
               on_intel do
-                url "https://github.com/superset-sh/superset/releases/download/cli-v#{{version}}/superset-linux-x64.tar.gz"
+                url "https://github.com/Spectralgo/spectralSet/releases/download/cli-v#{{version}}/superset-linux-x64.tar.gz"
                 sha256 "{linux_x64}"
               end
             end
@@ -115,12 +124,12 @@ jobs:
           cd homebrew-tap
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/superset.rb
+          git add Formula/spectralset.rb
           if git diff --cached --quiet; then
             echo "No changes to formula"
             exit 0
           fi
-          git commit -m "superset ${VERSION}"
+          git commit -m "spectralset ${VERSION}"
 
           # Retry once on non-fast-forward in case the remote moved between
           # checkout and push (shouldn't happen with the concurrency group,
