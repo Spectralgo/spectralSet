@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { authClient, setAuthToken, setJwt } from "renderer/lib/auth-client";
-import { SupersetLogo } from "renderer/routes/sign-in/components/SupersetLogo/SupersetLogo";
+import { SpectralSetLogo } from "renderer/routes/sign-in/components/SpectralSetLogo/SpectralSetLogo";
 import { electronTrpc } from "../../lib/electron-trpc";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	if (!isHydrated) {
 		return (
 			<div className="flex h-screen w-screen items-center justify-center bg-background">
-				<SupersetLogo className="h-8 w-auto animate-pulse opacity-80" />
+				<SpectralSetLogo className="h-8 w-auto animate-pulse opacity-80" />
 			</div>
 		);
 	}

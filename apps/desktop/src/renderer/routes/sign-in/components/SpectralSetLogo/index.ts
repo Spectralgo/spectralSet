@@ -1,0 +1,1 @@
+export { SpectralSetLogo } from "./SpectralSetLogo";

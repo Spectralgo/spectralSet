@@ -1,0 +1,13 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SpectralSet">
+  <title>SpectralSet</title>
+  <!-- TODO(ss-pul): placeholder wordmark; replace with final SpectralSet empty-state art. -->
+  <text
+    x="0"
+    y="44"
+    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+    font-weight="700"
+    font-size="40"
+    letter-spacing="-1"
+    fill="#EAE8E6"
+  >SpectralSet</text>
+</svg>

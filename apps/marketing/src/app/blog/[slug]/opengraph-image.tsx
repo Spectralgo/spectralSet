@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import { getBlogPost } from "@/lib/blog";
 import { formatBlogDate } from "@/lib/blog-utils";
 
-export const alt = "Superset Blog";
+export const alt = "SpectralSet Blog";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -67,7 +67,7 @@ export default async function Image({
 					fontFamily: "Inter",
 				}}
 			>
-				Superset Blog
+				SpectralSet Blog
 			</div>,
 			{
 				...size,

@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { LuFolderOpen, LuPlus, LuX } from "react-icons/lu";
 import { useOpenProject } from "renderer/react-query/projects";
-import { SupersetLogo } from "renderer/routes/sign-in/components/SupersetLogo";
+import { SpectralSetLogo } from "renderer/routes/sign-in/components/SpectralSetLogo";
 
 export function StartView() {
 	const navigate = useNavigate();
@@ -129,7 +129,7 @@ export function StartView() {
 				onDrop={handleDrop}
 			>
 				<div className="flex flex-col items-center w-full max-w-md px-6">
-					<SupersetLogo
+					<SpectralSetLogo
 						className={cn(
 							"h-8 w-auto mb-12 transition-opacity duration-200 opacity-80",
 							isDragOver && "opacity-0",

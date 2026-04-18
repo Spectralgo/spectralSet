@@ -7,7 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { env } from "renderer/env.renderer";
 import { track } from "renderer/lib/analytics";
 import { electronTrpc } from "renderer/lib/electron-trpc";
-import { SupersetLogo } from "./components/SupersetLogo";
+import { SpectralSetLogo } from "./components/SpectralSetLogo";
 import { useSessionRecovery } from "./hooks/useSessionRecovery";
 
 export const Route = createFileRoute("/sign-in/")({
@@ -49,7 +49,7 @@ function SignInPage() {
 			<div className="flex flex-1 items-center justify-center">
 				<div className="flex flex-col items-center w-full max-w-md px-8">
 					<div className="mb-8">
-						<SupersetLogo className="h-12 w-auto" />
+						<SpectralSetLogo className="h-12 w-auto" />
 					</div>
 
 					<div className="text-center mb-8">

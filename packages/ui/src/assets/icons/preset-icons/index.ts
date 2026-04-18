@@ -12,7 +12,7 @@ import opencodeIcon from "./opencode.svg";
 import opencodeWhiteIcon from "./opencode-white.svg";
 import piIcon from "./pi.svg";
 import piWhiteIcon from "./pi-white.svg";
-import supersetIcon from "./superset.svg";
+import spectralsetIcon from "./spectralset.svg";
 
 export interface PresetIconSet {
 	light: string;
@@ -26,8 +26,8 @@ export const PRESET_ICONS: Record<string, PresetIconSet> = {
 	copilot: { light: copilotIcon, dark: copilotWhiteIcon },
 	gemini: { light: geminiIcon, dark: geminiIcon },
 	pi: { light: piIcon, dark: piWhiteIcon },
-	superset: { light: supersetIcon, dark: supersetIcon },
-	"superset-chat": { light: supersetIcon, dark: supersetIcon },
+	superset: { light: spectralsetIcon, dark: spectralsetIcon },
+	"superset-chat": { light: spectralsetIcon, dark: spectralsetIcon },
 	"cursor-agent": { light: cursorAgentIcon, dark: cursorAgentIcon },
 	mastracode: { light: mastracodeIcon, dark: mastracodeWhiteIcon },
 	opencode: { light: opencodeIcon, dark: opencodeWhiteIcon },
@@ -58,5 +58,5 @@ export {
 	opencodeWhiteIcon,
 	piIcon,
 	piWhiteIcon,
-	supersetIcon,
+	spectralsetIcon,
 };

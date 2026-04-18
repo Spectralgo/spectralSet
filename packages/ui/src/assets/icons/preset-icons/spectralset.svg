@@ -1,0 +1,15 @@
+<svg width="182" height="183" viewBox="0 0 182 183" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SpectralSet">
+  <title>SpectralSet</title>
+  <!-- TODO(ss-pul): placeholder wordmark; replace with final SpectralSet art. -->
+  <rect width="182" height="183" rx="26" fill="#151110"/>
+  <text
+    x="91"
+    y="102"
+    text-anchor="middle"
+    font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+    font-weight="700"
+    font-size="26"
+    fill="#BBB9B7"
+    letter-spacing="-0.5"
+  >SpectralSet</text>
+</svg>
