@@ -140,7 +140,11 @@ export function GastownCard() {
 						</Button>
 					</p>
 				)}
-				{enabled && installed && <GastownRigList />}
+				{enabled && installed && (
+					<GastownRigList
+						fallbackTownRoot={probeQuery.data?.townRoot ?? undefined}
+					/>
+				)}
 			</CardContent>
 		</Card>
 	);

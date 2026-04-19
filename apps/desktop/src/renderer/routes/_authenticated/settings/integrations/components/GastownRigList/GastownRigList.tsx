@@ -3,17 +3,25 @@ import { useQuery } from "@tanstack/react-query";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 
-export function GastownRigList() {
-	const townPath = useGastownTownPath();
+interface GastownRigListProps {
+	// Probe-reported town root, used as a fallback when the user has not
+	// set a Town Path override. Prevents a parallel-fetch race where
+	// listRigs runs before probe populates the server-side cache.
+	fallbackTownRoot?: string;
+}
+
+export function GastownRigList({ fallbackTownRoot }: GastownRigListProps = {}) {
+	const userTownPath = useGastownTownPath();
+	const effectiveTownPath = userTownPath || fallbackTownRoot || "";
 	const {
 		data: rigs,
 		isLoading,
 		error,
 	} = useQuery({
-		queryKey: ["electron", "gastown", "listRigs", townPath],
+		queryKey: ["electron", "gastown", "listRigs", effectiveTownPath],
 		queryFn: () =>
 			electronTrpcClient.gastown.listRigs.query(
-				townPath ? { townPath } : undefined,
+				effectiveTownPath ? { townPath: effectiveTownPath } : undefined,
 			),
 		refetchOnWindowFocus: false,
 	});
