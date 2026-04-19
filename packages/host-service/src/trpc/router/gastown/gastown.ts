@@ -1,5 +1,6 @@
 import {
 	checkRecovery,
+	type GastownCliClientOptions,
 	listBeads,
 	listPolecats,
 	listRigs,
@@ -10,6 +11,7 @@ import {
 	sling,
 } from "@spectralset/gastown-cli-client";
 import { z } from "zod";
+import { getStrictShellEnvironment } from "../../../terminal/clean-shell-env";
 import { publicProcedure, router } from "../../index";
 
 const listPolecatsInputSchema = z
@@ -48,42 +50,71 @@ const nukeInputSchema = polecatTargetSchema.extend({
 	force: z.boolean().optional(),
 });
 
+// Electron's process.env on macOS doesn't include PATH entries from the
+// user's shell rc files (homebrew, asdf, mise, etc.), so a `gt` installed
+// via brew is invisible to plain `spawn("gt", ...)`. Resolve the full
+// shell PATH once per call (cached upstream) and pass it as the exec env.
+async function shellOptions(): Promise<GastownCliClientOptions> {
+	return { env: await getStrictShellEnvironment() };
+}
+
 export const gastownRouter = router({
-	probe: publicProcedure.query(() => probe()),
-	listRigs: publicProcedure.query(() => listRigs()),
+	probe: publicProcedure.query(async () => probe(await shellOptions())),
+	listRigs: publicProcedure.query(async () => listRigs(await shellOptions())),
 	listPolecats: publicProcedure
 		.input(listPolecatsInputSchema)
-		.query(({ input }) => listPolecats({ rig: input?.rig })),
+		.query(async ({ input }) =>
+			listPolecats({ rig: input?.rig }, await shellOptions()),
+		),
 	peek: publicProcedure
 		.input(peekInputSchema)
-		.query(({ input }) =>
-			peek({ rig: input.rig, polecat: input.polecat, lines: input.lines }),
+		.query(async ({ input }) =>
+			peek(
+				{ rig: input.rig, polecat: input.polecat, lines: input.lines },
+				await shellOptions(),
+			),
 		),
-	listBeads: publicProcedure.input(listBeadsInputSchema).query(({ input }) =>
-		listBeads({
-			rig: input.rig,
-			status: input.status,
-			limit: input.limit,
-		}),
-	),
-	sling: publicProcedure.input(slingInputSchema).mutation(({ input }) =>
-		sling({
-			rig: input.rig,
-			bead: input.bead,
-			mergeStrategy: input.mergeStrategy,
-			notes: input.notes,
-		}),
-	),
+	listBeads: publicProcedure
+		.input(listBeadsInputSchema)
+		.query(async ({ input }) =>
+			listBeads(
+				{
+					rig: input.rig,
+					status: input.status,
+					limit: input.limit,
+				},
+				await shellOptions(),
+			),
+		),
+	sling: publicProcedure
+		.input(slingInputSchema)
+		.mutation(async ({ input }) =>
+			sling(
+				{
+					rig: input.rig,
+					bead: input.bead,
+					mergeStrategy: input.mergeStrategy,
+					notes: input.notes,
+				},
+				await shellOptions(),
+			),
+		),
 	checkRecovery: publicProcedure
 		.input(polecatTargetSchema)
-		.query(({ input }) =>
-			checkRecovery({ rig: input.rig, polecat: input.polecat }),
+		.query(async ({ input }) =>
+			checkRecovery(
+				{ rig: input.rig, polecat: input.polecat },
+				await shellOptions(),
+			),
 		),
-	nuke: publicProcedure.input(nukeInputSchema).mutation(({ input }) =>
-		nuke({
-			rig: input.rig,
-			polecat: input.polecat,
-			force: input.force,
-		}),
+	nuke: publicProcedure.input(nukeInputSchema).mutation(async ({ input }) =>
+		nuke(
+			{
+				rig: input.rig,
+				polecat: input.polecat,
+				force: input.force,
+			},
+			await shellOptions(),
+		),
 	),
 });
