@@ -218,6 +218,71 @@ export const convoyStatusSchema = convoySchema;
 
 export type ConvoyStatus = z.infer<typeof convoyStatusSchema>;
 
+// `gt status --json` surfaces top-level agents (mayor/deacon/boot) and
+// rig-scoped agents (polecat/crew/witness/refinery). The CV data layer
+// flattens both shapes into a single AgentSummary stream so the renderer
+// can render every agent uniformly as a card.
+export const agentKindSchema = z.enum([
+	"mayor",
+	"deacon",
+	"boot",
+	"polecat",
+	"crew",
+	"witness",
+	"refinery",
+]);
+
+export type AgentKind = z.infer<typeof agentKindSchema>;
+
+export const agentStateSchema = z.enum([
+	"idle",
+	"working",
+	"stalled",
+	"zombie",
+	"done",
+	"nuked",
+]);
+
+export type AgentState = z.infer<typeof agentStateSchema>;
+
+export const agentSummarySchema = z.object({
+	kind: agentKindSchema,
+	name: z.string(),
+	address: z.string(),
+	session: z.string(),
+	role: z.string(),
+	rig: z.string().nullable(),
+	running: z.boolean(),
+	state: agentStateSchema,
+	unreadMail: z.number().int().nonnegative(),
+	firstSubject: z.string().nullable(),
+});
+
+export type AgentSummary = z.infer<typeof agentSummarySchema>;
+
+export const agentDetailSchema = agentSummarySchema.extend({
+	agentBeadId: z.string().nullable(),
+	hookBead: z.string().nullable(),
+	activeMr: z.string().nullable(),
+	branch: z.string().nullable(),
+	cleanupStatus: z.string().nullable(),
+	exitType: z.string().nullable(),
+	completionTime: z.string().nullable(),
+	// Best-effort list of recent closed beads authored by this agent. If the
+	// derivation path is unclear or too expensive, ship as an empty array.
+	recentCompletions: z
+		.array(
+			z.object({
+				beadId: z.string(),
+				title: z.string(),
+				closedAt: z.string().nullable(),
+			}),
+		)
+		.default([]),
+});
+
+export type AgentDetail = z.infer<typeof agentDetailSchema>;
+
 /**
  * A single entry from `git worktree list --porcelain`. Used by the
  * SpectralSet × Gas Town worktree bridge to discover polecat sandboxes.

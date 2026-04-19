@@ -16,6 +16,7 @@ import {
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
+import { createGastownAgentsRouter } from "./agents";
 import type {
 	applyReconciliation as ApplyReconciliationFn,
 	ReconcileResult,
@@ -407,6 +408,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					tmuxSocket: input.tmuxSocket,
 				});
 			}),
+		agents: createGastownAgentsRouter(),
 		convoys: createGastownConvoysRouter(),
 		mail: createGastownMailRouter(),
 		reconcile: publicProcedure

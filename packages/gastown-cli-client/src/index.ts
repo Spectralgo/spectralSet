@@ -36,6 +36,12 @@ import type {
 } from "./types";
 
 export {
+	type GetAgentArgs,
+	getAgent,
+	type ListAgentsArgs,
+	listAgents,
+} from "./agents";
+export {
 	type ConvoyStatusArgs,
 	convoyStatus,
 	type ListConvoysArgs,
@@ -64,6 +70,10 @@ export { SlingParseError } from "./parsers/sling";
 export { StatusParseError } from "./parsers/status";
 export { getRigPrefix } from "./rig-prefix";
 export type {
+	AgentDetail,
+	AgentKind,
+	AgentState,
+	AgentSummary,
 	Bead,
 	BeadStatus,
 	Convoy,
@@ -87,6 +97,10 @@ export type {
 	Worktree,
 } from "./types";
 export {
+	agentDetailSchema,
+	agentKindSchema,
+	agentStateSchema,
+	agentSummarySchema,
 	beadSchema,
 	beadStatusSchema,
 	convoyArraySchema,
