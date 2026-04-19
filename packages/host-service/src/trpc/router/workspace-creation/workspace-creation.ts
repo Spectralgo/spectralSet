@@ -717,7 +717,9 @@ export const workspaceCreationRouter = router({
 
 				if (!existsSync(repoPath)) {
 					mkdirSync(dirname(repoPath), { recursive: true });
-					await simpleGit().clone(cloudProject.repoCloneUrl, repoPath);
+					await simpleGit({
+						unsafe: { allowUnsafePager: true },
+					}).clone(cloudProject.repoCloneUrl, repoPath);
 				}
 
 				localProject = ctx.db
@@ -1046,7 +1048,9 @@ export const workspaceCreationRouter = router({
 				);
 				if (!existsSync(repoPath)) {
 					mkdirSync(dirname(repoPath), { recursive: true });
-					await simpleGit().clone(cloudProject.repoCloneUrl, repoPath);
+					await simpleGit({
+						unsafe: { allowUnsafePager: true },
+					}).clone(cloudProject.repoCloneUrl, repoPath);
 				}
 				localProject = ctx.db
 					.insert(projects)
