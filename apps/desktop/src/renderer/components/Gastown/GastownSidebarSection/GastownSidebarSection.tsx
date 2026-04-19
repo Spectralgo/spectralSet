@@ -35,15 +35,6 @@ export function GastownSidebarSection() {
 
 	const enabled = enabledQuery.data?.enabled ?? false;
 
-	// eslint-disable-next-line no-console
-	console.log("[GastownSidebar] enabledQuery", {
-		status: enabledQuery.status,
-		fetchStatus: enabledQuery.fetchStatus,
-		data: enabledQuery.data,
-		error: enabledQuery.error,
-		enabled,
-	});
-
 	if (!enabled) return null;
 
 	return <GastownSidebarSectionBody />;

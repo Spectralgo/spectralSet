@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { GastownSidebarSection } from "renderer/components/Gastown/GastownSidebarSection";
 import { useWorkspaceShortcuts } from "renderer/hooks/useWorkspaceShortcuts";
 import { useWorkspaceSelectionStore } from "renderer/stores/workspace-selection";
 import { MultiDragPreview } from "./MultiDragPreview";
@@ -108,6 +109,7 @@ export function WorkspaceSidebar({
 			</div>
 
 			{!isCollapsed && <PortsList />}
+			{!isCollapsed && <GastownSidebarSection />}
 
 			<SetupScriptCard
 				isCollapsed={isCollapsed}
