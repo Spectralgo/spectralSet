@@ -53,10 +53,7 @@ describe("getDefaultBranch", () => {
 	async function getDefaultBranchForTest(
 		mainRepoPath: string,
 	): Promise<string> {
-		const git = simpleGit({
-			baseDir: mainRepoPath,
-			unsafe: { allowUnsafePager: true },
-		});
+		const git = simpleGit(mainRepoPath);
 
 		try {
 			const headRef = await git.raw([

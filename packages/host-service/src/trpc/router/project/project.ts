@@ -162,10 +162,7 @@ async function importExistingRepo(
 		});
 	}
 
-	const git = simpleGit({
-		baseDir: localPath,
-		unsafe: { allowUnsafePager: true },
-	});
+	const git = simpleGit(localPath);
 
 	let gitRoot: string;
 	try {
@@ -177,9 +174,7 @@ async function importExistingRepo(
 		});
 	}
 
-	const remotes = await getGitHubRemotes(
-		simpleGit({ baseDir: gitRoot, unsafe: { allowUnsafePager: true } }),
-	);
+	const remotes = await getGitHubRemotes(simpleGit(gitRoot));
 	const matchingRemote = findMatchingRemote(remotes, expectedSlug);
 
 	if (!matchingRemote) {
@@ -235,10 +230,7 @@ async function cloneRepo(
 	}
 
 	try {
-		await simpleGit({ unsafe: { allowUnsafePager: true } }).clone(
-			repoCloneUrl,
-			targetPath,
-		);
+		await simpleGit().clone(repoCloneUrl, targetPath);
 	} catch (err) {
 		if (existsSync(targetPath)) {
 			rmSync(targetPath, { recursive: true, force: true });
@@ -249,9 +241,7 @@ async function cloneRepo(
 		});
 	}
 
-	const remotes = await getGitHubRemotes(
-		simpleGit({ baseDir: targetPath, unsafe: { allowUnsafePager: true } }),
-	);
+	const remotes = await getGitHubRemotes(simpleGit(targetPath));
 	const matchingRemote = findMatchingRemote(remotes, expectedSlug);
 
 	if (!matchingRemote) {

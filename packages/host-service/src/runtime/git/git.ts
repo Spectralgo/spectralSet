@@ -6,10 +6,7 @@ import { getRemoteUrl } from "./utils";
 export function createGitFactory(provider: GitCredentialProvider): GitFactory {
 	return async (repoPath: string) => {
 		const initialCredentials = await provider.getCredentials(null);
-		const git = simpleGit({
-			baseDir: repoPath,
-			unsafe: { allowUnsafePager: true },
-		}).env(initialCredentials.env);
+		const git = simpleGit(repoPath).env(initialCredentials.env);
 		const remoteUrl = await getRemoteUrl(git);
 		const credentials = await provider.getCredentials(remoteUrl);
 

@@ -11,12 +11,7 @@ const execFileAsync = promisify(execFile);
 export async function getSimpleGitWithShellPath(
 	repoPath?: string,
 ): Promise<SimpleGit> {
-	const git = repoPath
-		? simpleGit({
-				baseDir: repoPath,
-				unsafe: { allowUnsafePager: true },
-			})
-		: simpleGit({ unsafe: { allowUnsafePager: true } });
+	const git = repoPath ? simpleGit(repoPath) : simpleGit();
 	git.env(await getProcessEnvWithShellPath());
 	return git;
 }
