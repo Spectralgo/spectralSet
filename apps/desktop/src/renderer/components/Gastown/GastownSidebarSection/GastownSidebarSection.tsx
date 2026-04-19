@@ -1,4 +1,4 @@
-import { getRigPrefix, type RigAgent } from "@spectralset/gastown-cli-client";
+import type { RigAgent } from "@spectralset/gastown-cli-client";
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -13,6 +13,7 @@ import { AgentRow } from "renderer/components/Gastown/AgentRow";
 import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { attachToAgent, buildTmuxSessionName } from "renderer/lib/gastown";
+import { getRigPrefix } from "renderer/lib/gastown/rig-prefix";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { useTabsStore } from "renderer/stores/tabs/store";
 
