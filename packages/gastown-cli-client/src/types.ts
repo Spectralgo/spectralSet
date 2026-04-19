@@ -31,6 +31,12 @@ export const probeResultSchema = z.object({
 	rigs: z.array(rigSchema),
 	daemonRunning: z.boolean(),
 	doltRunning: z.boolean(),
+	// Socket name of the running Gas Town tmux server (e.g.
+	// "spectralgastown-a292c7"). Discovered from tmux by the desktop host;
+	// the cli-client itself always returns null. Used to build
+	// `tmux -L <socket> attach-session -t <prefix>-<polecat>` commands
+	// when the renderer attaches to a live polecat session.
+	tmuxSocket: z.string().nullable(),
 });
 
 export type ProbeResult = z.infer<typeof probeResultSchema>;

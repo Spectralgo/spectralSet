@@ -8,6 +8,7 @@ import {
 	listRigs,
 	listWorktrees,
 	mergeStrategySchema,
+	nudge,
 	nuke,
 	peek,
 	probe,
@@ -22,14 +23,23 @@ import type {
 } from "./apply-reconciliation";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 
-// Reads GT_TOWN_ROOT from any running Gas Town tmux socket. The Gas Town
-// shell sets this as a global tmux env var (`tmux set-environment -g
+export interface TmuxGastownLookup {
+	townRoot: string | undefined;
+	socket: string | undefined;
+}
+
+// Reads GT_TOWN_ROOT from any running Gas Town tmux socket, and returns
+// the matched socket name alongside it. The Gas Town shell sets
+// GT_TOWN_ROOT as a global tmux env var (`tmux set-environment -g
 // GT_TOWN_ROOT <town>`); agents spawned under tmux inherit it. Electron
-// doesn't, so we query tmux directly. Returns undefined if no matching
-// socket exists or the var is unset.
-async function readTownRootFromTmux(
+// doesn't, so we query tmux directly.
+//
+// The socket name is needed by the renderer to issue
+// `tmux -L <socket> attach-session -t <prefix>-<polecat>` when attaching
+// to a live polecat session from the Gas Town sidebar.
+async function readTownAndSocketFromTmux(
 	env: NodeJS.ProcessEnv,
-): Promise<string | undefined> {
+): Promise<TmuxGastownLookup> {
 	const SOCKET_GLOB = "spectralgastown-";
 	const sockets = await listTmuxSockets(env);
 	for (const socket of sockets) {
@@ -40,9 +50,9 @@ async function readTownRootFromTmux(
 		);
 		if (!value) continue;
 		const match = value.match(/^GT_TOWN_ROOT=(.+)$/m);
-		if (match?.[1]) return match[1].trim();
+		if (match?.[1]) return { townRoot: match[1].trim(), socket };
 	}
-	return undefined;
+	return { townRoot: undefined, socket: undefined };
 }
 
 async function listTmuxSockets(env: NodeJS.ProcessEnv): Promise<string[]> {
@@ -106,6 +116,13 @@ const peekInputSchema = z.object({
 	rig: z.string().min(1),
 	polecat: z.string().min(1),
 	lines: z.number().int().positive().max(2000).optional(),
+	townPath: townPathSchema,
+});
+
+const nudgeInputSchema = z.object({
+	rig: z.string().min(1),
+	polecat: z.string().min(1),
+	message: z.string().min(1).max(10_000),
 	townPath: townPathSchema,
 });
 
@@ -191,9 +208,11 @@ interface GastownRouterDeps {
 		opts: Parameters<typeof ApplyReconciliationFn>[0],
 	) => ReconcileResult | Promise<ReconcileResult>;
 	// Override the tmux env lookup (used by tests to isolate from the
-	// host's real tmux state). Returns the GT_TOWN_ROOT value, or
-	// undefined when no Gas Town tmux socket is present.
-	readTmuxTownRootFn?: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
+	// host's real tmux state). Returns the GT_TOWN_ROOT value + socket
+	// name, or `{ townRoot: undefined, socket: undefined }` when no
+	// Gas Town tmux socket is present.
+	readTmuxTownRootFn?: (env: NodeJS.ProcessEnv) => Promise<TmuxGastownLookup>;
+	nudgeFn?: typeof nudge;
 }
 
 export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
@@ -207,7 +226,9 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const nukeImpl = deps.nukeFn ?? nuke;
 	const listWorktreesImpl = deps.listWorktreesFn ?? listWorktrees;
 	const applyReconciliationOverride = deps.applyReconciliationFn;
-	const readTmuxTownRootImpl = deps.readTmuxTownRootFn ?? readTownRootFromTmux;
+	const readTmuxTownRootImpl =
+		deps.readTmuxTownRootFn ?? readTownAndSocketFromTmux;
+	const nudgeImpl = deps.nudgeFn ?? nudge;
 
 	async function applyReconciliationImpl(opts: {
 		projectId: string;
@@ -224,11 +245,14 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	// undefined so stale roots don't linger across uninstalls).
 	let cachedTownRoot: string | undefined;
 
-	// Town root discovered from the Gas Town tmux socket env. Read lazily
-	// on the first probe. Provides a known-good cwd for gt status --json
-	// even before the user sets an override or a successful probe caches
-	// its result.
+	// Town root + socket discovered from the Gas Town tmux env. Read
+	// lazily on the first probe. The town root provides a known-good
+	// cwd for `gt status --json` even before the user sets an override.
+	// The socket is surfaced to the renderer so it can build
+	// `tmux -L <socket> attach-session` commands when attaching to a
+	// polecat from the sidebar.
 	let tmuxTownRoot: string | undefined;
+	let tmuxSocket: string | undefined;
 	let tmuxLookupDone = false;
 
 	function resolveEffectiveTownPath(
@@ -244,7 +268,9 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
 			const opts = await shellOptions();
 			if (!tmuxLookupDone) {
-				tmuxTownRoot = await readTmuxTownRootImpl(opts.env ?? process.env);
+				const lookup = await readTmuxTownRootImpl(opts.env ?? process.env);
+				tmuxTownRoot = lookup.townRoot;
+				tmuxSocket = lookup.socket;
 				tmuxLookupDone = true;
 			}
 			const townRoot = resolveEffectiveTownPath(input?.townPath);
@@ -254,7 +280,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 			}
 			const result = await probeImpl(opts);
 			cachedTownRoot = result.townRoot ?? undefined;
-			return result;
+			return { ...result, tmuxSocket: tmuxSocket ?? null };
 		}),
 		listRigs: publicProcedure
 			.input(listRigsInputSchema)
@@ -286,6 +312,20 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 				await shellOptions(),
 			),
 		),
+		nudge: publicProcedure
+			.input(nudgeInputSchema)
+			.mutation(async ({ input }) => {
+				await nudgeImpl(
+					{
+						rig: input.rig,
+						polecat: input.polecat,
+						message: input.message,
+						townRoot: resolveEffectiveTownPath(input.townPath),
+					},
+					await shellOptions(),
+				);
+				return { ok: true as const };
+			}),
 		listBeads: publicProcedure
 			.input(listBeadsInputSchema)
 			.query(async ({ input }) =>

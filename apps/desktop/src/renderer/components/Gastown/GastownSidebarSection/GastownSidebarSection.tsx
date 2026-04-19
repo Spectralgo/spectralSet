@@ -1,14 +1,20 @@
-import type { RigAgent } from "@spectralset/gastown-cli-client";
+import { getRigPrefix, type RigAgent } from "@spectralset/gastown-cli-client";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@spectralset/ui/collapsible";
+import { toast } from "@spectralset/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useParams } from "@tanstack/react-router";
+import { useCallback, useMemo, useState } from "react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi2";
 import { AgentRow } from "renderer/components/Gastown/AgentRow";
+import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
+import { electronTrpc } from "renderer/lib/electron-trpc";
+import { attachToAgent, buildTmuxSessionName } from "renderer/lib/gastown";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
+import { useTabsStore } from "renderer/stores/tabs/store";
 
 // Shares the key with GastownCard so toggle + sidebar read the same cache.
 const ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
@@ -58,9 +64,83 @@ function GastownSidebarSectionBody() {
 		[rigs],
 	);
 
-	const onAttach = (_agent: RigAgent) => {
-		// Attach wiring lands via ss-x5y. MVP stub — no-op.
+	const tmuxSocket = probeQuery.data?.tmuxSocket ?? null;
+
+	const { workspaceId: activeWorkspaceId } = useParams({ strict: false }) as {
+		workspaceId?: string;
 	};
+	const addTab = useTabsStore((s) => s.addTab);
+	const setTabAutoTitle = useTabsStore((s) => s.setTabAutoTitle);
+	const setActiveTab = useTabsStore((s) => s.setActiveTab);
+	const createOrAttach = useCreateOrAttachWithTheme();
+	const writeToTerminal = electronTrpc.terminal.write.useMutation();
+
+	const onAttach = useCallback(
+		async (agent: RigAgent) => {
+			if (!activeWorkspaceId) {
+				toast.error(
+					"Open a workspace first — terminal tabs are workspace-scoped.",
+				);
+				return;
+			}
+			if (!tmuxSocket) {
+				toast.error(
+					"No Gas Town tmux session found. Start one via `gt` before attaching.",
+				);
+				return;
+			}
+			const rigPrefix = getRigPrefix(agent.rig);
+			const sessionName = buildTmuxSessionName(rigPrefix, agent.name);
+			try {
+				await attachToAgent(
+					{
+						rig: agent.rig,
+						polecat: agent.name,
+						rigPrefix,
+						tmuxSocket,
+						workspaceId: activeWorkspaceId,
+						state: agent.state ?? undefined,
+					},
+					{
+						findExistingAttachTab: () => {
+							const state = useTabsStore.getState();
+							const match = state.tabs.find(
+								(t) =>
+									t.workspaceId === activeWorkspaceId &&
+									(t.name === sessionName ||
+										t.name.startsWith(`${sessionName} `)),
+							);
+							if (!match) return null;
+							const paneIds = Object.keys(state.panes).filter(
+								(id) => state.panes[id]?.tabId === match.id,
+							);
+							const paneId = paneIds[0];
+							if (!paneId) return null;
+							return { tabId: match.id, paneId };
+						},
+						activateTab: (tabId) => setActiveTab(activeWorkspaceId, tabId),
+						addTab: (workspaceId) => addTab(workspaceId),
+						setTabTitle: (tabId, title) => setTabAutoTitle(tabId, title),
+						createOrAttach: (input) => createOrAttach.mutateAsync(input),
+						writeToTerminal: (input) => writeToTerminal.mutateAsync(input),
+					},
+				);
+			} catch (err) {
+				const message =
+					err instanceof Error ? err.message : "Failed to attach terminal";
+				toast.error(message);
+			}
+		},
+		[
+			activeWorkspaceId,
+			tmuxSocket,
+			addTab,
+			setTabAutoTitle,
+			setActiveTab,
+			createOrAttach,
+			writeToTerminal,
+		],
+	);
 
 	return (
 		<div className="border-t border-border/60 px-2 py-2">
