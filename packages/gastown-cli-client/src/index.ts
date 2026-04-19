@@ -60,6 +60,7 @@ export type {
 	RecoveryCheck,
 	RecoveryStatus,
 	Rig,
+	RigAgent,
 	SlingResult,
 	Worktree,
 } from "./types";
@@ -70,6 +71,7 @@ export {
 	nukeResultSchema,
 	recoveryCheckSchema,
 	recoveryStatusSchema,
+	rigAgentSchema,
 	slingResultSchema,
 	worktreeSchema,
 } from "./types";

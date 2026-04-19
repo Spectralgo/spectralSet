@@ -38,6 +38,7 @@ describe("parseStatus", () => {
 				refineryRunning: true,
 				polecatCount: 4,
 				crewCount: 13,
+				agents: [],
 			},
 			{
 				name: "spectralTranscript",
@@ -45,6 +46,7 @@ describe("parseStatus", () => {
 				refineryRunning: false,
 				polecatCount: 0,
 				crewCount: 0,
+				agents: [],
 			},
 		]);
 	});
@@ -89,6 +91,7 @@ describe("parseStatus", () => {
 				refineryRunning: false,
 				polecatCount: 0,
 				crewCount: 0,
+				agents: [],
 			},
 			{
 				name: "b",
@@ -96,6 +99,7 @@ describe("parseStatus", () => {
 				refineryRunning: true,
 				polecatCount: 0,
 				crewCount: 1,
+				agents: [],
 			},
 		]);
 	});
@@ -114,5 +118,54 @@ describe("parseStatus", () => {
 		expect(() => parseStatus(JSON.stringify([1, 2, 3]))).toThrow(
 			StatusParseError,
 		);
+	});
+
+	it("maps rig agents with mixed roles and drops invalid entries", () => {
+		const fixture = JSON.stringify({
+			name: "town",
+			location: "/t",
+			daemon: { running: true },
+			dolt: { running: true },
+			rigs: [
+				{
+					name: "alpha",
+					has_witness: true,
+					has_refinery: true,
+					polecat_count: 1,
+					crew_count: 2,
+					agents: [
+						{
+							name: "jasper",
+							role: "polecat",
+							session: "a-jasper",
+							state: "working",
+						},
+						{
+							name: "refinery",
+							role: "refinery",
+							session: "a-refinery",
+							state: "idle",
+						},
+						{ name: null, role: "crew", session: null, state: null },
+					],
+				},
+			],
+		});
+		const agents = parseStatus(fixture).rigs[0]?.agents ?? [];
+		expect(agents).toHaveLength(2);
+		expect(agents[0]).toEqual({
+			rig: "alpha",
+			name: "jasper",
+			role: "polecat",
+			session: "a-jasper",
+			state: "working",
+		});
+		expect(agents[1]).toEqual({
+			rig: "alpha",
+			name: "refinery",
+			role: "refinery",
+			session: "a-refinery",
+			state: "idle",
+		});
 	});
 });

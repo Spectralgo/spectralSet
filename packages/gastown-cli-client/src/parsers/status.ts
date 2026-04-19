@@ -1,4 +1,20 @@
-import type { Rig } from "../types";
+import type { Rig, RigAgent } from "../types";
+
+const KNOWN_ROLES = new Set([
+	"mayor",
+	"polecat",
+	"refinery",
+	"witness",
+	"crew",
+]);
+const KNOWN_STATES = new Set([
+	"working",
+	"idle",
+	"done",
+	"stalled",
+	"zombie",
+	"nuked",
+]);
 
 export class StatusParseError extends Error {
 	constructor(message: string) {
@@ -39,12 +55,28 @@ export function parseStatus(stdout: string): ParsedStatus {
 		if (!isRecord(entry)) continue;
 		const name = typeof entry.name === "string" ? entry.name : null;
 		if (!name) continue;
+		const agentsInput = Array.isArray(entry.agents) ? entry.agents : [];
+		const agents: RigAgent[] = [];
+		for (const a of agentsInput) {
+			if (!isRecord(a)) continue;
+			const agentName = typeof a.name === "string" ? a.name : null;
+			const role = KNOWN_ROLES.has(a.role as string)
+				? (a.role as RigAgent["role"])
+				: null;
+			if (!agentName || !role) continue;
+			const session = typeof a.session === "string" ? a.session : null;
+			const state = KNOWN_STATES.has(a.state as string)
+				? (a.state as RigAgent["state"])
+				: null;
+			agents.push({ rig: name, name: agentName, role, session, state });
+		}
 		rigs.push({
 			name,
 			witnessRunning: entry.has_witness === true,
 			refineryRunning: entry.has_refinery === true,
 			polecatCount: toNonNegativeInt(entry.polecat_count),
 			crewCount: toNonNegativeInt(entry.crew_count),
+			agents,
 		});
 	}
 

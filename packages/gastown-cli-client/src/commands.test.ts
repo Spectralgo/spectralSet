@@ -119,6 +119,7 @@ describe("probe() — gt status --json primary path", () => {
 					refineryRunning: true,
 					polecatCount: 2,
 					crewCount: 1,
+					agents: [],
 				},
 			],
 			daemonRunning: true,

@@ -1,11 +1,24 @@
 import { z } from "zod";
 
+export const rigAgentSchema = z.object({
+	rig: z.string(),
+	name: z.string(),
+	role: z.enum(["mayor", "polecat", "refinery", "witness", "crew"]),
+	session: z.string().nullable(),
+	state: z
+		.enum(["working", "idle", "done", "stalled", "zombie", "nuked"])
+		.nullable(),
+});
+
+export type RigAgent = z.infer<typeof rigAgentSchema>;
+
 export const rigSchema = z.object({
 	name: z.string(),
 	witnessRunning: z.boolean(),
 	refineryRunning: z.boolean(),
 	polecatCount: z.number().int().nonnegative(),
 	crewCount: z.number().int().nonnegative(),
+	agents: z.array(rigAgentSchema),
 });
 
 export type Rig = z.infer<typeof rigSchema>;

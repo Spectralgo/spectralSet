@@ -38,6 +38,7 @@ describe("parseRigList", () => {
 				refineryRunning: true,
 				polecatCount: 4,
 				crewCount: 13,
+				agents: [],
 			},
 			{
 				name: "spectralChat",
@@ -45,6 +46,7 @@ describe("parseRigList", () => {
 				refineryRunning: true,
 				polecatCount: 2,
 				crewCount: 3,
+				agents: [],
 			},
 			{
 				name: "spectralTranscript",
@@ -52,6 +54,7 @@ describe("parseRigList", () => {
 				refineryRunning: false,
 				polecatCount: 0,
 				crewCount: 0,
+				agents: [],
 			},
 		]);
 	});
@@ -64,6 +67,7 @@ describe("parseRigList", () => {
 				refineryRunning: true,
 				polecatCount: 7,
 				crewCount: 0,
+				agents: [],
 			},
 		]);
 	});

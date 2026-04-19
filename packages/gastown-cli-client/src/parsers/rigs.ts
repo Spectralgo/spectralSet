@@ -21,6 +21,7 @@ export function parseRigList(stdout: string): Rig[] {
 				refineryRunning: current.refineryRunning ?? false,
 				polecatCount: current.polecatCount ?? 0,
 				crewCount: current.crewCount ?? 0,
+				agents: [],
 			});
 		}
 	};
