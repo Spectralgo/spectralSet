@@ -8,6 +8,8 @@ import { createApiClient } from "./api";
 import { createDb } from "./db";
 import { EventBus, registerEventBusRoute } from "./events";
 import type { ApiAuthProvider } from "./providers/auth";
+import { DoltClient } from "./providers/dolt/client";
+import { DoltWatcher } from "./providers/dolt/watcher";
 import type { HostAuthProvider } from "./providers/host-auth";
 import type { ModelProviderRuntimeResolver } from "./providers/model-providers";
 import { ChatRuntimeManager } from "./runtime/chat";
@@ -88,6 +90,9 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	const eventBus = new EventBus({ db, filesystem });
 	eventBus.start();
 
+	const doltWatcher = new DoltWatcher(new DoltClient());
+	doltWatcher.start();
+
 	const wsAuth: MiddlewareHandler = async (c, next) => {
 		const token = c.req.query("token");
 		const authorized =
@@ -118,6 +123,7 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 					api,
 					db,
 					runtime,
+					doltWatcher,
 					organizationId: config.organizationId,
 					isAuthenticated,
 				} as Record<string, unknown>;

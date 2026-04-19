@@ -10,7 +10,9 @@ import {
 	probe,
 	sling,
 } from "@spectralset/gastown-cli-client";
+import { observable } from "@trpc/server/observable";
 import { z } from "zod";
+import type { DoltChangeEvent } from "../../../providers/dolt/watcher";
 import { getStrictShellEnvironment } from "../../../terminal/clean-shell-env";
 import { publicProcedure, router } from "../../index";
 
@@ -116,5 +118,12 @@ export const gastownRouter = router({
 			},
 			await shellOptions(),
 		),
+	),
+	doltChanges: publicProcedure.subscription(({ ctx }) =>
+		observable<DoltChangeEvent>((emit) => {
+			return ctx.doltWatcher.on((event) => {
+				emit.next(event);
+			});
+		}),
 	),
 });

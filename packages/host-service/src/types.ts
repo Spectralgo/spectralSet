@@ -2,6 +2,7 @@ import type { Octokit } from "@octokit/rest";
 import type { AppRouter } from "@spectralset/trpc";
 import type { TRPCClient } from "@trpc/client";
 import type { HostDb } from "./db";
+import type { DoltWatcher } from "./providers/dolt/watcher";
 import type { ChatRuntimeManager } from "./runtime/chat";
 import type { WorkspaceFilesystemManager } from "./runtime/filesystem";
 import type { GitFactory } from "./runtime/git";
@@ -21,6 +22,7 @@ export interface HostServiceContext {
 	api: ApiClient;
 	db: HostDb;
 	runtime: HostServiceRuntime;
+	doltWatcher: DoltWatcher;
 	organizationId: string;
 	isAuthenticated: boolean;
 }
