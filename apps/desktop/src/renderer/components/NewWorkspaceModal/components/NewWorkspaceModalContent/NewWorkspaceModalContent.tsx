@@ -10,7 +10,11 @@ import { PromptGroup } from "../PromptGroup";
 
 // Shared key with GastownCard + sidebar so all three read the same cache
 // backed by the host-side settings SQLite (not the cloud user API).
-const GASTOWN_ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
+const GASTOWN_ENABLED_QUERY_KEY = [
+	"electron",
+	"settings",
+	"gastownEnabled",
+] as const;
 
 interface NewWorkspaceModalContentProps {
 	isOpen: boolean;

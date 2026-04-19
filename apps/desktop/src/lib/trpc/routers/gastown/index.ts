@@ -27,7 +27,9 @@ import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 // GT_TOWN_ROOT <town>`); agents spawned under tmux inherit it. Electron
 // doesn't, so we query tmux directly. Returns undefined if no matching
 // socket exists or the var is unset.
-async function readTownRootFromTmux(env: NodeJS.ProcessEnv): Promise<string | undefined> {
+async function readTownRootFromTmux(
+	env: NodeJS.ProcessEnv,
+): Promise<string | undefined> {
 	const SOCKET_GLOB = "spectralgastown-";
 	const sockets = await listTmuxSockets(env);
 	for (const socket of sockets) {
@@ -38,7 +40,7 @@ async function readTownRootFromTmux(env: NodeJS.ProcessEnv): Promise<string | un
 		);
 		if (!value) continue;
 		const match = value.match(/^GT_TOWN_ROOT=(.+)$/m);
-		if (match && match[1]) return match[1].trim();
+		if (match?.[1]) return match[1].trim();
 	}
 	return undefined;
 }
@@ -46,7 +48,8 @@ async function readTownRootFromTmux(env: NodeJS.ProcessEnv): Promise<string | un
 async function listTmuxSockets(env: NodeJS.ProcessEnv): Promise<string[]> {
 	try {
 		const { readdir } = await import("node:fs/promises");
-		const tmpDir = env.TMUX_TMPDIR ?? `/private/tmp/tmux-${process.getuid?.() ?? ""}`;
+		const tmpDir =
+			env.TMUX_TMPDIR ?? `/private/tmp/tmux-${process.getuid?.() ?? ""}`;
 		const entries = await readdir(tmpDir);
 		return entries;
 	} catch {
@@ -54,7 +57,10 @@ async function listTmuxSockets(env: NodeJS.ProcessEnv): Promise<string[]> {
 	}
 }
 
-function runTmux(argv: string[], env: NodeJS.ProcessEnv): Promise<string | undefined> {
+function runTmux(
+	argv: string[],
+	env: NodeJS.ProcessEnv,
+): Promise<string | undefined> {
 	return new Promise((resolve) => {
 		const child = spawn("tmux", argv, {
 			env,
@@ -181,7 +187,9 @@ interface GastownRouterDeps {
 	// from ./apply-reconciliation. Tests pass a spy so the router can be
 	// exercised without dragging in the electron main-process localDb
 	// module at evaluation time.
-	applyReconciliationFn?: typeof ApplyReconciliationFn;
+	applyReconciliationFn?: (
+		opts: Parameters<typeof ApplyReconciliationFn>[0],
+	) => ReconcileResult | Promise<ReconcileResult>;
 	// Override the tmux env lookup (used by tests to isolate from the
 	// host's real tmux state). Returns the GT_TOWN_ROOT value, or
 	// undefined when no Gas Town tmux socket is present.

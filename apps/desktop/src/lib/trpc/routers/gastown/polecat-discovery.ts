@@ -9,7 +9,8 @@ import type { Polecat, Worktree } from "@spectralset/gastown-cli-client";
  */
 
 /** Matches both current and legacy polecat branch naming conventions. */
-const POLECAT_BRANCH_RE = /^polecat\/([a-z0-9_-]+?)(?:-mo[0-9a-z]+|\/[^@]+@mo[0-9a-z]+)$/i;
+const POLECAT_BRANCH_RE =
+	/^polecat\/([a-z0-9_-]+?)(?:-mo[0-9a-z]+|\/[^@]+@mo[0-9a-z]+)$/i;
 
 /** Extracts the polecat name segment from the sandbox path. */
 const POLECAT_PATH_SEGMENT_RE = /\/polecats\/([^/]+)\//;

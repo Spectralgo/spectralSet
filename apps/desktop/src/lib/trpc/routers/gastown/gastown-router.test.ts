@@ -104,8 +104,7 @@ describe("createGastownRouter townPath threading", () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
 			readTmuxTownRootFn: async () => undefined,
-			probeFn: async () =>
-				makeProbeResult({ townRoot: "/Users/demo/town" }),
+			probeFn: async () => makeProbeResult({ townRoot: "/Users/demo/town" }),
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -121,8 +120,7 @@ describe("createGastownRouter townPath threading", () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
 			readTmuxTownRootFn: async () => undefined,
-			probeFn: async () =>
-				makeProbeResult({ townRoot: "/Users/demo/cached" }),
+			probeFn: async () => makeProbeResult({ townRoot: "/Users/demo/cached" }),
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
