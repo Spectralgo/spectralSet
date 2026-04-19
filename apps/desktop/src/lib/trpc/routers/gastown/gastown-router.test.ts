@@ -94,4 +94,76 @@ describe("createGastownRouter townPath threading", () => {
 		await caller.probe({ townPath: "/Users/demo/town" });
 		expect((optsCapture[0] as { cwd?: string }).cwd).toBe("/Users/demo/town");
 	});
+
+	test("cached probe.townRoot is used as fallback when townPath is blank", async () => {
+		const calls: unknown[] = [];
+		const router = createGastownRouter({
+			probeFn: async () =>
+				makeProbeResult({ townRoot: "/Users/demo/town" }),
+			listRigsFn: async (args) => {
+				calls.push(args);
+				return [];
+			},
+		});
+		const caller = router.createCaller({});
+		await caller.probe();
+		await caller.listRigs();
+		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/town" });
+	});
+
+	test("user-supplied townPath wins over cached probe townRoot", async () => {
+		const calls: unknown[] = [];
+		const router = createGastownRouter({
+			probeFn: async () =>
+				makeProbeResult({ townRoot: "/Users/demo/cached" }),
+			listRigsFn: async (args) => {
+				calls.push(args);
+				return [];
+			},
+		});
+		const caller = router.createCaller({});
+		await caller.probe();
+		await caller.listRigs({ townPath: "/Users/demo/override" });
+		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/override" });
+	});
+
+	test("re-probing with a different townRoot overwrites the cache", async () => {
+		const calls: unknown[] = [];
+		let nextRoot = "/Users/demo/first";
+		const router = createGastownRouter({
+			probeFn: async () => makeProbeResult({ townRoot: nextRoot }),
+			listRigsFn: async (args) => {
+				calls.push(args);
+				return [];
+			},
+		});
+		const caller = router.createCaller({});
+		await caller.probe();
+		await caller.listRigs();
+		nextRoot = "/Users/demo/second";
+		await caller.probe();
+		await caller.listRigs();
+		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/first" });
+		expect(calls[1]).toMatchObject({ townRoot: "/Users/demo/second" });
+	});
+
+	test("probe with townRoot=null clears the cache", async () => {
+		const calls: unknown[] = [];
+		let nextRoot: string | null = "/Users/demo/town";
+		const router = createGastownRouter({
+			probeFn: async () => makeProbeResult({ townRoot: nextRoot }),
+			listRigsFn: async (args) => {
+				calls.push(args);
+				return [];
+			},
+		});
+		const caller = router.createCaller({});
+		await caller.probe();
+		await caller.listRigs();
+		nextRoot = null;
+		await caller.probe();
+		await caller.listRigs();
+		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/town" });
+		expect(calls[1]).toEqual({ townRoot: undefined });
+	});
 });

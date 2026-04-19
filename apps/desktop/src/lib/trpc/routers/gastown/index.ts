@@ -71,9 +71,10 @@ const nukeInputSchema = polecatTargetSchema.extend({
 });
 
 // Resolves the user-supplied Town Path override into an absolute cwd.
-// Precedence (per ss-iq9):
+// Precedence (per ss-iq9 + ss-e12):
 //   1. expandTilde(userTownPath) when non-empty.
-//   2. TODO(ss-egj): cachedProbe.townRoot from `gt status --json`.
+//   2. cachedProbe.townRoot from `gt status --json` (populated by the
+//      probe handler; see createGastownRouter).
 //   3. process.env.GT_TOWN_ROOT (handled downstream by gt).
 //   4. undefined — let gt pick its default.
 // `~` expansion must happen in the main process: Node's spawn({ cwd }) does
@@ -116,18 +117,34 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const checkRecoveryImpl = deps.checkRecoveryFn ?? checkRecovery;
 	const nukeImpl = deps.nukeFn ?? nuke;
 
+	// Cache of the town root reported by the most recent probe.
+	// Consulted as a fallback when the user leaves the Town Path input blank.
+	// Populated after every probe call (including failures — reset to
+	// undefined so stale roots don't linger across uninstalls).
+	let cachedTownRoot: string | undefined;
+
+	function resolveEffectiveTownPath(
+		townPath: string | undefined,
+	): string | undefined {
+		const expanded = resolveTownPath(townPath);
+		if (expanded) return expanded;
+		return cachedTownRoot;
+	}
+
 	return router({
 		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
-			const townRoot = resolveTownPath(input?.townPath);
+			const townRoot = resolveEffectiveTownPath(input?.townPath);
 			const opts = await shellOptions();
 			if (townRoot) opts.cwd = townRoot;
-			return probeImpl(opts);
+			const result = await probeImpl(opts);
+			cachedTownRoot = result.townRoot ?? undefined;
+			return result;
 		}),
 		listRigs: publicProcedure
 			.input(listRigsInputSchema)
 			.query(async ({ input }) =>
 				listRigsImpl(
-					{ townRoot: resolveTownPath(input?.townPath) },
+					{ townRoot: resolveEffectiveTownPath(input?.townPath) },
 					await shellOptions(),
 				),
 			),
@@ -137,7 +154,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 				listPolecatsImpl(
 					{
 						rig: input?.rig,
-						townRoot: resolveTownPath(input?.townPath),
+						townRoot: resolveEffectiveTownPath(input?.townPath),
 					},
 					await shellOptions(),
 				),
@@ -148,7 +165,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					rig: input.rig,
 					polecat: input.polecat,
 					lines: input.lines,
-					townRoot: resolveTownPath(input.townPath),
+					townRoot: resolveEffectiveTownPath(input.townPath),
 				},
 				await shellOptions(),
 			),
@@ -161,7 +178,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 						rig: input.rig,
 						status: input.status,
 						limit: input.limit,
-						gastownRoot: resolveTownPath(input.townPath),
+						gastownRoot: resolveEffectiveTownPath(input.townPath),
 					},
 					await shellOptions(),
 				),
@@ -173,7 +190,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					bead: input.bead,
 					mergeStrategy: input.mergeStrategy,
 					notes: input.notes,
-					townRoot: resolveTownPath(input.townPath),
+					townRoot: resolveEffectiveTownPath(input.townPath),
 				},
 				await shellOptions(),
 			),
@@ -185,7 +202,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					{
 						rig: input.rig,
 						polecat: input.polecat,
-						townRoot: resolveTownPath(input.townPath),
+						townRoot: resolveEffectiveTownPath(input.townPath),
 					},
 					await shellOptions(),
 				),
@@ -196,7 +213,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					rig: input.rig,
 					polecat: input.polecat,
 					force: input.force,
-					townRoot: resolveTownPath(input.townPath),
+					townRoot: resolveEffectiveTownPath(input.townPath),
 				},
 				await shellOptions(),
 			),
