@@ -12,6 +12,7 @@ import {
 	HiChevronDown,
 	HiChevronRight,
 	HiOutlineEnvelope,
+	HiOutlineTruck,
 } from "react-icons/hi2";
 import { AgentRow } from "renderer/components/Gastown/AgentRow";
 import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
@@ -193,6 +194,15 @@ function GastownSidebarSectionBody() {
 					>
 						<HiOutlineEnvelope className="size-3 shrink-0 text-muted-foreground" />
 						<span className="truncate">Mail</span>
+					</button>
+					<button
+						type="button"
+						onClick={() => navigate({ to: "/gastown/convoys" })}
+						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+						aria-label="Open Gas Town Convoys"
+					>
+						<HiOutlineTruck className="size-3 shrink-0 text-muted-foreground" />
+						<span className="truncate">Convoys</span>
 					</button>
 					{probeQuery.error ? (
 						<div className="px-2 text-xs text-destructive">
