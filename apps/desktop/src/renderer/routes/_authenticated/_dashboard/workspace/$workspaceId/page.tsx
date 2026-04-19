@@ -1,10 +1,13 @@
 import type { ExternalApp } from "@spectralset/local-db";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCopyToClipboard } from "renderer/hooks/useCopyToClipboard";
+import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
 import { useFileOpenMode } from "renderer/hooks/useFileOpenMode";
 import { useHotkey } from "renderer/hotkeys";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import { attachToAgent, buildTmuxSessionName } from "renderer/lib/gastown";
+import { getRigPrefix } from "renderer/lib/gastown/rig-prefix";
 import { electronTrpcClient as trpcClient } from "renderer/lib/trpc-client";
 import { usePresets } from "renderer/react-query/presets";
 import type { WorkspaceSearchParams } from "renderer/routes/_authenticated/_dashboard/utils/workspace-navigation";
@@ -118,6 +121,72 @@ function WorkspacePage() {
 
 		routeNavigate({ search: {}, replace: true });
 	}, [searchTabId, searchPaneId, workspaceId, routeNavigate]);
+
+	// Auto-attach a terminal tab to the polecat's tmux session when this
+	// workspace represents a Gas Town polecat sandbox. Guarded by a ref so
+	// the effect doesn't re-fire on every workspace/probe refetch. See ss-spl.
+	const { data: gastownProbe } = electronTrpc.gastown.probe.useQuery();
+	const polecatAddTab = useTabsStore((s) => s.addTab);
+	const setTabAutoTitle = useTabsStore((s) => s.setTabAutoTitle);
+	const setActiveTabForPolecat = useTabsStore((s) => s.setActiveTab);
+	const polecatCreateOrAttach = useCreateOrAttachWithTheme();
+	const polecatWriteToTerminal = electronTrpc.terminal.write.useMutation();
+	const attachedPolecatRef = useRef<string | null>(null);
+	useEffect(() => {
+		if (!workspace) return;
+		const rig = workspace.gastownRig;
+		const polecatName = workspace.gastownPolecatName;
+		if (!rig || !polecatName) return;
+		const tmuxSocket = gastownProbe?.tmuxSocket;
+		if (!tmuxSocket) return;
+		const key = `${workspace.id}::${rig}/${polecatName}`;
+		if (attachedPolecatRef.current === key) return;
+		attachedPolecatRef.current = key;
+
+		const rigPrefix = getRigPrefix(rig);
+		const sessionName = buildTmuxSessionName(rigPrefix, polecatName);
+		void attachToAgent(
+			{
+				rig,
+				polecat: polecatName,
+				rigPrefix,
+				tmuxSocket,
+				workspaceId,
+				cwd: workspace.worktreePath || undefined,
+			},
+			{
+				findExistingAttachTab: () => {
+					const state = useTabsStore.getState();
+					const match = state.tabs.find(
+						(t) =>
+							t.workspaceId === workspaceId &&
+							(t.name === sessionName || t.name.startsWith(`${sessionName} `)),
+					);
+					if (!match) return null;
+					const paneId = Object.keys(state.panes).find(
+						(id) => state.panes[id]?.tabId === match.id,
+					);
+					return paneId ? { tabId: match.id, paneId } : null;
+				},
+				activateTab: (tabId) => setActiveTabForPolecat(workspaceId, tabId),
+				addTab: (ws) => polecatAddTab(ws),
+				setTabTitle: setTabAutoTitle,
+				createOrAttach: (input) => polecatCreateOrAttach.mutateAsync(input),
+				writeToTerminal: (input) => polecatWriteToTerminal.mutateAsync(input),
+			},
+		).catch((err) => {
+			console.error("[WorkspacePage] polecat auto-attach failed", err);
+		});
+	}, [
+		workspace,
+		gastownProbe?.tmuxSocket,
+		workspaceId,
+		polecatAddTab,
+		setActiveTabForPolecat,
+		setTabAutoTitle,
+		polecatCreateOrAttach,
+		polecatWriteToTerminal,
+	]);
 
 	// Check if workspace is initializing or failed
 	const isInitializing = useIsWorkspaceInitializing(workspaceId);
