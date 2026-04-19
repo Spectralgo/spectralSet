@@ -10,6 +10,7 @@ import {
 import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 
 export interface NukeTarget {
@@ -29,6 +30,7 @@ export function NukeConfirmDialog({
 	onOpenChange,
 }: NukeConfirmDialogProps) {
 	const queryClient = useQueryClient();
+	const townPath = useGastownTownPath();
 
 	const recoveryQuery = useQuery<RecoveryCheck>({
 		queryKey: [
@@ -37,6 +39,7 @@ export function NukeConfirmDialog({
 			"checkRecovery",
 			target?.rig,
 			target?.name,
+			townPath,
 		],
 		queryFn: async () => {
 			if (!target) {
@@ -45,6 +48,7 @@ export function NukeConfirmDialog({
 			return await electronTrpcClient.gastown.checkRecovery.query({
 				rig: target.rig,
 				polecat: target.name,
+				...(townPath ? { townPath } : {}),
 			});
 		},
 		enabled: open && !!target,
@@ -53,8 +57,12 @@ export function NukeConfirmDialog({
 	});
 
 	const nukeMutation = useMutation({
-		mutationFn: (input: { rig: string; polecat: string; force: boolean }) =>
-			electronTrpcClient.gastown.nuke.mutate(input),
+		mutationFn: (input: {
+			rig: string;
+			polecat: string;
+			force: boolean;
+			townPath?: string;
+		}) => electronTrpcClient.gastown.nuke.mutate(input),
 		onSuccess: (_result, variables) => {
 			toast.success(`Nuked ${variables.polecat}`);
 			queryClient.invalidateQueries({
@@ -79,6 +87,7 @@ export function NukeConfirmDialog({
 			rig: target.rig,
 			polecat: target.name,
 			force,
+			...(townPath ? { townPath } : {}),
 		});
 	};
 

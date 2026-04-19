@@ -12,6 +12,7 @@ import { toast } from "@spectralset/ui/sonner";
 import { Textarea } from "@spectralset/ui/textarea";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { BeadPicker } from "./components/BeadPicker";
 import { MergeStrategySelect } from "./components/MergeStrategySelect";
@@ -23,9 +24,13 @@ interface GastownTabProps {
 const DEFAULT_MERGE_STRATEGY: MergeStrategy = "direct";
 
 export function GastownTab({ onSlung }: GastownTabProps) {
+	const townPath = useGastownTownPath();
 	const rigsQuery = useQuery({
-		queryKey: ["electron", "gastown", "listRigs"],
-		queryFn: () => electronTrpcClient.gastown.listRigs.query(),
+		queryKey: ["electron", "gastown", "listRigs", townPath],
+		queryFn: () =>
+			electronTrpcClient.gastown.listRigs.query(
+				townPath ? { townPath } : undefined,
+			),
 		refetchOnWindowFocus: false,
 	});
 
@@ -45,12 +50,20 @@ export function GastownTab({ onSlung }: GastownTabProps) {
 	}, [rigs, selectedRig]);
 
 	const beadsQuery = useQuery({
-		queryKey: ["electron", "gastown", "listBeads", selectedRig, "open"],
+		queryKey: [
+			"electron",
+			"gastown",
+			"listBeads",
+			selectedRig,
+			"open",
+			townPath,
+		],
 		queryFn: async () => {
 			if (!selectedRig) return [];
 			return await electronTrpcClient.gastown.listBeads.query({
 				rig: selectedRig,
 				status: "open",
+				...(townPath ? { townPath } : {}),
 			});
 		},
 		enabled: !!selectedRig,
@@ -71,6 +84,7 @@ export function GastownTab({ onSlung }: GastownTabProps) {
 			bead: string;
 			mergeStrategy: MergeStrategy;
 			notes?: string;
+			townPath?: string;
 		}) => electronTrpcClient.gastown.sling.mutate(input),
 		onSuccess: (result, variables) => {
 			toast.success(`Slung ${variables.bead} to ${result.polecat}`);
@@ -96,6 +110,7 @@ export function GastownTab({ onSlung }: GastownTabProps) {
 			bead: selectedBeadId,
 			mergeStrategy,
 			notes: notes.trim() ? notes.trim() : undefined,
+			...(townPath ? { townPath } : {}),
 		});
 	};
 

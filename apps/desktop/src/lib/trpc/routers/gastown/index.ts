@@ -14,9 +14,24 @@ import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
 
+const townPathSchema = z.string().min(1).optional();
+
+const probeInputSchema = z
+	.object({
+		townPath: townPathSchema,
+	})
+	.optional();
+
+const listRigsInputSchema = z
+	.object({
+		townPath: townPathSchema,
+	})
+	.optional();
+
 const listPolecatsInputSchema = z
 	.object({
 		rig: z.string().min(1).optional(),
+		townPath: townPathSchema,
 	})
 	.optional();
 
@@ -24,6 +39,7 @@ const peekInputSchema = z.object({
 	rig: z.string().min(1),
 	polecat: z.string().min(1),
 	lines: z.number().int().positive().max(2000).optional(),
+	townPath: townPathSchema,
 });
 
 const beadStatusSchema = z.enum(["open", "closed", "in_progress"]);
@@ -32,6 +48,7 @@ const listBeadsInputSchema = z.object({
 	rig: z.string().min(1),
 	status: beadStatusSchema.optional(),
 	limit: z.number().int().positive().max(500).optional(),
+	townPath: townPathSchema,
 });
 
 const slingInputSchema = z.object({
@@ -39,40 +56,62 @@ const slingInputSchema = z.object({
 	bead: z.string().min(1),
 	mergeStrategy: mergeStrategySchema,
 	notes: z.string().max(10_000).optional(),
+	townPath: townPathSchema,
 });
 
 const polecatTargetSchema = z.object({
 	rig: z.string().min(1),
 	polecat: z.string().min(1),
+	townPath: townPathSchema,
 });
 
 const nukeInputSchema = polecatTargetSchema.extend({
 	force: z.boolean().optional(),
 });
 
+function resolveTownPath(townPath: string | undefined): string | undefined {
+	if (!townPath) return undefined;
+	const trimmed = townPath.trim();
+	if (!trimmed) return undefined;
+	return trimmed.replace(/\/+$/, "");
+}
+
 // Electron's process.env on macOS doesn't include PATH entries from the
 // user's shell rc files (homebrew, asdf, mise, etc.), so a `gt` installed
 // via brew is invisible to plain `spawn("gt", ...)`. Resolve the full
 // shell PATH (cached) and pass it as the exec env on every call.
-async function shellOptions(): Promise<GastownCliClientOptions> {
-	return { env: await getProcessEnvWithShellPath() };
+async function shellOptions(
+	townPath?: string,
+): Promise<GastownCliClientOptions> {
+	const options: GastownCliClientOptions = {
+		env: await getProcessEnvWithShellPath(),
+	};
+	const cwd = resolveTownPath(townPath);
+	if (cwd) options.cwd = cwd;
+	return options;
 }
 
 export const createGastownRouter = () => {
 	return router({
-		probe: publicProcedure.query(async () => probe(await shellOptions())),
-		listRigs: publicProcedure.query(async () => listRigs(await shellOptions())),
+		probe: publicProcedure
+			.input(probeInputSchema)
+			.query(async ({ input }) => probe(await shellOptions(input?.townPath))),
+		listRigs: publicProcedure
+			.input(listRigsInputSchema)
+			.query(async ({ input }) =>
+				listRigs(await shellOptions(input?.townPath)),
+			),
 		listPolecats: publicProcedure
 			.input(listPolecatsInputSchema)
 			.query(async ({ input }) =>
-				listPolecats({ rig: input?.rig }, await shellOptions()),
+				listPolecats({ rig: input?.rig }, await shellOptions(input?.townPath)),
 			),
 		peek: publicProcedure
 			.input(peekInputSchema)
 			.query(async ({ input }) =>
 				peek(
 					{ rig: input.rig, polecat: input.polecat, lines: input.lines },
-					await shellOptions(),
+					await shellOptions(input.townPath),
 				),
 			),
 		listBeads: publicProcedure
@@ -83,8 +122,9 @@ export const createGastownRouter = () => {
 						rig: input.rig,
 						status: input.status,
 						limit: input.limit,
+						gastownRoot: resolveTownPath(input.townPath),
 					},
-					await shellOptions(),
+					await shellOptions(input.townPath),
 				),
 			),
 		sling: publicProcedure.input(slingInputSchema).mutation(async ({ input }) =>
@@ -95,7 +135,7 @@ export const createGastownRouter = () => {
 					mergeStrategy: input.mergeStrategy,
 					notes: input.notes,
 				},
-				await shellOptions(),
+				await shellOptions(input.townPath),
 			),
 		),
 		checkRecovery: publicProcedure
@@ -103,7 +143,7 @@ export const createGastownRouter = () => {
 			.query(async ({ input }) =>
 				checkRecovery(
 					{ rig: input.rig, polecat: input.polecat },
-					await shellOptions(),
+					await shellOptions(input.townPath),
 				),
 			),
 		nuke: publicProcedure.input(nukeInputSchema).mutation(async ({ input }) =>
@@ -113,7 +153,7 @@ export const createGastownRouter = () => {
 					polecat: input.polecat,
 					force: input.force,
 				},
-				await shellOptions(),
+				await shellOptions(input.townPath),
 			),
 		),
 	});

@@ -1,15 +1,20 @@
 import { Skeleton } from "@spectralset/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 
 export function GastownRigList() {
+	const townPath = useGastownTownPath();
 	const {
 		data: rigs,
 		isLoading,
 		error,
 	} = useQuery({
-		queryKey: ["electron", "gastown", "listRigs"],
-		queryFn: () => electronTrpcClient.gastown.listRigs.query(),
+		queryKey: ["electron", "gastown", "listRigs", townPath],
+		queryFn: () =>
+			electronTrpcClient.gastown.listRigs.query(
+				townPath ? { townPath } : undefined,
+			),
 		refetchOnWindowFocus: false,
 	});
 

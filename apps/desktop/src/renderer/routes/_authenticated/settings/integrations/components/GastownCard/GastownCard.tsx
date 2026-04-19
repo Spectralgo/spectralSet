@@ -5,24 +5,41 @@ import {
 	CardDescription,
 	CardHeader,
 } from "@spectralset/ui/card";
+import { Input } from "@spectralset/ui/input";
+import { Label } from "@spectralset/ui/label";
 import { Switch } from "@spectralset/ui/switch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
+import {
+	setGastownTownPath,
+	useGastownTownPath,
+} from "renderer/hooks/useGastownTownPath";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { GastownRigList } from "../GastownRigList";
 import { GastownStatus } from "../GastownStatus";
 
 const GASTOWN_DOCS_URL = "https://github.com/spectralgo/gastown";
+const TOWN_PATH_PLACEHOLDER = "~/code/spectralGasTown";
 
 const ENABLED_QUERY_KEY = ["user", "gastownEnabled"] as const;
 
 export function GastownCard() {
 	const queryClient = useQueryClient();
+	const townPath = useGastownTownPath();
+	const [townPathDraft, setTownPathDraft] = useState(townPath);
+
+	useEffect(() => {
+		setGastownTownPath(townPathDraft);
+	}, [townPathDraft]);
 
 	const probeQuery = useQuery({
-		queryKey: ["electron", "gastown", "probe"],
-		queryFn: () => electronTrpcClient.gastown.probe.query(),
+		queryKey: ["electron", "gastown", "probe", townPath],
+		queryFn: () =>
+			electronTrpcClient.gastown.probe.query(
+				townPath ? { townPath } : undefined,
+			),
 		refetchOnWindowFocus: false,
 	});
 
@@ -87,8 +104,29 @@ export function GastownCard() {
 					</div>
 				</div>
 			</CardHeader>
-			{!installed && !probeQuery.isLoading && (
-				<CardContent className="pt-0">
+			<CardContent className="space-y-3 pt-0">
+				<div className="flex flex-col gap-1.5">
+					<Label
+						htmlFor="gastown-town-path"
+						className="text-xs text-muted-foreground"
+					>
+						Town path (optional)
+					</Label>
+					<Input
+						id="gastown-town-path"
+						value={townPathDraft}
+						onChange={(e) => setTownPathDraft(e.target.value)}
+						placeholder={TOWN_PATH_PLACEHOLDER}
+						spellCheck={false}
+						autoCorrect="off"
+						autoCapitalize="off"
+					/>
+					<p className="text-xs text-muted-foreground">
+						Override auto-detection. Used as the working directory when invoking
+						gt/bd. Leave blank to use the default discovered town.
+					</p>
+				</div>
+				{!installed && !probeQuery.isLoading && (
 					<p className="text-sm text-muted-foreground">
 						Gas Town CLI not found on PATH.{" "}
 						<Button
@@ -101,13 +139,9 @@ export function GastownCard() {
 							<HiOutlineArrowTopRightOnSquare className="ml-1 size-3" />
 						</Button>
 					</p>
-				</CardContent>
-			)}
-			{enabled && installed && (
-				<CardContent className="pt-0">
-					<GastownRigList />
-				</CardContent>
-			)}
+				)}
+				{enabled && installed && <GastownRigList />}
+			</CardContent>
 		</Card>
 	);
 }
