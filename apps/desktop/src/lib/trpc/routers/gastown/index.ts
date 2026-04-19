@@ -21,6 +21,10 @@ import type {
 	applyReconciliation as ApplyReconciliationFn,
 	ReconcileResult,
 } from "./apply-reconciliation";
+import type {
+	ensureProject as EnsureProjectFn,
+	EnsureProjectResult,
+} from "./ensure-project";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 
 export interface TmuxGastownLookup {
@@ -164,6 +168,12 @@ const reconcileInputSchema = z.object({
 	townPath: townPathSchema,
 });
 
+const ensureProjectInputSchema = z.object({
+	townRoot: z.string().min(1),
+	townName: z.string().nullable(),
+	tmuxSocket: z.string().nullable(),
+});
+
 // Resolves the user-supplied Town Path override into an absolute cwd.
 // Precedence (per ss-iq9 + ss-e12):
 //   1. expandTilde(userTownPath) when non-empty.
@@ -207,6 +217,12 @@ interface GastownRouterDeps {
 	applyReconciliationFn?: (
 		opts: Parameters<typeof ApplyReconciliationFn>[0],
 	) => ReconcileResult | Promise<ReconcileResult>;
+	// Inject the DB-writing project/preset upsert. Default lazy-imports
+	// from ./ensure-project so tests can exercise the router wiring
+	// without dragging in the electron main-process localDb module.
+	ensureProjectFn?: (
+		opts: Parameters<typeof EnsureProjectFn>[0],
+	) => EnsureProjectResult | Promise<EnsureProjectResult>;
 	// Override the tmux env lookup (used by tests to isolate from the
 	// host's real tmux state). Returns the GT_TOWN_ROOT value + socket
 	// name, or `{ townRoot: undefined, socket: undefined }` when no
@@ -226,6 +242,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const nukeImpl = deps.nukeFn ?? nuke;
 	const listWorktreesImpl = deps.listWorktreesFn ?? listWorktrees;
 	const applyReconciliationOverride = deps.applyReconciliationFn;
+	const ensureProjectOverride = deps.ensureProjectFn;
 	const readTmuxTownRootImpl =
 		deps.readTmuxTownRootFn ?? readTownAndSocketFromTmux;
 	const nudgeImpl = deps.nudgeFn ?? nudge;
@@ -237,6 +254,16 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		if (applyReconciliationOverride) return applyReconciliationOverride(opts);
 		const { applyReconciliation } = await import("./apply-reconciliation");
 		return applyReconciliation(opts);
+	}
+
+	async function ensureProjectImpl(opts: {
+		townRoot: string;
+		townName: string | null;
+		tmuxSocket: string | null;
+	}): Promise<EnsureProjectResult> {
+		if (ensureProjectOverride) return ensureProjectOverride(opts);
+		const { ensureProject } = await import("./ensure-project");
+		return ensureProject(opts);
 	}
 
 	// Cache of the town root reported by the most recent probe.
@@ -385,6 +412,15 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					await shellOptions(),
 				),
 			),
+		ensureProject: publicProcedure
+			.input(ensureProjectInputSchema)
+			.mutation(async ({ input }): Promise<EnsureProjectResult> => {
+				return ensureProjectImpl({
+					townRoot: input.townRoot,
+					townName: input.townName,
+					tmuxSocket: input.tmuxSocket,
+				});
+			}),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)
 			.mutation(async ({ input }): Promise<ReconcileResult> => {

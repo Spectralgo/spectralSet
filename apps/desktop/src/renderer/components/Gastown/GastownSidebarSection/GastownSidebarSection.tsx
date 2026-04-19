@@ -7,7 +7,7 @@ import {
 import { toast } from "@spectralset/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi2";
 import { AgentRow } from "renderer/components/Gastown/AgentRow";
 import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
@@ -66,6 +66,24 @@ function GastownSidebarSectionBody() {
 	);
 
 	const tmuxSocket = probeQuery.data?.tmuxSocket ?? null;
+
+	// Auto-upsert the Gas Town project + Mayor preset once per unique
+	// townRoot seen from a successful probe. Guarded by a ref so the
+	// 5s probe refetch doesn't re-fire the mutation. See bead ss-4ho.
+	const ensuredTownRootRef = useRef<string | null>(null);
+	useEffect(() => {
+		const probe = probeQuery.data;
+		if (!probe?.installed) return;
+		const townRoot = probe.townRoot;
+		if (!townRoot) return;
+		if (ensuredTownRootRef.current === townRoot) return;
+		ensuredTownRootRef.current = townRoot;
+		void electronTrpcClient.gastown.ensureProject.mutate({
+			townRoot,
+			townName: probe.townName,
+			tmuxSocket: probe.tmuxSocket,
+		});
+	}, [probeQuery.data]);
 
 	const { workspaceId: activeWorkspaceId } = useParams({ strict: false }) as {
 		workspaceId?: string;
