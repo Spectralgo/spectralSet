@@ -22,14 +22,15 @@ import {
 } from "renderer/components/Gastown/PolecatPeekDrawer";
 import { PolecatRow } from "renderer/components/Gastown/PolecatRow";
 import { useGastownFleet } from "renderer/hooks/useGastownFleet";
-import { apiTrpcClient } from "renderer/lib/api-trpc-client";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 
-const ENABLED_QUERY_KEY = ["user", "gastownEnabled"] as const;
+// Shares the key with GastownCard so toggle + sidebar read the same cache.
+const ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
 
 export function GastownSidebarSection() {
 	const enabledQuery = useQuery({
 		queryKey: ENABLED_QUERY_KEY,
-		queryFn: () => apiTrpcClient.user.getGastownEnabled.query(),
+		queryFn: () => electronTrpcClient.settings.getGastownEnabled.query(),
 	});
 
 	const enabled = enabledQuery.data?.enabled ?? false;

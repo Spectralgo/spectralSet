@@ -15,7 +15,6 @@ import {
 	setGastownTownPath,
 	useGastownTownPath,
 } from "renderer/hooks/useGastownTownPath";
-import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { GastownRigList } from "../GastownRigList";
 import { GastownStatus } from "../GastownStatus";
@@ -23,7 +22,9 @@ import { GastownStatus } from "../GastownStatus";
 const GASTOWN_DOCS_URL = "https://github.com/spectralgo/gastown";
 const TOWN_PATH_PLACEHOLDER = "~/code/spectralGasTown";
 
-const ENABLED_QUERY_KEY = ["user", "gastownEnabled"] as const;
+// Gas Town is a local feature; enabled flag lives in the host-side
+// settings SQLite via electronTrpcClient, not the cloud user API.
+const ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
 
 export function GastownCard() {
 	const queryClient = useQueryClient();
@@ -59,12 +60,12 @@ export function GastownCard() {
 
 	const enabledQuery = useQuery({
 		queryKey: ENABLED_QUERY_KEY,
-		queryFn: () => apiTrpcClient.user.getGastownEnabled.query(),
+		queryFn: () => electronTrpcClient.settings.getGastownEnabled.query(),
 	});
 
 	const setEnabled = useMutation({
 		mutationFn: (enabled: boolean) =>
-			apiTrpcClient.user.setGastownEnabled.mutate({ enabled }),
+			electronTrpcClient.settings.setGastownEnabled.mutate({ enabled }),
 		onMutate: async (enabled) => {
 			await queryClient.cancelQueries({ queryKey: ENABLED_QUERY_KEY });
 			const previous = queryClient.getQueryData<{ enabled: boolean }>(

@@ -1,14 +1,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@spectralset/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { apiTrpcClient } from "renderer/lib/api-trpc-client";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { useCloseNewWorkspaceModal } from "renderer/stores/new-workspace-modal";
 import { useNewWorkspaceModalDraft } from "../../NewWorkspaceModalDraftContext";
 import { GastownTab } from "../GastownTab";
 import { PromptGroup } from "../PromptGroup";
 
-const GASTOWN_ENABLED_QUERY_KEY = ["user", "gastownEnabled"] as const;
+// Shared key with GastownCard + sidebar so all three read the same cache
+// backed by the host-side settings SQLite (not the cloud user API).
+const GASTOWN_ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
 
 interface NewWorkspaceModalContentProps {
 	isOpen: boolean;
@@ -32,7 +34,7 @@ export function NewWorkspaceModalContent({
 
 	const gastownEnabledQuery = useQuery({
 		queryKey: GASTOWN_ENABLED_QUERY_KEY,
-		queryFn: () => apiTrpcClient.user.getGastownEnabled.query(),
+		queryFn: () => electronTrpcClient.settings.getGastownEnabled.query(),
 	});
 	const gastownEnabled = gastownEnabledQuery.data?.enabled ?? false;
 

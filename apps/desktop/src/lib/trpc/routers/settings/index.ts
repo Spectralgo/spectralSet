@@ -965,6 +965,26 @@ export const createSettingsRouter = () => {
 				return { success: true };
 			}),
 
+		getGastownEnabled: publicProcedure.query(() => {
+			const row = getSettings();
+			return { enabled: row.gastownEnabled ?? false };
+		}),
+
+		setGastownEnabled: publicProcedure
+			.input(z.object({ enabled: z.boolean() }))
+			.mutation(({ input }) => {
+				localDb
+					.insert(settings)
+					.values({ id: 1, gastownEnabled: input.enabled })
+					.onConflictDoUpdate({
+						target: settings.id,
+						set: { gastownEnabled: input.enabled },
+					})
+					.run();
+
+				return { enabled: input.enabled };
+			}),
+
 		// TODO: remove telemetry procedures once telemetry_enabled column is dropped
 		getTelemetryEnabled: publicProcedure.query(() => {
 			return true;

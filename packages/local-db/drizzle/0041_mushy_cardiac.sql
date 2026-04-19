@@ -1,0 +1,1 @@
+ALTER TABLE `settings` ADD `gastown_enabled` integer;
