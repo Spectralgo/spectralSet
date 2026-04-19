@@ -3,13 +3,18 @@ import { toast } from "@spectralset/ui/sonner";
 import { cn } from "@spectralset/ui/utils";
 import { formatDistanceToNow } from "date-fns";
 import { useMemo, useState } from "react";
-import { HiOutlineClipboard, HiOutlineEnvelope } from "react-icons/hi2";
+import {
+	HiOutlineClipboard,
+	HiOutlineEnvelope,
+	HiOutlinePencilSquare,
+} from "react-icons/hi2";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import {
 	type MailMessage,
 	priorityBadgeClass,
 } from "renderer/lib/gastown/mail-types";
 import { AddressPicker, MAYOR_ADDRESS } from "./AddressPicker";
+import { ComposeMailDialog } from "./ComposeMailDialog";
 
 export interface MailPanelProps {
 	initialAddress?: string;
@@ -18,6 +23,7 @@ export interface MailPanelProps {
 export function MailPanel({ initialAddress = MAYOR_ADDRESS }: MailPanelProps) {
 	const [address, setAddress] = useState(initialAddress);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
+	const [composeOpen, setComposeOpen] = useState(false);
 
 	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
 		{ address, unreadOnly: false },
@@ -35,7 +41,17 @@ export function MailPanel({ initialAddress = MAYOR_ADDRESS }: MailPanelProps) {
 			<header className="flex items-center gap-3 border-b border-border/60 px-4 py-3">
 				<HiOutlineEnvelope className="size-5 text-muted-foreground" />
 				<h1 className="text-sm font-medium">Gas Town Mail</h1>
-				<div className="ml-auto">
+				<div className="ml-auto flex items-center gap-2">
+					<Button
+						type="button"
+						size="sm"
+						variant="outline"
+						className="h-8 gap-1.5 text-xs"
+						onClick={() => setComposeOpen(true)}
+					>
+						<HiOutlinePencilSquare className="size-3.5" />
+						Compose
+					</Button>
 					<AddressPicker
 						value={address}
 						onChange={(next) => {
@@ -45,6 +61,11 @@ export function MailPanel({ initialAddress = MAYOR_ADDRESS }: MailPanelProps) {
 					/>
 				</div>
 			</header>
+			<ComposeMailDialog
+				open={composeOpen}
+				onOpenChange={setComposeOpen}
+				initialTo={address}
+			/>
 			<div className="flex min-h-0 flex-1">
 				<MessageList
 					messages={messages}
