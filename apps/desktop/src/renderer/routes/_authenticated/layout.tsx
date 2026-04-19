@@ -32,6 +32,7 @@ import { setPaneWorkspaceRunState } from "renderer/stores/tabs/workspace-run";
 import { useWorkspaceInitStore } from "renderer/stores/workspace-init";
 import { MOCK_ORG_ID, NOTIFICATION_EVENTS } from "shared/constants";
 import { AgentHooks } from "./components/AgentHooks";
+import { GastownDoltInvalidation } from "./components/GastownDoltInvalidation";
 import { GlobalTerminalLifecycle } from "./components/GlobalTerminalLifecycle";
 import { TeardownLogsDialog } from "./components/TeardownLogsDialog";
 import { createPierreWorker } from "./lib/pierreWorker";
@@ -57,6 +58,9 @@ function AuthenticatedLayout() {
 	const utils = electronTrpc.useUtils();
 	const shownWorkspaceInitWarningsRef = useRef(new Set<string>());
 	const { isV2CloudEnabled } = useIsV2CloudEnabled();
+	const gastownEnabledQuery =
+		electronTrpc.settings.getGastownEnabled.useQuery();
+	const gastownEnabled = gastownEnabledQuery.data?.enabled ?? false;
 
 	const isSignedIn = env.SKIP_ENV_VALIDATION || !!session?.user;
 	const activeOrganizationId = env.SKIP_ENV_VALIDATION
@@ -183,6 +187,7 @@ function AuthenticatedLayout() {
 			<CollectionsProvider>
 				<GlobalTerminalLifecycle />
 				<LocalHostServiceProvider>
+					<GastownDoltInvalidation enabled={gastownEnabled} />
 					<WorkerPoolContextProvider
 						poolOptions={{ workerFactory: createPierreWorker, poolSize: 8 }}
 						highlighterOptions={{ preferredHighlighter: "shiki-wasm" }}

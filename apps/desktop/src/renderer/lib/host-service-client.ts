@@ -1,5 +1,10 @@
 import type { AppRouter } from "@spectralset/host-service";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import {
+	createTRPCClient,
+	httpBatchLink,
+	httpSubscriptionLink,
+	splitLink,
+} from "@trpc/client";
 import superjson from "superjson";
 import { getHostServiceHeaders } from "./host-service-auth";
 
@@ -18,12 +23,20 @@ export function getHostServiceClientByUrl(hostUrl: string): HostServiceClient {
 	const cached = clientCache.get(hostUrl);
 	if (cached) return cached;
 
+	const trpcUrl = `${hostUrl}/trpc`;
 	const client = createTRPCClient<AppRouter>({
 		links: [
-			httpBatchLink({
-				url: `${hostUrl}/trpc`,
-				transformer: superjson,
-				headers: () => getHostServiceHeaders(hostUrl),
+			splitLink({
+				condition: (op) => op.type === "subscription",
+				true: httpSubscriptionLink({
+					url: trpcUrl,
+					transformer: superjson,
+				}),
+				false: httpBatchLink({
+					url: trpcUrl,
+					transformer: superjson,
+					headers: () => getHostServiceHeaders(hostUrl),
+				}),
 			}),
 		],
 	});
