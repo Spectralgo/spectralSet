@@ -7,7 +7,7 @@ import {
 	ContextMenuTrigger,
 } from "@spectralset/ui/context-menu";
 import { cn } from "@spectralset/ui/utils";
-import { LuEye, LuTrash2 } from "react-icons/lu";
+import { LuEye, LuMessageSquare, LuTerminal, LuTrash2 } from "react-icons/lu";
 
 const STATE_DOT_CLASS: Record<PolecatState, string> = {
 	working: "bg-emerald-500",
@@ -29,20 +29,37 @@ const STATE_LABEL: Record<PolecatState, string> = {
 
 interface PolecatRowProps {
 	polecat: Polecat;
+	onAttach: () => void;
 	onPeek: () => void;
+	onNudge: () => void;
 	onNuke: () => void;
+	attachDisabled?: boolean;
 }
 
-export function PolecatRow({ polecat, onPeek, onNuke }: PolecatRowProps) {
+export function PolecatRow({
+	polecat,
+	onAttach,
+	onPeek,
+	onNudge,
+	onNuke,
+	attachDisabled,
+}: PolecatRowProps) {
 	const label = polecat.currentBeadTitle ?? polecat.currentBead ?? "";
+	const handlePrimaryClick = () => {
+		if (attachDisabled) {
+			onPeek();
+			return;
+		}
+		onAttach();
+	};
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger asChild>
 				<button
 					type="button"
-					onClick={onPeek}
+					onClick={handlePrimaryClick}
 					className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
-					aria-label={`Peek ${polecat.rig}/${polecat.name} (${STATE_LABEL[polecat.state]})`}
+					aria-label={`Attach terminal to ${polecat.rig}/${polecat.name} (${STATE_LABEL[polecat.state]})`}
 				>
 					<span
 						aria-hidden
@@ -64,9 +81,17 @@ export function PolecatRow({ polecat, onPeek, onNuke }: PolecatRowProps) {
 				</button>
 			</ContextMenuTrigger>
 			<ContextMenuContent>
+				<ContextMenuItem onSelect={onAttach} disabled={attachDisabled}>
+					<LuTerminal className="mr-2 size-4" />
+					Attach terminal
+				</ContextMenuItem>
 				<ContextMenuItem onSelect={onPeek}>
 					<LuEye className="mr-2 size-4" />
 					Peek
+				</ContextMenuItem>
+				<ContextMenuItem onSelect={onNudge}>
+					<LuMessageSquare className="mr-2 size-4" />
+					Nudge…
 				</ContextMenuItem>
 				<ContextMenuSeparator />
 				<ContextMenuItem variant="destructive" onSelect={onNuke}>

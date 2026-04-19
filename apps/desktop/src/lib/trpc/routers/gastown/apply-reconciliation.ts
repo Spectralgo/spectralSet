@@ -82,13 +82,12 @@ export function applyReconciliation(opts: {
 			.returning()
 			.get();
 
-		const maxTabOrder =
-			localDb
-				.select({ tabOrder: workspaces.tabOrder })
-				.from(workspaces)
-				.where(eq(workspaces.projectId, opts.projectId))
-				.all()
-				.reduce((max, r) => (r.tabOrder > max ? r.tabOrder : max), 0);
+		const maxTabOrder = localDb
+			.select({ tabOrder: workspaces.tabOrder })
+			.from(workspaces)
+			.where(eq(workspaces.projectId, opts.projectId))
+			.all()
+			.reduce((max, r) => (r.tabOrder > max ? r.tabOrder : max), 0);
 
 		localDb
 			.insert(workspaces)

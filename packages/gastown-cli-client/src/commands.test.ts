@@ -123,6 +123,7 @@ describe("probe() — gt status --json primary path", () => {
 			],
 			daemonRunning: true,
 			doltRunning: true,
+			tmuxSocket: null,
 		});
 		expect(calls).toHaveLength(1);
 		expect(calls[0]?.argv).toEqual(["status", "--json"]);

@@ -1,17 +1,23 @@
-import type { Polecat } from "@spectralset/gastown-cli-client";
+import { getRigPrefix, type Polecat } from "@spectralset/gastown-cli-client";
 import { Button } from "@spectralset/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@spectralset/ui/collapsible";
+import { toast } from "@spectralset/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useParams } from "@tanstack/react-router";
+import { useCallback, useMemo, useState } from "react";
 import {
 	HiChevronDown,
 	HiChevronRight,
 	HiOutlineArrowPath,
 } from "react-icons/hi2";
+import {
+	NudgeDialog,
+	type NudgeTarget,
+} from "renderer/components/Gastown/NudgeDialog";
 import {
 	NukeConfirmDialog,
 	type NukeTarget,
@@ -21,8 +27,13 @@ import {
 	type PolecatPeekTarget,
 } from "renderer/components/Gastown/PolecatPeekDrawer";
 import { PolecatRow } from "renderer/components/Gastown/PolecatRow";
+import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
 import { useGastownFleet } from "renderer/hooks/useGastownFleet";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
+import { electronTrpc } from "renderer/lib/electron-trpc";
+import { attachToAgent, buildTmuxSessionName } from "renderer/lib/gastown";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
+import { useTabsStore } from "renderer/stores/tabs/store";
 
 // Shares the key with GastownCard so toggle + sidebar read the same cache.
 const ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
@@ -42,14 +53,100 @@ export function GastownSidebarSection() {
 
 function GastownSidebarSectionBody() {
 	const [open, setOpen] = useState(true);
-	const [target, setTarget] = useState<PolecatPeekTarget | null>(null);
+	const [peekTarget, setPeekTarget] = useState<PolecatPeekTarget | null>(null);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [nukeTarget, setNukeTarget] = useState<NukeTarget | null>(null);
 	const [nukeOpen, setNukeOpen] = useState(false);
+	const [nudgeTarget, setNudgeTarget] = useState<NudgeTarget | null>(null);
+	const [nudgeOpen, setNudgeOpen] = useState(false);
 
 	const fleetQuery = useGastownFleet({ enabled: true });
 	const polecats = fleetQuery.data ?? [];
 	const rigs = useMemo(() => groupByRig(polecats), [polecats]);
+
+	const townPath = useGastownTownPath();
+	const probeQuery = electronTrpc.gastown.probe.useQuery(
+		townPath ? { townPath } : undefined,
+	);
+	const tmuxSocket = probeQuery.data?.tmuxSocket ?? null;
+
+	const { workspaceId: activeWorkspaceId } = useParams({ strict: false }) as {
+		workspaceId?: string;
+	};
+	const addTab = useTabsStore((s) => s.addTab);
+	const setTabAutoTitle = useTabsStore((s) => s.setTabAutoTitle);
+	const setActiveTab = useTabsStore((s) => s.setActiveTab);
+	const createOrAttach = useCreateOrAttachWithTheme();
+	const writeToTerminal = electronTrpc.terminal.write.useMutation();
+
+	const handleAttach = useCallback(
+		async (polecat: Polecat) => {
+			if (!activeWorkspaceId) {
+				toast.error(
+					"Open a workspace first — terminal tabs are workspace-scoped.",
+				);
+				return;
+			}
+			if (!tmuxSocket) {
+				toast.error(
+					"No Gas Town tmux session found. Start one via `gt` before attaching.",
+				);
+				return;
+			}
+			const rigPrefix = getRigPrefix(polecat.rig);
+			const sessionName = buildTmuxSessionName(rigPrefix, polecat.name);
+			try {
+				await attachToAgent(
+					{
+						rig: polecat.rig,
+						polecat: polecat.name,
+						rigPrefix,
+						tmuxSocket,
+						workspaceId: activeWorkspaceId,
+						state: polecat.state,
+					},
+					{
+						findExistingAttachTab: () => {
+							const state = useTabsStore.getState();
+							const match = state.tabs.find(
+								(t) =>
+									t.workspaceId === activeWorkspaceId &&
+									(t.name === sessionName ||
+										t.name.startsWith(`${sessionName} `)),
+							);
+							if (!match) return null;
+							const paneIds = Object.keys(state.panes).filter(
+								(id) => state.panes[id]?.tabId === match.id,
+							);
+							const paneId = paneIds[0];
+							if (!paneId) return null;
+							return { tabId: match.id, paneId };
+						},
+						activateTab: (tabId) => setActiveTab(activeWorkspaceId, tabId),
+						addTab: (workspaceId) => addTab(workspaceId),
+						setTabTitle: (tabId, title) => setTabAutoTitle(tabId, title),
+						createOrAttach: (input) => createOrAttach.mutateAsync(input),
+						writeToTerminal: (input) => writeToTerminal.mutateAsync(input),
+					},
+				);
+			} catch (err) {
+				const message =
+					err instanceof Error ? err.message : "Failed to attach terminal";
+				toast.error(message);
+			}
+		},
+		[
+			activeWorkspaceId,
+			tmuxSocket,
+			addTab,
+			setTabAutoTitle,
+			setActiveTab,
+			createOrAttach,
+			writeToTerminal,
+		],
+	);
+
+	const attachDisabled = !activeWorkspaceId || !tmuxSocket;
 
 	return (
 		<div className="border-t border-border/60 px-2 py-2">
@@ -106,9 +203,15 @@ function GastownSidebarSectionBody() {
 								key={rig.name}
 								rig={rig.name}
 								polecats={rig.polecats}
+								attachDisabled={attachDisabled}
+								onAttach={handleAttach}
 								onPeek={(p) => {
-									setTarget({ rig: p.rig, name: p.name, state: p.state });
+									setPeekTarget({ rig: p.rig, name: p.name, state: p.state });
 									setDrawerOpen(true);
+								}}
+								onNudge={(p) => {
+									setNudgeTarget({ rig: p.rig, name: p.name });
+									setNudgeOpen(true);
 								}}
 								onNuke={(p) => {
 									setNukeTarget({ rig: p.rig, name: p.name });
@@ -120,11 +223,19 @@ function GastownSidebarSectionBody() {
 				</CollapsibleContent>
 			</Collapsible>
 			<PolecatPeekDrawer
-				target={target}
+				target={peekTarget}
 				open={drawerOpen}
 				onOpenChange={(next) => {
 					setDrawerOpen(next);
-					if (!next) setTarget(null);
+					if (!next) setPeekTarget(null);
+				}}
+			/>
+			<NudgeDialog
+				target={nudgeTarget}
+				open={nudgeOpen}
+				onOpenChange={(next) => {
+					setNudgeOpen(next);
+					if (!next) setNudgeTarget(null);
 				}}
 			/>
 			<NukeConfirmDialog
@@ -142,11 +253,22 @@ function GastownSidebarSectionBody() {
 interface RigGroupProps {
 	rig: string;
 	polecats: Polecat[];
+	attachDisabled: boolean;
+	onAttach: (polecat: Polecat) => void;
 	onPeek: (polecat: Polecat) => void;
+	onNudge: (polecat: Polecat) => void;
 	onNuke: (polecat: Polecat) => void;
 }
 
-function RigGroup({ rig, polecats, onPeek, onNuke }: RigGroupProps) {
+function RigGroup({
+	rig,
+	polecats,
+	attachDisabled,
+	onAttach,
+	onPeek,
+	onNudge,
+	onNuke,
+}: RigGroupProps) {
 	const [open, setOpen] = useState(true);
 	return (
 		<Collapsible open={open} onOpenChange={setOpen}>
@@ -166,7 +288,10 @@ function RigGroup({ rig, polecats, onPeek, onNuke }: RigGroupProps) {
 					<PolecatRow
 						key={`${polecat.rig}/${polecat.name}`}
 						polecat={polecat}
+						attachDisabled={attachDisabled}
+						onAttach={() => onAttach(polecat)}
 						onPeek={() => onPeek(polecat)}
+						onNudge={() => onNudge(polecat)}
 						onNuke={() => onNuke(polecat)}
 					/>
 				))}

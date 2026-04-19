@@ -48,6 +48,7 @@ export {
 export { RecoveryParseError } from "./parsers/recovery";
 export { SlingParseError } from "./parsers/sling";
 export { StatusParseError } from "./parsers/status";
+export { getRigPrefix } from "./rig-prefix";
 export type {
 	Bead,
 	BeadStatus,
@@ -84,6 +85,7 @@ const EMPTY_PROBE: ProbeResult = {
 	rigs: [],
 	daemonRunning: false,
 	doltRunning: false,
+	tmuxSocket: null,
 };
 
 export async function probe(
@@ -114,6 +116,7 @@ export async function probe(
 				rigs: parsed.rigs,
 				daemonRunning: parsed.daemonRunning,
 				doltRunning: parsed.doltRunning,
+				tmuxSocket: null,
 			};
 		} catch (err) {
 			if (!(err instanceof StatusParseError)) throw err;
@@ -318,6 +321,37 @@ export async function checkRecovery(
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
 	return parseRecovery(stdout);
+}
+
+export interface NudgeArgs {
+	rig: string;
+	polecat: string;
+	message: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
+/**
+ * Sends a message to a polecat's Claude session via `gt nudge`.
+ * The message is passed over stdin so it can contain newlines, quotes,
+ * and shell metacharacters without escaping.
+ */
+export async function nudge(
+	args: NudgeArgs,
+	options: GastownCliClientOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<void> {
+	const target = `${args.rig}/${args.polecat}`;
+	const argv = ["nudge", target, "--stdin"];
+	const cwd = resolveRigCwd(args.rig, args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd, stdin: args.message },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
 }
 
 export interface NukeArgs {

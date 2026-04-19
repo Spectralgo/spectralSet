@@ -11,6 +11,7 @@ function makeProbeResult(overrides: Partial<ProbeResult> = {}): ProbeResult {
 		rigs: [],
 		daemonRunning: true,
 		doltRunning: true,
+		tmuxSocket: null,
 		...overrides,
 	};
 }
@@ -19,7 +20,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("listRigs forwards trimmed townPath as townRoot to cli-client", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -33,7 +37,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("listRigs passes townRoot=undefined when townPath omitted", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -47,7 +54,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("peek forwards townPath as townRoot for rig-scoped composition", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			peekFn: async (args) => {
 				calls.push(args);
 				return { output: "ok" };
@@ -69,7 +79,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("listBeads forwards townPath as gastownRoot", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			listBeadsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -89,7 +102,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("probe sets cwd from townPath via shellOptions", async () => {
 		const optsCapture: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			probeFn: async (opts) => {
 				optsCapture.push(opts);
 				return makeProbeResult();
@@ -103,9 +119,11 @@ describe("createGastownRouter townPath threading", () => {
 	test("cached probe.townRoot is used as fallback when townPath is blank", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
-			probeFn: async () =>
-				makeProbeResult({ townRoot: "/Users/demo/town" }),
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			probeFn: async () => makeProbeResult({ townRoot: "/Users/demo/town" }),
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -120,9 +138,11 @@ describe("createGastownRouter townPath threading", () => {
 	test("user-supplied townPath wins over cached probe townRoot", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
-			probeFn: async () =>
-				makeProbeResult({ townRoot: "/Users/demo/cached" }),
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			probeFn: async () => makeProbeResult({ townRoot: "/Users/demo/cached" }),
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -138,7 +158,10 @@ describe("createGastownRouter townPath threading", () => {
 		const calls: unknown[] = [];
 		let nextRoot = "/Users/demo/first";
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			probeFn: async () => makeProbeResult({ townRoot: nextRoot }),
 			listRigsFn: async (args) => {
 				calls.push(args);
@@ -159,7 +182,10 @@ describe("createGastownRouter townPath threading", () => {
 		const calls: unknown[] = [];
 		let nextRoot: string | null = "/Users/demo/town";
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			probeFn: async () => makeProbeResult({ townRoot: nextRoot }),
 			listRigsFn: async (args) => {
 				calls.push(args);
@@ -179,7 +205,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("listWorktrees forwards rig + resolved townRoot", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			listWorktreesFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -196,7 +225,10 @@ describe("createGastownRouter townPath threading", () => {
 	test("reconcile collates worktrees + polecats and hands specs to applyReconciliation", async () => {
 		const specsCapture: unknown[] = [];
 		const router = createGastownRouter({
-			readTmuxTownRootFn: async () => undefined,
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
 			listWorktreesFn: async () => [
 				{
 					path: "/t/alpha/polecats/jasper/alpha",
@@ -242,5 +274,64 @@ describe("createGastownRouter townPath threading", () => {
 		expect(captured.specs).toHaveLength(1);
 		expect(captured.specs[0].polecatName).toBe("jasper");
 		expect(captured.specs[0].beadId).toBe("a-42");
+	});
+
+	test("probe returns tmuxSocket discovered from the tmux env", async () => {
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => ({
+				townRoot: "/Users/demo/town",
+				socket: "spectralgastown-a292c7",
+			}),
+			probeFn: async () => makeProbeResult(),
+		});
+		const caller = router.createCaller({});
+		const result = await caller.probe();
+		expect(result.tmuxSocket).toBe("spectralgastown-a292c7");
+	});
+
+	test("probe returns tmuxSocket=null when no Gas Town tmux is running", async () => {
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			probeFn: async () => makeProbeResult(),
+		});
+		const caller = router.createCaller({});
+		const result = await caller.probe();
+		expect(result.tmuxSocket).toBeNull();
+	});
+
+	test("nudge forwards rig + polecat + message + resolved townRoot", async () => {
+		const calls: Array<{
+			rig: string;
+			polecat: string;
+			message: string;
+			townRoot?: string;
+		}> = [];
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			nudgeFn: async (args) => {
+				calls.push(args);
+			},
+		});
+		const caller = router.createCaller({});
+		const result = await caller.nudge({
+			rig: "alpha",
+			polecat: "jasper",
+			message: "status please",
+			townPath: "/Users/demo/town",
+		});
+		expect(result).toEqual({ ok: true });
+		expect(calls).toHaveLength(1);
+		expect(calls[0]).toMatchObject({
+			rig: "alpha",
+			polecat: "jasper",
+			message: "status please",
+			townRoot: "/Users/demo/town",
+		});
 	});
 });
