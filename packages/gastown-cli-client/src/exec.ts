@@ -1,6 +1,17 @@
 import { type SpawnOptions, spawn } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
 
 export const DEFAULT_TIMEOUT_MS = 5_000;
+
+export function expandTilde(p: string | undefined | null): string | undefined {
+	if (p == null) return undefined;
+	const trimmed = p.trim();
+	if (trimmed === "") return undefined;
+	if (trimmed === "~") return homedir();
+	if (trimmed.startsWith("~/")) return join(homedir(), trimmed.slice(2));
+	return trimmed;
+}
 
 export interface ExecGtOptions {
 	timeoutMs?: number;

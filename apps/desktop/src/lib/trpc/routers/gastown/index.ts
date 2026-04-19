@@ -1,5 +1,6 @@
 import {
 	checkRecovery,
+	expandTilde,
 	type GastownCliClientOptions,
 	listBeads,
 	listPolecats,
@@ -69,11 +70,21 @@ const nukeInputSchema = polecatTargetSchema.extend({
 	force: z.boolean().optional(),
 });
 
-function resolveTownPath(townPath: string | undefined): string | undefined {
-	if (!townPath) return undefined;
-	const trimmed = townPath.trim();
-	if (!trimmed) return undefined;
-	return trimmed.replace(/\/+$/, "");
+// Resolves the user-supplied Town Path override into an absolute cwd.
+// Precedence (per ss-iq9):
+//   1. expandTilde(userTownPath) when non-empty.
+//   2. TODO(ss-egj): cachedProbe.townRoot from `gt status --json`.
+//   3. process.env.GT_TOWN_ROOT (handled downstream by gt).
+//   4. undefined — let gt pick its default.
+// `~` expansion must happen in the main process: Node's spawn({ cwd }) does
+// not expand tildes (shells do), so a literal "~/..." is treated as a
+// relative path and lookup fails.
+export function resolveTownPath(
+	townPath: string | undefined,
+): string | undefined {
+	const expanded = expandTilde(townPath);
+	if (!expanded) return undefined;
+	return expanded.replace(/\/+$/, "");
 }
 
 // Electron's process.env on macOS doesn't include PATH entries from the

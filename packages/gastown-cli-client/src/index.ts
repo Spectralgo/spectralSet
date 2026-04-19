@@ -32,6 +32,7 @@ import type {
 } from "./types";
 
 export {
+	expandTilde,
 	GastownCliError,
 	GastownCliNotInstalledError,
 	GastownCliTimeoutError,

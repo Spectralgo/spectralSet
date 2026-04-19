@@ -1,7 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import { EventEmitter } from "node:events";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import {
 	execGt,
+	expandTilde,
 	GastownCliError,
 	GastownCliNotInstalledError,
 	GastownCliTimeoutError,
@@ -115,5 +118,53 @@ describe("execGt", () => {
 		expect(err.argv).toEqual(["rig", "list"]);
 		expect(err.exitCode).toBe(3);
 		expect(err.stderr).toBe("bad things");
+	});
+});
+
+describe("expandTilde", () => {
+	it("returns undefined for undefined", () => {
+		expect(expandTilde(undefined)).toBeUndefined();
+	});
+
+	it("returns undefined for null", () => {
+		expect(expandTilde(null)).toBeUndefined();
+	});
+
+	it("returns undefined for empty string", () => {
+		expect(expandTilde("")).toBeUndefined();
+	});
+
+	it("returns undefined for whitespace-only string", () => {
+		expect(expandTilde("   ")).toBeUndefined();
+	});
+
+	it("expands bare ~ to homedir()", () => {
+		expect(expandTilde("~")).toBe(homedir());
+	});
+
+	it("expands ~/ prefix to homedir-joined path", () => {
+		expect(expandTilde("~/foo")).toBe(join(homedir(), "foo"));
+	});
+
+	it("expands ~/nested/path correctly", () => {
+		expect(expandTilde("~/code/spectralGasTown")).toBe(
+			join(homedir(), "code/spectralGasTown"),
+		);
+	});
+
+	it("trims surrounding whitespace before expanding", () => {
+		expect(expandTilde("  ~/foo  ")).toBe(join(homedir(), "foo"));
+	});
+
+	it("returns absolute paths unchanged", () => {
+		expect(expandTilde("/abs/path")).toBe("/abs/path");
+	});
+
+	it("returns relative paths unchanged", () => {
+		expect(expandTilde("foo/bar")).toBe("foo/bar");
+	});
+
+	it("leaves ~user-style prefixes unchanged (out of scope)", () => {
+		expect(expandTilde("~bob/foo")).toBe("~bob/foo");
 	});
 });
