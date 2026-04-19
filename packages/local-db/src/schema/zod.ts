@@ -179,11 +179,28 @@ export const agentCustomDefinitionSchema = z.object({
 export type AgentCustomDefinition = z.infer<typeof agentCustomDefinitionSchema>;
 
 /**
- * Workspace type
+ * Workspace type. `polecat` is the Gas Town bridge type — the workspace
+ * maps onto a polecat sandbox managed by `gt sling` / `gt polecat nuke`.
  */
-export const workspaceTypeSchema = z.enum(["worktree", "branch"]);
+export const workspaceTypeSchema = z.enum(["worktree", "branch", "polecat"]);
 
 export type WorkspaceType = z.infer<typeof workspaceTypeSchema>;
+
+/**
+ * Gas Town state of a polecat workspace. Mirrors the states reported by
+ * `gt polecat list`. `nuked` rows are treated as archived (filtered from
+ * the sidebar by default).
+ */
+export const gastownStateSchema = z.enum([
+	"idle",
+	"working",
+	"stalled",
+	"zombie",
+	"done",
+	"nuked",
+]);
+
+export type GastownState = z.infer<typeof gastownStateSchema>;
 
 /**
  * External apps that can be opened

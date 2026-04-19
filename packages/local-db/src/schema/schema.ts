@@ -7,6 +7,7 @@ import type {
 	BranchPrefixMode,
 	ExternalApp,
 	FileOpenMode,
+	GastownState,
 	GitHubStatus,
 	GitStatus,
 	TerminalLinkBehavior,
@@ -131,6 +132,16 @@ export const workspaces = sqliteTable(
 		sectionId: text("section_id").references(() => workspaceSections.id, {
 			onDelete: "set null",
 		}),
+		// Gas Town bridge metadata. Only populated when type = "polecat".
+		// Lets us correlate a SpectralSet workspace row with the polecat
+		// sandbox that Gas Town owns. See ai_docs/WORKTREE-BRIDGE-DESIGN.md.
+		gastownTown: text("gastown_town"),
+		gastownRig: text("gastown_rig"),
+		gastownPolecatName: text("gastown_polecat_name"),
+		gastownBeadId: text("gastown_bead_id"),
+		gastownBranch: text("gastown_branch"),
+		gastownState: text("gastown_state").$type<GastownState>(),
+		gastownLastSyncedAt: integer("gastown_last_synced_at"),
 	},
 	(table) => [
 		index("workspaces_project_id_idx").on(table.projectId),
