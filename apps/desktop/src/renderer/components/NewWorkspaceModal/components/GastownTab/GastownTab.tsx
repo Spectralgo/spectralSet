@@ -12,8 +12,7 @@ import { toast } from "@spectralset/ui/sonner";
 import { Textarea } from "@spectralset/ui/textarea";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
-import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { BeadPicker } from "./components/BeadPicker";
 import { MergeStrategySelect } from "./components/MergeStrategySelect";
 
@@ -24,16 +23,9 @@ interface GastownTabProps {
 const DEFAULT_MERGE_STRATEGY: MergeStrategy = "direct";
 
 export function GastownTab({ onSlung }: GastownTabProps) {
-	const { activeHostUrl } = useLocalHostService();
-
 	const rigsQuery = useQuery({
-		queryKey: ["host", "gastown", "listRigs", activeHostUrl],
-		queryFn: async () => {
-			if (!activeHostUrl) return [];
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.listRigs.query();
-		},
-		enabled: !!activeHostUrl,
+		queryKey: ["electron", "gastown", "listRigs"],
+		queryFn: () => electronTrpcClient.gastown.listRigs.query(),
 		refetchOnWindowFocus: false,
 	});
 
@@ -53,23 +45,15 @@ export function GastownTab({ onSlung }: GastownTabProps) {
 	}, [rigs, selectedRig]);
 
 	const beadsQuery = useQuery({
-		queryKey: [
-			"host",
-			"gastown",
-			"listBeads",
-			activeHostUrl,
-			selectedRig,
-			"open",
-		],
+		queryKey: ["electron", "gastown", "listBeads", selectedRig, "open"],
 		queryFn: async () => {
-			if (!activeHostUrl || !selectedRig) return [];
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.listBeads.query({
+			if (!selectedRig) return [];
+			return await electronTrpcClient.gastown.listBeads.query({
 				rig: selectedRig,
 				status: "open",
 			});
 		},
-		enabled: !!activeHostUrl && !!selectedRig,
+		enabled: !!selectedRig,
 		refetchOnWindowFocus: false,
 	});
 
@@ -82,18 +66,12 @@ export function GastownTab({ onSlung }: GastownTabProps) {
 	};
 
 	const slingMutation = useMutation({
-		mutationFn: async (input: {
+		mutationFn: (input: {
 			rig: string;
 			bead: string;
 			mergeStrategy: MergeStrategy;
 			notes?: string;
-		}) => {
-			if (!activeHostUrl) {
-				throw new Error("Host service unavailable");
-			}
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.sling.mutate(input);
-		},
+		}) => electronTrpcClient.gastown.sling.mutate(input),
 		onSuccess: (result, variables) => {
 			toast.success(`Slung ${variables.bead} to ${result.polecat}`);
 			onSlung();

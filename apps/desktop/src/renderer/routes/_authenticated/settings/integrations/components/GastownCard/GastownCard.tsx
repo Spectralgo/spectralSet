@@ -9,8 +9,7 @@ import { Switch } from "@spectralset/ui/switch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
 import { apiTrpcClient } from "renderer/lib/api-trpc-client";
-import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
-import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { GastownRigList } from "../GastownRigList";
 import { GastownStatus } from "../GastownStatus";
 
@@ -20,16 +19,10 @@ const ENABLED_QUERY_KEY = ["user", "gastownEnabled"] as const;
 
 export function GastownCard() {
 	const queryClient = useQueryClient();
-	const { activeHostUrl } = useLocalHostService();
 
 	const probeQuery = useQuery({
-		queryKey: ["host", "gastown", "probe", activeHostUrl],
-		queryFn: async () => {
-			if (!activeHostUrl) return null;
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.probe.query();
-		},
-		enabled: !!activeHostUrl,
+		queryKey: ["electron", "gastown", "probe"],
+		queryFn: () => electronTrpcClient.gastown.probe.query(),
 		refetchOnWindowFocus: false,
 	});
 

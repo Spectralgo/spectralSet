@@ -1,31 +1,17 @@
 import { Skeleton } from "@spectralset/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
-import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 
 export function GastownRigList() {
-	const { activeHostUrl } = useLocalHostService();
-
 	const {
 		data: rigs,
 		isLoading,
 		error,
 	} = useQuery({
-		queryKey: ["host", "gastown", "listRigs", activeHostUrl],
-		queryFn: async () => {
-			if (!activeHostUrl) return [];
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.listRigs.query();
-		},
-		enabled: !!activeHostUrl,
+		queryKey: ["electron", "gastown", "listRigs"],
+		queryFn: () => electronTrpcClient.gastown.listRigs.query(),
 		refetchOnWindowFocus: false,
 	});
-
-	if (!activeHostUrl) {
-		return (
-			<p className="text-sm text-muted-foreground">Waiting for host service…</p>
-		);
-	}
 
 	if (isLoading) {
 		return (

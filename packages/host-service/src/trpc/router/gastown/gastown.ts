@@ -86,19 +86,17 @@ export const gastownRouter = router({
 				await shellOptions(),
 			),
 		),
-	sling: publicProcedure
-		.input(slingInputSchema)
-		.mutation(async ({ input }) =>
-			sling(
-				{
-					rig: input.rig,
-					bead: input.bead,
-					mergeStrategy: input.mergeStrategy,
-					notes: input.notes,
-				},
-				await shellOptions(),
-			),
+	sling: publicProcedure.input(slingInputSchema).mutation(async ({ input }) =>
+		sling(
+			{
+				rig: input.rig,
+				bead: input.bead,
+				mergeStrategy: input.mergeStrategy,
+				notes: input.notes,
+			},
+			await shellOptions(),
 		),
+	),
 	checkRecovery: publicProcedure
 		.input(polecatTargetSchema)
 		.query(async ({ input }) =>

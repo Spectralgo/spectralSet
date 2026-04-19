@@ -1,8 +1,7 @@
 import type { PeekResult } from "@spectralset/gastown-cli-client";
 import { useQuery } from "@tanstack/react-query";
 import { useWindowVisibility } from "renderer/hooks/useWindowVisibility";
-import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
-import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 
 export const GASTOWN_PEEK_POLL_MS = 5_000;
 export const GASTOWN_PEEK_LINES = 30;
@@ -20,30 +19,18 @@ export function useGastownPeek({
 	paused,
 	enabled,
 }: UseGastownPeekOptions) {
-	const { activeHostUrl } = useLocalHostService();
 	const windowVisible = useWindowVisibility();
-	const shouldPoll = enabled && !paused && windowVisible && !!activeHostUrl;
+	const shouldPoll = enabled && !paused && windowVisible;
 
 	return useQuery<PeekResult>({
-		queryKey: [
-			"host",
-			"gastown",
-			"peek",
-			activeHostUrl,
-			rig,
-			polecat,
-			GASTOWN_PEEK_LINES,
-		],
-		queryFn: async () => {
-			if (!activeHostUrl) return { output: "" };
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.peek.query({
+		queryKey: ["electron", "gastown", "peek", rig, polecat, GASTOWN_PEEK_LINES],
+		queryFn: () =>
+			electronTrpcClient.gastown.peek.query({
 				rig,
 				polecat,
 				lines: GASTOWN_PEEK_LINES,
-			});
-		},
-		enabled: enabled && !!activeHostUrl,
+			}),
+		enabled,
 		refetchInterval: shouldPoll ? GASTOWN_PEEK_POLL_MS : false,
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,

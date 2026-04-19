@@ -1,10 +1,6 @@
-import type { AppRouter as HostAppRouter } from "@spectralset/host-service";
+import type { ProbeResult } from "@spectralset/gastown-cli-client";
 import { Badge } from "@spectralset/ui/badge";
 import { Skeleton } from "@spectralset/ui/skeleton";
-import type { inferRouterOutputs } from "@trpc/server";
-
-type ProbeResult =
-	inferRouterOutputs<HostAppRouter>["host"]["gastown"]["probe"];
 
 interface GastownStatusProps {
 	probe: ProbeResult | undefined;

@@ -10,8 +10,7 @@ import {
 import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
-import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 
 export interface NukeTarget {
 	rig: string;
@@ -29,47 +28,37 @@ export function NukeConfirmDialog({
 	open,
 	onOpenChange,
 }: NukeConfirmDialogProps) {
-	const { activeHostUrl } = useLocalHostService();
 	const queryClient = useQueryClient();
 
 	const recoveryQuery = useQuery<RecoveryCheck>({
 		queryKey: [
-			"host",
+			"electron",
 			"gastown",
 			"checkRecovery",
-			activeHostUrl,
 			target?.rig,
 			target?.name,
 		],
 		queryFn: async () => {
-			if (!activeHostUrl || !target) {
-				throw new Error("Host service unavailable");
+			if (!target) {
+				throw new Error("No target selected");
 			}
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.checkRecovery.query({
+			return await electronTrpcClient.gastown.checkRecovery.query({
 				rig: target.rig,
 				polecat: target.name,
 			});
 		},
-		enabled: open && !!activeHostUrl && !!target,
+		enabled: open && !!target,
 		refetchOnWindowFocus: false,
 		staleTime: 0,
 	});
 
 	const nukeMutation = useMutation({
-		mutationFn: async (input: {
-			rig: string;
-			polecat: string;
-			force: boolean;
-		}) => {
-			if (!activeHostUrl) throw new Error("Host service unavailable");
-			const client = getHostServiceClientByUrl(activeHostUrl);
-			return await client.host.gastown.nuke.mutate(input);
-		},
+		mutationFn: (input: { rig: string; polecat: string; force: boolean }) =>
+			electronTrpcClient.gastown.nuke.mutate(input),
 		onSuccess: (_result, variables) => {
 			toast.success(`Nuked ${variables.polecat}`);
 			queryClient.invalidateQueries({
-				queryKey: ["host", "gastown", "listPolecats"],
+				queryKey: ["electron", "gastown", "listPolecats"],
 			});
 			onOpenChange(false);
 		},
