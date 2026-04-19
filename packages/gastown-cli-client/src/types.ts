@@ -113,3 +113,17 @@ export const nukeResultSchema = z.object({
 });
 
 export type NukeResult = z.infer<typeof nukeResultSchema>;
+
+/**
+ * A single entry from `git worktree list --porcelain`. Used by the
+ * SpectralSet × Gas Town worktree bridge to discover polecat sandboxes.
+ */
+export const worktreeSchema = z.object({
+	path: z.string(),
+	branch: z.string().nullable(),
+	head: z.string(),
+	isDetached: z.boolean(),
+	isBare: z.boolean(),
+});
+
+export type Worktree = z.infer<typeof worktreeSchema>;

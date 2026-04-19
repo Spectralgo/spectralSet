@@ -177,6 +177,14 @@ export function execBd(
 	return execBin("bd", argv, options, deps);
 }
 
+export function execGit(
+	argv: readonly string[],
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<ExecGtResult> {
+	return execBin("git", argv, options, deps);
+}
+
 function isEnoent(err: unknown): boolean {
 	return (
 		typeof err === "object" &&

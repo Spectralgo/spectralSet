@@ -6,6 +6,7 @@ import {
 	listBeads,
 	listPolecats,
 	listRigs,
+	listWorktrees,
 	mergeStrategySchema,
 	nuke,
 	peek,
@@ -15,6 +16,11 @@ import {
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
+import type {
+	applyReconciliation as ApplyReconciliationFn,
+	ReconcileResult,
+} from "./apply-reconciliation";
+import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 
 // Reads GT_TOWN_ROOT from any running Gas Town tmux socket. The Gas Town
 // shell sets this as a global tmux env var (`tmux set-environment -g
@@ -124,6 +130,17 @@ const nukeInputSchema = polecatTargetSchema.extend({
 	force: z.boolean().optional(),
 });
 
+const listWorktreesInputSchema = z.object({
+	rig: z.string().min(1),
+	townPath: townPathSchema,
+});
+
+const reconcileInputSchema = z.object({
+	rig: z.string().min(1),
+	projectId: z.string().min(1),
+	townPath: townPathSchema,
+});
+
 // Resolves the user-supplied Town Path override into an absolute cwd.
 // Precedence (per ss-iq9 + ss-e12):
 //   1. expandTilde(userTownPath) when non-empty.
@@ -159,6 +176,12 @@ interface GastownRouterDeps {
 	slingFn?: typeof sling;
 	checkRecoveryFn?: typeof checkRecovery;
 	nukeFn?: typeof nuke;
+	listWorktreesFn?: typeof listWorktrees;
+	// Inject the DB-writing reconciliation step; default lazy-imports
+	// from ./apply-reconciliation. Tests pass a spy so the router can be
+	// exercised without dragging in the electron main-process localDb
+	// module at evaluation time.
+	applyReconciliationFn?: typeof ApplyReconciliationFn;
 	// Override the tmux env lookup (used by tests to isolate from the
 	// host's real tmux state). Returns the GT_TOWN_ROOT value, or
 	// undefined when no Gas Town tmux socket is present.
@@ -174,7 +197,18 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const slingImpl = deps.slingFn ?? sling;
 	const checkRecoveryImpl = deps.checkRecoveryFn ?? checkRecovery;
 	const nukeImpl = deps.nukeFn ?? nuke;
+	const listWorktreesImpl = deps.listWorktreesFn ?? listWorktrees;
+	const applyReconciliationOverride = deps.applyReconciliationFn;
 	const readTmuxTownRootImpl = deps.readTmuxTownRootFn ?? readTownRootFromTmux;
+
+	async function applyReconciliationImpl(opts: {
+		projectId: string;
+		specs: readonly import("./polecat-discovery").PolecatWorkspaceSpec[];
+	}): Promise<ReconcileResult> {
+		if (applyReconciliationOverride) return applyReconciliationOverride(opts);
+		const { applyReconciliation } = await import("./apply-reconciliation");
+		return applyReconciliation(opts);
+	}
 
 	// Cache of the town root reported by the most recent probe.
 	// Consulted as a fallback when the user leaves the Town Path input blank.
@@ -292,5 +326,38 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 				await shellOptions(),
 			),
 		),
+		listWorktrees: publicProcedure
+			.input(listWorktreesInputSchema)
+			.query(async ({ input }) =>
+				listWorktreesImpl(
+					{
+						rig: input.rig,
+						townRoot: resolveEffectiveTownPath(input.townPath),
+					},
+					await shellOptions(),
+				),
+			),
+		reconcile: publicProcedure
+			.input(reconcileInputSchema)
+			.mutation(async ({ input }): Promise<ReconcileResult> => {
+				const townRoot = resolveEffectiveTownPath(input.townPath);
+				const opts = await shellOptions();
+				const [worktreeList, polecatList] = await Promise.all([
+					listWorktreesImpl({ rig: input.rig, townRoot }, opts),
+					listPolecatsImpl({ rig: input.rig, townRoot }, opts),
+				]);
+				const specs = extractPolecatWorkspaceSpecs({
+					town: townRoot ?? "",
+					rig: input.rig,
+					worktrees: worktreeList,
+					polecats: polecatList,
+				});
+				return applyReconciliationImpl({
+					projectId: input.projectId,
+					specs,
+				});
+			}),
 	});
 };
+
+export type { ReconcileResult } from "./apply-reconciliation";

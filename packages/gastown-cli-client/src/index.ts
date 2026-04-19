@@ -2,6 +2,7 @@ import {
 	type ExecGtDeps,
 	type ExecGtOptions,
 	execBd,
+	execGit,
 	execGt,
 	GastownCliError,
 	GastownCliNotInstalledError,
@@ -20,6 +21,7 @@ import { parseRigList } from "./parsers/rigs";
 import { parseSlingResult } from "./parsers/sling";
 import { parseStatus, StatusParseError } from "./parsers/status";
 import { parseVersion } from "./parsers/version";
+import { parseWorktreeList } from "./parsers/worktrees";
 import type {
 	Bead,
 	MergeStrategy,
@@ -30,6 +32,7 @@ import type {
 	RecoveryCheck,
 	Rig,
 	SlingResult,
+	Worktree,
 } from "./types";
 
 export {
@@ -58,6 +61,7 @@ export type {
 	RecoveryStatus,
 	Rig,
 	SlingResult,
+	Worktree,
 } from "./types";
 export {
 	beadSchema,
@@ -67,6 +71,7 @@ export {
 	recoveryCheckSchema,
 	recoveryStatusSchema,
 	slingResultSchema,
+	worktreeSchema,
 } from "./types";
 
 export interface GastownCliClientOptions extends ExecGtOptions {}
@@ -349,6 +354,36 @@ export async function nuke(
 	}
 	const parsed = parseNukeSuccess(stdout);
 	return { ok: true, closedBead: parsed.closedBead };
+}
+
+export interface ListWorktreesArgs {
+	rig: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
+/**
+ * Lists git worktrees attached to the rig's shared bare repo at
+ * `<town>/<rig>/.repo.git`. Returns every polecat sandbox, the
+ * refinery checkout, and the bare itself. Used by the SpectralSet ×
+ * Gas Town worktree bridge to discover polecat workspaces.
+ */
+export async function listWorktrees(
+	args: ListWorktreesArgs,
+	options: GastownCliClientOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<Worktree[]> {
+	const cwd = resolveRigCwd(args.rig, args.townRoot, options.cwd);
+	const argv = ["-C", ".repo.git", "worktree", "list", "--porcelain"];
+	const { stdout, stderr, exitCode } = await execGit(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+	return parseWorktreeList(stdout);
 }
 
 export function resolveRigCwd(

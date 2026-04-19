@@ -175,4 +175,72 @@ describe("createGastownRouter townPath threading", () => {
 		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/town" });
 		expect(calls[1]).toEqual({ townRoot: undefined });
 	});
+
+	test("listWorktrees forwards rig + resolved townRoot", async () => {
+		const calls: unknown[] = [];
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
+			listWorktreesFn: async (args) => {
+				calls.push(args);
+				return [];
+			},
+		});
+		const caller = router.createCaller({});
+		await caller.listWorktrees({ rig: "alpha", townPath: "/Users/demo/town" });
+		expect(calls[0]).toMatchObject({
+			rig: "alpha",
+			townRoot: "/Users/demo/town",
+		});
+	});
+
+	test("reconcile collates worktrees + polecats and hands specs to applyReconciliation", async () => {
+		const specsCapture: unknown[] = [];
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
+			listWorktreesFn: async () => [
+				{
+					path: "/t/alpha/polecats/jasper/alpha",
+					branch: "polecat/jasper-mo5xo851",
+					head: "abc",
+					isBare: false,
+					isDetached: false,
+				},
+				{
+					path: "/t/alpha/.repo.git",
+					branch: null,
+					head: "",
+					isBare: true,
+					isDetached: false,
+				},
+			],
+			listPolecatsFn: async () => [
+				{
+					rig: "alpha",
+					name: "jasper",
+					state: "working",
+					currentBead: "a-42",
+				},
+			],
+			applyReconciliationFn: async (opts) => {
+				specsCapture.push(opts);
+				return { registered: ["jasper"], updated: [], archived: [] };
+			},
+		});
+		const caller = router.createCaller({});
+		const result = await caller.reconcile({
+			rig: "alpha",
+			projectId: "proj-1",
+			townPath: "/t",
+		});
+		expect(result.registered).toEqual(["jasper"]);
+		expect(specsCapture).toHaveLength(1);
+		const captured = specsCapture[0] as {
+			projectId: string;
+			specs: Array<{ polecatName: string; beadId: string | null }>;
+		};
+		expect(captured.projectId).toBe("proj-1");
+		expect(captured.specs).toHaveLength(1);
+		expect(captured.specs[0].polecatName).toBe("jasper");
+		expect(captured.specs[0].beadId).toBe("a-42");
+	});
 });

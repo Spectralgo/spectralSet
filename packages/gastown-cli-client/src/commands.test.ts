@@ -5,6 +5,7 @@ import {
 	checkRecovery,
 	listPolecats,
 	listRigs,
+	listWorktrees,
 	nuke,
 	peek,
 	probe,
@@ -287,6 +288,37 @@ describe("rig-scoped calls — townRoot propagation", () => {
 			{ spawn: spawnFn },
 		);
 		expect(calls[0]?.options.cwd).toBe("/explicit/override");
+	});
+
+	it("listWorktrees shells out to git -C .repo.git with rig-scoped cwd", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({
+			stdout: [
+				"worktree /Users/demo/town/alpha/.repo.git",
+				"bare",
+				"",
+				"worktree /Users/demo/town/alpha/polecats/jasper/alpha",
+				"HEAD abc",
+				"branch refs/heads/polecat/jasper-mo5",
+				"",
+			].join("\n"),
+			exitCode: 0,
+		});
+		const result = await listWorktrees(
+			{ rig: "alpha", townRoot: "/Users/demo/town" },
+			{},
+			{ spawn: spawnFn },
+		);
+		expect(calls[0]?.bin).toBe("git");
+		expect(calls[0]?.argv).toEqual([
+			"-C",
+			".repo.git",
+			"worktree",
+			"list",
+			"--porcelain",
+		]);
+		expect(calls[0]?.options.cwd).toBe("/Users/demo/town/alpha");
+		expect(result).toHaveLength(2);
+		expect(result[1]?.branch).toBe("polecat/jasper-mo5");
 	});
 
 	it("falls back to GT_TOWN_ROOT env var when townRoot not supplied", async () => {
