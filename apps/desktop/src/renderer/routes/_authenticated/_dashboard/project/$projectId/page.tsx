@@ -170,6 +170,33 @@ function ProjectPage() {
 	const titleInputRef = useRef<HTMLInputElement>(null);
 	const [hasInitializedSetup, setHasInitializedSetup] = useState(false);
 
+	const { data: gastownProbe } = electronTrpc.gastown.probe.useQuery();
+	const reconciledProjectIdRef = useRef<string | null>(null);
+	useEffect(() => {
+		if (!project || !gastownProbe?.installed) return;
+		if (gastownProbe.townRoot !== project.mainRepoPath) return;
+		if (reconciledProjectIdRef.current === project.id) return;
+		reconciledProjectIdRef.current = project.id;
+
+		const rigs = gastownProbe.rigs ?? [];
+		if (rigs.length === 0) return;
+
+		void Promise.all(
+			rigs.map((rig) =>
+				trpcClient.gastown.reconcile.mutate({
+					rig: rig.name,
+					projectId: project.id,
+					townPath: project.mainRepoPath,
+				}),
+			),
+		).catch((err) => {
+			console.error("gastown.reconcile failed", err);
+			toast.error(
+				err instanceof Error ? err.message : "Failed to reconcile polecats",
+			);
+		});
+	}, [project, gastownProbe]);
+
 	const createWorkspace = useCreateWorkspace();
 
 	const authorPrefix = gitAuthor?.prefix;
