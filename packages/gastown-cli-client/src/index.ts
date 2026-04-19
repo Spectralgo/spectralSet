@@ -18,6 +18,7 @@ import { parsePolecatList } from "./parsers/polecats";
 import { parseRecovery } from "./parsers/recovery";
 import { parseRigList } from "./parsers/rigs";
 import { parseSlingResult } from "./parsers/sling";
+import { parseStatus, StatusParseError } from "./parsers/status";
 import { parseVersion } from "./parsers/version";
 import type {
 	Bead,
@@ -43,6 +44,7 @@ export {
 } from "./parsers/nuke";
 export { RecoveryParseError } from "./parsers/recovery";
 export { SlingParseError } from "./parsers/sling";
+export { StatusParseError } from "./parsers/status";
 export type {
 	Bead,
 	BeadStatus,
@@ -69,40 +71,84 @@ export {
 
 export interface GastownCliClientOptions extends ExecGtOptions {}
 
+const EMPTY_PROBE: ProbeResult = {
+	installed: false,
+	version: null,
+	townRoot: null,
+	townName: null,
+	rigs: [],
+	daemonRunning: false,
+	doltRunning: false,
+};
+
 export async function probe(
 	options: GastownCliClientOptions = {},
 	deps: ExecGtDeps = {},
 ): Promise<ProbeResult> {
+	let statusStdout = "";
+	let statusExit = -1;
 	try {
-		const { stdout, exitCode, stderr } = await execGt(
-			["--version"],
-			options,
-			deps,
-		);
-		if (exitCode !== 0) {
-			throw new GastownCliError({
-				argv: ["--version"],
-				exitCode,
-				stdout,
-				stderr,
-			});
-		}
-		return { installed: true, version: parseVersion(stdout) };
+		const result = await execGt(["status", "--json"], options, deps);
+		statusStdout = result.stdout;
+		statusExit = result.exitCode;
 	} catch (err) {
 		if (err instanceof GastownCliNotInstalledError) {
-			return { installed: false, version: null };
+			return { ...EMPTY_PROBE };
+		}
+		throw err;
+	}
+
+	if (statusExit === 0) {
+		try {
+			const parsed = parseStatus(statusStdout);
+			return {
+				installed: true,
+				version: null,
+				townRoot: parsed.townRoot,
+				townName: parsed.townName,
+				rigs: parsed.rigs,
+				daemonRunning: parsed.daemonRunning,
+				doltRunning: parsed.doltRunning,
+			};
+		} catch (err) {
+			if (!(err instanceof StatusParseError)) throw err;
+			// Fall through to version fallback.
+		}
+	}
+
+	// Fallback: gt present but town not initialized, or legacy install.
+	try {
+		const { stdout, exitCode } = await execGt(["--version"], options, deps);
+		if (exitCode !== 0) {
+			return { ...EMPTY_PROBE };
+		}
+		return {
+			...EMPTY_PROBE,
+			installed: true,
+			version: parseVersion(stdout),
+		};
+	} catch (err) {
+		if (err instanceof GastownCliNotInstalledError) {
+			return { ...EMPTY_PROBE };
 		}
 		throw err;
 	}
 }
 
+export interface ListRigsArgs {
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
 export async function listRigs(
+	args: ListRigsArgs = {},
 	options: GastownCliClientOptions = {},
 	deps: ExecGtDeps = {},
 ): Promise<Rig[]> {
+	const cwd = resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		["rig", "list"],
-		options,
+		{ ...options, cwd },
 		deps,
 	);
 	if (exitCode !== 0) {
@@ -118,6 +164,8 @@ export async function listRigs(
 
 export interface ListPolecatsArgs {
 	rig?: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
 }
 
 export async function listPolecats(
@@ -128,7 +176,14 @@ export async function listPolecats(
 	const argv = args.rig
 		? ["polecat", "list", args.rig]
 		: ["polecat", "list", "--all"];
-	const { stdout, stderr, exitCode } = await execGt(argv, options, deps);
+	const cwd = args.rig
+		? resolveRigCwd(args.rig, args.townRoot, options.cwd)
+		: resolveTownCwd(args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
 	if (exitCode !== 0) {
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
@@ -139,6 +194,8 @@ export interface PeekArgs {
 	rig: string;
 	polecat: string;
 	lines?: number;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
 }
 
 const DEFAULT_PEEK_LINES = 30;
@@ -151,7 +208,12 @@ export async function peek(
 	const target = `${args.rig}/${args.polecat}`;
 	const lines = args.lines ?? DEFAULT_PEEK_LINES;
 	const argv = ["peek", target, "-n", String(lines)];
-	const { stdout, stderr, exitCode } = await execGt(argv, options, deps);
+	const cwd = resolveRigCwd(args.rig, args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
 	if (exitCode !== 0) {
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
@@ -195,6 +257,8 @@ export interface SlingArgs {
 	bead: string;
 	mergeStrategy: MergeStrategy;
 	notes?: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
 }
 
 export async function sling(
@@ -211,7 +275,8 @@ export async function sling(
 		"--no-convoy",
 		"--create",
 	];
-	const execOptions: ExecGtOptions = { ...options };
+	const cwd = resolveRigCwd(args.rig, args.townRoot, options.cwd);
+	const execOptions: ExecGtOptions = { ...options, cwd };
 	if (args.notes && args.notes.trim().length > 0) {
 		argv.push("--stdin");
 		execOptions.stdin = args.notes;
@@ -227,6 +292,8 @@ export async function sling(
 export interface CheckRecoveryArgs {
 	rig: string;
 	polecat: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
 }
 
 export async function checkRecovery(
@@ -236,7 +303,12 @@ export async function checkRecovery(
 ): Promise<RecoveryCheck> {
 	const target = `${args.rig}/${args.polecat}`;
 	const argv = ["polecat", "check-recovery", target, "--json"];
-	const { stdout, stderr, exitCode } = await execGt(argv, options, deps);
+	const cwd = resolveRigCwd(args.rig, args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
 	if (exitCode !== 0) {
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
@@ -247,6 +319,8 @@ export interface NukeArgs {
 	rig: string;
 	polecat: string;
 	force?: boolean;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
 }
 
 export async function nuke(
@@ -257,7 +331,12 @@ export async function nuke(
 	const target = `${args.rig}/${args.polecat}`;
 	const argv = ["polecat", "nuke", target];
 	if (args.force) argv.push("--force");
-	const { stdout, stderr, exitCode } = await execGt(argv, options, deps);
+	const cwd = resolveRigCwd(args.rig, args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
 	if (exitCode !== 0) {
 		if (isNukeSafetyFailure(stderr)) {
 			throw new NukeSafetyError({
@@ -272,13 +351,21 @@ export async function nuke(
 	return { ok: true, closedBead: parsed.closedBead };
 }
 
-function resolveRigCwd(
+export function resolveRigCwd(
 	rig: string,
-	gastownRoot: string | undefined,
+	townRoot: string | undefined,
 	explicitCwd: string | undefined,
 ): string | undefined {
 	if (explicitCwd) return explicitCwd;
-	const root = gastownRoot ?? process.env.GT_TOWN_ROOT;
+	const root = townRoot ?? process.env.GT_TOWN_ROOT;
 	if (!root) return undefined;
 	return `${root}/${rig}`;
+}
+
+export function resolveTownCwd(
+	townRoot: string | undefined,
+	explicitCwd: string | undefined,
+): string | undefined {
+	if (explicitCwd) return explicitCwd;
+	return townRoot ?? process.env.GT_TOWN_ROOT ?? undefined;
 }

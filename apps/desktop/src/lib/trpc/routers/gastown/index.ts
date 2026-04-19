@@ -91,80 +91,114 @@ export function resolveTownPath(
 // user's shell rc files (homebrew, asdf, mise, etc.), so a `gt` installed
 // via brew is invisible to plain `spawn("gt", ...)`. Resolve the full
 // shell PATH (cached) and pass it as the exec env on every call.
-async function shellOptions(
-	townPath?: string,
-): Promise<GastownCliClientOptions> {
-	const options: GastownCliClientOptions = {
-		env: await getProcessEnvWithShellPath(),
-	};
-	const cwd = resolveTownPath(townPath);
-	if (cwd) options.cwd = cwd;
-	return options;
+async function shellOptions(): Promise<GastownCliClientOptions> {
+	return { env: await getProcessEnvWithShellPath() };
 }
 
-export const createGastownRouter = () => {
+interface GastownRouterDeps {
+	probeFn?: typeof probe;
+	listRigsFn?: typeof listRigs;
+	listPolecatsFn?: typeof listPolecats;
+	peekFn?: typeof peek;
+	listBeadsFn?: typeof listBeads;
+	slingFn?: typeof sling;
+	checkRecoveryFn?: typeof checkRecovery;
+	nukeFn?: typeof nuke;
+}
+
+export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
+	const probeImpl = deps.probeFn ?? probe;
+	const listRigsImpl = deps.listRigsFn ?? listRigs;
+	const listPolecatsImpl = deps.listPolecatsFn ?? listPolecats;
+	const peekImpl = deps.peekFn ?? peek;
+	const listBeadsImpl = deps.listBeadsFn ?? listBeads;
+	const slingImpl = deps.slingFn ?? sling;
+	const checkRecoveryImpl = deps.checkRecoveryFn ?? checkRecovery;
+	const nukeImpl = deps.nukeFn ?? nuke;
+
 	return router({
-		probe: publicProcedure
-			.input(probeInputSchema)
-			.query(async ({ input }) => probe(await shellOptions(input?.townPath))),
+		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
+			const townRoot = resolveTownPath(input?.townPath);
+			const opts = await shellOptions();
+			if (townRoot) opts.cwd = townRoot;
+			return probeImpl(opts);
+		}),
 		listRigs: publicProcedure
 			.input(listRigsInputSchema)
 			.query(async ({ input }) =>
-				listRigs(await shellOptions(input?.townPath)),
+				listRigsImpl(
+					{ townRoot: resolveTownPath(input?.townPath) },
+					await shellOptions(),
+				),
 			),
 		listPolecats: publicProcedure
 			.input(listPolecatsInputSchema)
 			.query(async ({ input }) =>
-				listPolecats({ rig: input?.rig }, await shellOptions(input?.townPath)),
-			),
-		peek: publicProcedure
-			.input(peekInputSchema)
-			.query(async ({ input }) =>
-				peek(
-					{ rig: input.rig, polecat: input.polecat, lines: input.lines },
-					await shellOptions(input.townPath),
+				listPolecatsImpl(
+					{
+						rig: input?.rig,
+						townRoot: resolveTownPath(input?.townPath),
+					},
+					await shellOptions(),
 				),
 			),
+		peek: publicProcedure.input(peekInputSchema).query(async ({ input }) =>
+			peekImpl(
+				{
+					rig: input.rig,
+					polecat: input.polecat,
+					lines: input.lines,
+					townRoot: resolveTownPath(input.townPath),
+				},
+				await shellOptions(),
+			),
+		),
 		listBeads: publicProcedure
 			.input(listBeadsInputSchema)
 			.query(async ({ input }) =>
-				listBeads(
+				listBeadsImpl(
 					{
 						rig: input.rig,
 						status: input.status,
 						limit: input.limit,
 						gastownRoot: resolveTownPath(input.townPath),
 					},
-					await shellOptions(input.townPath),
+					await shellOptions(),
 				),
 			),
 		sling: publicProcedure.input(slingInputSchema).mutation(async ({ input }) =>
-			sling(
+			slingImpl(
 				{
 					rig: input.rig,
 					bead: input.bead,
 					mergeStrategy: input.mergeStrategy,
 					notes: input.notes,
+					townRoot: resolveTownPath(input.townPath),
 				},
-				await shellOptions(input.townPath),
+				await shellOptions(),
 			),
 		),
 		checkRecovery: publicProcedure
 			.input(polecatTargetSchema)
 			.query(async ({ input }) =>
-				checkRecovery(
-					{ rig: input.rig, polecat: input.polecat },
-					await shellOptions(input.townPath),
+				checkRecoveryImpl(
+					{
+						rig: input.rig,
+						polecat: input.polecat,
+						townRoot: resolveTownPath(input.townPath),
+					},
+					await shellOptions(),
 				),
 			),
 		nuke: publicProcedure.input(nukeInputSchema).mutation(async ({ input }) =>
-			nuke(
+			nukeImpl(
 				{
 					rig: input.rig,
 					polecat: input.polecat,
 					force: input.force,
+					townRoot: resolveTownPath(input.townPath),
 				},
-				await shellOptions(input.townPath),
+				await shellOptions(),
 			),
 		),
 	});

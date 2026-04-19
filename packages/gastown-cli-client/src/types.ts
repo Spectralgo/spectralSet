@@ -13,6 +13,11 @@ export type Rig = z.infer<typeof rigSchema>;
 export const probeResultSchema = z.object({
 	installed: z.boolean(),
 	version: z.string().nullable(),
+	townRoot: z.string().nullable(),
+	townName: z.string().nullable(),
+	rigs: z.array(rigSchema),
+	daemonRunning: z.boolean(),
+	doltRunning: z.boolean(),
 });
 
 export type ProbeResult = z.infer<typeof probeResultSchema>;

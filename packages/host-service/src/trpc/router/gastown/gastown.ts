@@ -60,7 +60,9 @@ async function shellOptions(): Promise<GastownCliClientOptions> {
 
 export const gastownRouter = router({
 	probe: publicProcedure.query(async () => probe(await shellOptions())),
-	listRigs: publicProcedure.query(async () => listRigs(await shellOptions())),
+	listRigs: publicProcedure.query(async () =>
+		listRigs({}, await shellOptions()),
+	),
 	listPolecats: publicProcedure
 		.input(listPolecatsInputSchema)
 		.query(async ({ input }) =>
