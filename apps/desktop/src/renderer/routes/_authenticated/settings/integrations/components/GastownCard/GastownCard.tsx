@@ -9,7 +9,7 @@ import { Input } from "@spectralset/ui/input";
 import { Label } from "@spectralset/ui/label";
 import { Switch } from "@spectralset/ui/switch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
 import {
 	setGastownTownPath,
@@ -42,6 +42,20 @@ export function GastownCard() {
 			),
 		refetchOnWindowFocus: false,
 	});
+
+	// Auto-populate the Town Path input with the probe-detected root when
+	// the user hasn't set one yet. One-shot per session: once the user
+	// edits or clears the field we stop overwriting so they remain in
+	// control.
+	const autoFilledRef = useRef(false);
+	useEffect(() => {
+		if (autoFilledRef.current) return;
+		if (townPathDraft) return;
+		const detected = probeQuery.data?.townRoot;
+		if (!detected) return;
+		autoFilledRef.current = true;
+		setTownPathDraft(detected);
+	}, [probeQuery.data?.townRoot, townPathDraft]);
 
 	const enabledQuery = useQuery({
 		queryKey: ENABLED_QUERY_KEY,
