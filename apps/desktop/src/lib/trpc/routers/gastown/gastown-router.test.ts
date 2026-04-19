@@ -19,6 +19,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("listRigs forwards trimmed townPath as townRoot to cli-client", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -32,6 +33,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("listRigs passes townRoot=undefined when townPath omitted", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			listRigsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -45,6 +47,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("peek forwards townPath as townRoot for rig-scoped composition", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			peekFn: async (args) => {
 				calls.push(args);
 				return { output: "ok" };
@@ -66,6 +69,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("listBeads forwards townPath as gastownRoot", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			listBeadsFn: async (args) => {
 				calls.push(args);
 				return [];
@@ -85,6 +89,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("probe sets cwd from townPath via shellOptions", async () => {
 		const optsCapture: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			probeFn: async (opts) => {
 				optsCapture.push(opts);
 				return makeProbeResult();
@@ -98,6 +103,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("cached probe.townRoot is used as fallback when townPath is blank", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			probeFn: async () =>
 				makeProbeResult({ townRoot: "/Users/demo/town" }),
 			listRigsFn: async (args) => {
@@ -114,6 +120,7 @@ describe("createGastownRouter townPath threading", () => {
 	test("user-supplied townPath wins over cached probe townRoot", async () => {
 		const calls: unknown[] = [];
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			probeFn: async () =>
 				makeProbeResult({ townRoot: "/Users/demo/cached" }),
 			listRigsFn: async (args) => {
@@ -131,6 +138,7 @@ describe("createGastownRouter townPath threading", () => {
 		const calls: unknown[] = [];
 		let nextRoot = "/Users/demo/first";
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			probeFn: async () => makeProbeResult({ townRoot: nextRoot }),
 			listRigsFn: async (args) => {
 				calls.push(args);
@@ -151,6 +159,7 @@ describe("createGastownRouter townPath threading", () => {
 		const calls: unknown[] = [];
 		let nextRoot: string | null = "/Users/demo/town";
 		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => undefined,
 			probeFn: async () => makeProbeResult({ townRoot: nextRoot }),
 			listRigsFn: async (args) => {
 				calls.push(args);

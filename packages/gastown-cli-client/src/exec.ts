@@ -2,7 +2,10 @@ import { type SpawnOptions, spawn } from "node:child_process";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-export const DEFAULT_TIMEOUT_MS = 5_000;
+// Timeout bumped to 30s after observing gt status --json take ~12s
+// against a warm Dolt backend in this town. 5s was the old default and
+// caused silent fallback to gt --version (missing rigs + townRoot).
+export const DEFAULT_TIMEOUT_MS = 30_000;
 
 export function expandTilde(p: string | undefined | null): string | undefined {
 	if (p == null) return undefined;

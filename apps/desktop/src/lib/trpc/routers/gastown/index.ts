@@ -1,3 +1,4 @@
+import { spawn } from "node:child_process";
 import {
 	checkRecovery,
 	expandTilde,
@@ -14,6 +15,59 @@ import {
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
+
+// Reads GT_TOWN_ROOT from any running Gas Town tmux socket. The Gas Town
+// shell sets this as a global tmux env var (`tmux set-environment -g
+// GT_TOWN_ROOT <town>`); agents spawned under tmux inherit it. Electron
+// doesn't, so we query tmux directly. Returns undefined if no matching
+// socket exists or the var is unset.
+async function readTownRootFromTmux(env: NodeJS.ProcessEnv): Promise<string | undefined> {
+	const SOCKET_GLOB = "spectralgastown-";
+	const sockets = await listTmuxSockets(env);
+	for (const socket of sockets) {
+		if (!socket.includes(SOCKET_GLOB)) continue;
+		const value = await runTmux(
+			["-L", socket, "show-environment", "-g", "GT_TOWN_ROOT"],
+			env,
+		);
+		if (!value) continue;
+		const match = value.match(/^GT_TOWN_ROOT=(.+)$/m);
+		if (match && match[1]) return match[1].trim();
+	}
+	return undefined;
+}
+
+async function listTmuxSockets(env: NodeJS.ProcessEnv): Promise<string[]> {
+	try {
+		const { readdir } = await import("node:fs/promises");
+		const tmpDir = env.TMUX_TMPDIR ?? `/private/tmp/tmux-${process.getuid?.() ?? ""}`;
+		const entries = await readdir(tmpDir);
+		return entries;
+	} catch {
+		return [];
+	}
+}
+
+function runTmux(argv: string[], env: NodeJS.ProcessEnv): Promise<string | undefined> {
+	return new Promise((resolve) => {
+		const child = spawn("tmux", argv, {
+			env,
+			stdio: ["ignore", "pipe", "ignore"],
+		});
+		let stdout = "";
+		child.stdout?.on("data", (chunk) => {
+			stdout += chunk.toString("utf8");
+		});
+		child.on("error", () => resolve(undefined));
+		child.on("close", (code) => {
+			resolve(code === 0 ? stdout : undefined);
+		});
+		setTimeout(() => {
+			child.kill("SIGKILL");
+			resolve(undefined);
+		}, 2_000);
+	});
+}
 
 const townPathSchema = z.string().min(1).optional();
 
@@ -105,6 +159,10 @@ interface GastownRouterDeps {
 	slingFn?: typeof sling;
 	checkRecoveryFn?: typeof checkRecovery;
 	nukeFn?: typeof nuke;
+	// Override the tmux env lookup (used by tests to isolate from the
+	// host's real tmux state). Returns the GT_TOWN_ROOT value, or
+	// undefined when no Gas Town tmux socket is present.
+	readTmuxTownRootFn?: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
 }
 
 export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
@@ -116,6 +174,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const slingImpl = deps.slingFn ?? sling;
 	const checkRecoveryImpl = deps.checkRecoveryFn ?? checkRecovery;
 	const nukeImpl = deps.nukeFn ?? nuke;
+	const readTmuxTownRootImpl = deps.readTmuxTownRootFn ?? readTownRootFromTmux;
 
 	// Cache of the town root reported by the most recent probe.
 	// Consulted as a fallback when the user leaves the Town Path input blank.
@@ -123,19 +182,34 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	// undefined so stale roots don't linger across uninstalls).
 	let cachedTownRoot: string | undefined;
 
+	// Town root discovered from the Gas Town tmux socket env. Read lazily
+	// on the first probe. Provides a known-good cwd for gt status --json
+	// even before the user sets an override or a successful probe caches
+	// its result.
+	let tmuxTownRoot: string | undefined;
+	let tmuxLookupDone = false;
+
 	function resolveEffectiveTownPath(
 		townPath: string | undefined,
 	): string | undefined {
 		const expanded = resolveTownPath(townPath);
 		if (expanded) return expanded;
-		return cachedTownRoot;
+		if (cachedTownRoot) return cachedTownRoot;
+		return tmuxTownRoot;
 	}
 
 	return router({
 		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
-			const townRoot = resolveEffectiveTownPath(input?.townPath);
 			const opts = await shellOptions();
-			if (townRoot) opts.cwd = townRoot;
+			if (!tmuxLookupDone) {
+				tmuxTownRoot = await readTmuxTownRootImpl(opts.env ?? process.env);
+				tmuxLookupDone = true;
+			}
+			const townRoot = resolveEffectiveTownPath(input?.townPath);
+			if (townRoot) {
+				opts.cwd = townRoot;
+				opts.env = { ...(opts.env ?? {}), GT_TOWN_ROOT: townRoot };
+			}
 			const result = await probeImpl(opts);
 			cachedTownRoot = result.townRoot ?? undefined;
 			return result;
