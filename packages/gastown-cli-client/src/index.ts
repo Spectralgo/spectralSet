@@ -42,6 +42,14 @@ export {
 	GastownCliTimeoutError,
 } from "./exec";
 export {
+	type ListInboxArgs,
+	listInbox,
+	type ReadMailArgs,
+	readMessage,
+	type SendMailArgs,
+	sendMail,
+} from "./mail";
+export {
 	NukeParseError,
 	NukeSafetyError,
 } from "./parsers/nuke";
@@ -52,6 +60,10 @@ export { getRigPrefix } from "./rig-prefix";
 export type {
 	Bead,
 	BeadStatus,
+	MailMessage,
+	MailPriority,
+	MailSendType,
+	MailType,
 	MergeStrategy,
 	NukeResult,
 	PeekResult,
@@ -68,6 +80,11 @@ export type {
 export {
 	beadSchema,
 	beadStatusSchema,
+	mailMessageArraySchema,
+	mailMessageSchema,
+	mailPrioritySchema,
+	mailSendTypeSchema,
+	mailTypeSchema,
 	mergeStrategySchema,
 	nukeResultSchema,
 	recoveryCheckSchema,

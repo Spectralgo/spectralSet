@@ -133,6 +133,55 @@ export const nukeResultSchema = z.object({
 
 export type NukeResult = z.infer<typeof nukeResultSchema>;
 
+export const mailPrioritySchema = z.enum([
+	"urgent",
+	"high",
+	"normal",
+	"low",
+	"backlog",
+]);
+
+export type MailPriority = z.infer<typeof mailPrioritySchema>;
+
+// `gt mail inbox --json` emits `escalation` alongside the four send-side
+// types documented in `gt mail send --help`. Accept both so parsing
+// real inbox payloads doesn't fail; the tRPC send input still restricts
+// callers to the four valid send types.
+export const mailTypeSchema = z.enum([
+	"task",
+	"scavenge",
+	"notification",
+	"reply",
+	"escalation",
+]);
+
+export type MailType = z.infer<typeof mailTypeSchema>;
+
+export const mailSendTypeSchema = z.enum([
+	"task",
+	"scavenge",
+	"notification",
+	"reply",
+]);
+
+export type MailSendType = z.infer<typeof mailSendTypeSchema>;
+
+export const mailMessageSchema = z.object({
+	id: z.string(),
+	from: z.string(),
+	to: z.string(),
+	subject: z.string(),
+	body: z.string(),
+	timestamp: z.string(),
+	read: z.boolean(),
+	priority: mailPrioritySchema,
+	type: mailTypeSchema,
+});
+
+export type MailMessage = z.infer<typeof mailMessageSchema>;
+
+export const mailMessageArraySchema = z.array(mailMessageSchema);
+
 /**
  * A single entry from `git worktree list --porcelain`. Used by the
  * SpectralSet × Gas Town worktree bridge to discover polecat sandboxes.

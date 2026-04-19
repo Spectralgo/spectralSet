@@ -1,7 +1,6 @@
 import { spawn } from "node:child_process";
 import {
 	checkRecovery,
-	expandTilde,
 	type GastownCliClientOptions,
 	listBeads,
 	listPolecats,
@@ -25,7 +24,11 @@ import type {
 	ensureProject as EnsureProjectFn,
 	EnsureProjectResult,
 } from "./ensure-project";
+import { createGastownMailRouter } from "./mail";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
+import { resolveTownPath } from "./resolve-town-path";
+
+export { resolveTownPath } from "./resolve-town-path";
 
 export interface TmuxGastownLookup {
 	townRoot: string | undefined;
@@ -173,24 +176,6 @@ const ensureProjectInputSchema = z.object({
 	townName: z.string().nullable(),
 	tmuxSocket: z.string().nullable(),
 });
-
-// Resolves the user-supplied Town Path override into an absolute cwd.
-// Precedence (per ss-iq9 + ss-e12):
-//   1. expandTilde(userTownPath) when non-empty.
-//   2. cachedProbe.townRoot from `gt status --json` (populated by the
-//      probe handler; see createGastownRouter).
-//   3. process.env.GT_TOWN_ROOT (handled downstream by gt).
-//   4. undefined — let gt pick its default.
-// `~` expansion must happen in the main process: Node's spawn({ cwd }) does
-// not expand tildes (shells do), so a literal "~/..." is treated as a
-// relative path and lookup fails.
-export function resolveTownPath(
-	townPath: string | undefined,
-): string | undefined {
-	const expanded = expandTilde(townPath);
-	if (!expanded) return undefined;
-	return expanded.replace(/\/+$/, "");
-}
 
 // Electron's process.env on macOS doesn't include PATH entries from the
 // user's shell rc files (homebrew, asdf, mise, etc.), so a `gt` installed
@@ -421,6 +406,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					tmuxSocket: input.tmuxSocket,
 				});
 			}),
+		mail: createGastownMailRouter(),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)
 			.mutation(async ({ input }): Promise<ReconcileResult> => {
