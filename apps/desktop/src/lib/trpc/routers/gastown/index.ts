@@ -20,6 +20,7 @@ import type {
 	applyReconciliation as ApplyReconciliationFn,
 	ReconcileResult,
 } from "./apply-reconciliation";
+import { createGastownConvoysRouter } from "./convoys";
 import type {
 	ensureProject as EnsureProjectFn,
 	EnsureProjectResult,
@@ -406,6 +407,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					tmuxSocket: input.tmuxSocket,
 				});
 			}),
+		convoys: createGastownConvoysRouter(),
 		mail: createGastownMailRouter(),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)

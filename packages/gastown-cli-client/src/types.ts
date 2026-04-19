@@ -182,6 +182,42 @@ export type MailMessage = z.infer<typeof mailMessageSchema>;
 
 export const mailMessageArraySchema = z.array(mailMessageSchema);
 
+// `gt convoy list --json` / `gt convoy status <id> --json`.
+// `status` on the convoy and tracked entries is passed through as a string —
+// the gt enum may drift (open/closed/in_progress/blocked/...) and we do not
+// want the renderer to fail parsing when a new variant appears.
+export const convoyTrackedSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	status: z.string(),
+	dependency_type: z.string(),
+	issue_type: z.string(),
+});
+
+export type ConvoyTracked = z.infer<typeof convoyTrackedSchema>;
+
+export const convoySchema = z
+	.object({
+		id: z.string(),
+		title: z.string(),
+		status: z.string(),
+		created_at: z.string(),
+		tracked: z.array(convoyTrackedSchema),
+		completed: z.number().nullable().optional(),
+		total: z.number().nullable().optional(),
+	})
+	.passthrough();
+
+export type Convoy = z.infer<typeof convoySchema>;
+
+export const convoyArraySchema = z.array(convoySchema);
+
+// `gt convoy status <id> --json` returns a richer shape than `list`; start
+// permissive via passthrough and tighten once the UI stress-tests it.
+export const convoyStatusSchema = convoySchema;
+
+export type ConvoyStatus = z.infer<typeof convoyStatusSchema>;
+
 /**
  * A single entry from `git worktree list --porcelain`. Used by the
  * SpectralSet × Gas Town worktree bridge to discover polecat sandboxes.

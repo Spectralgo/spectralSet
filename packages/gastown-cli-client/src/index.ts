@@ -36,6 +36,12 @@ import type {
 } from "./types";
 
 export {
+	type ConvoyStatusArgs,
+	convoyStatus,
+	type ListConvoysArgs,
+	listConvoys,
+} from "./convoys";
+export {
 	expandTilde,
 	GastownCliError,
 	GastownCliNotInstalledError,
@@ -60,6 +66,9 @@ export { getRigPrefix } from "./rig-prefix";
 export type {
 	Bead,
 	BeadStatus,
+	Convoy,
+	ConvoyStatus,
+	ConvoyTracked,
 	MailMessage,
 	MailPriority,
 	MailSendType,
@@ -80,6 +89,10 @@ export type {
 export {
 	beadSchema,
 	beadStatusSchema,
+	convoyArraySchema,
+	convoySchema,
+	convoyStatusSchema,
+	convoyTrackedSchema,
 	mailMessageArraySchema,
 	mailMessageSchema,
 	mailPrioritySchema,
