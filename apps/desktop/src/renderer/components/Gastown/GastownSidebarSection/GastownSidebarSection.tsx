@@ -6,9 +6,13 @@ import {
 } from "@spectralset/ui/collapsible";
 import { toast } from "@spectralset/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { HiChevronDown, HiChevronRight } from "react-icons/hi2";
+import {
+	HiChevronDown,
+	HiChevronRight,
+	HiOutlineEnvelope,
+} from "react-icons/hi2";
 import { AgentRow } from "renderer/components/Gastown/AgentRow";
 import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
 import { electronTrpc } from "renderer/lib/electron-trpc";
@@ -93,6 +97,7 @@ function GastownSidebarSectionBody() {
 	const setActiveTab = useTabsStore((s) => s.setActiveTab);
 	const createOrAttach = useCreateOrAttachWithTheme();
 	const writeToTerminal = electronTrpc.terminal.write.useMutation();
+	const navigate = useNavigate();
 
 	const onAttach = useCallback(
 		async (agent: RigAgent) => {
@@ -180,6 +185,15 @@ function GastownSidebarSectionBody() {
 					</CollapsibleTrigger>
 				</div>
 				<CollapsibleContent className="mt-1 space-y-2">
+					<button
+						type="button"
+						onClick={() => navigate({ to: "/gastown/mail" })}
+						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+						aria-label="Open Gas Town Mail"
+					>
+						<HiOutlineEnvelope className="size-3 shrink-0 text-muted-foreground" />
+						<span className="truncate">Mail</span>
+					</button>
 					{probeQuery.error ? (
 						<div className="px-2 text-xs text-destructive">
 							Gas Town unavailable.
