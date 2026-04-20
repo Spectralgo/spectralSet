@@ -408,9 +408,15 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					tmuxSocket: input.tmuxSocket,
 				});
 			}),
-		agents: createGastownAgentsRouter(),
-		convoys: createGastownConvoysRouter(),
-		mail: createGastownMailRouter(),
+		agents: createGastownAgentsRouter({
+			resolveTownPathFn: resolveEffectiveTownPath,
+		}),
+		convoys: createGastownConvoysRouter({
+			resolveTownPathFn: resolveEffectiveTownPath,
+		}),
+		mail: createGastownMailRouter({
+			resolveTownPathFn: resolveEffectiveTownPath,
+		}),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)
 			.mutation(async ({ input }): Promise<ReconcileResult> => {
