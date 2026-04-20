@@ -1,14 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ConvoyBoard } from "renderer/components/Gastown/ConvoyBoard";
+import { electronTrpc } from "renderer/lib/electron-trpc";
 
 export const Route = createFileRoute("/_authenticated/gastown/convoys/")({
 	component: GastownConvoysPage,
 });
 
 function GastownConvoysPage() {
+	const { data: platform } = electronTrpc.window.getPlatform.useQuery();
+	const isMac = platform === undefined || platform === "darwin";
 	return (
-		<div className="h-screen w-screen bg-background">
-			<ConvoyBoard />
+		<div className="flex h-screen w-screen flex-col bg-background">
+			<div
+				className="drag h-8 w-full shrink-0 bg-background"
+				style={{ paddingLeft: isMac ? "88px" : "16px" }}
+			/>
+			<div className="min-h-0 flex-1">
+				<ConvoyBoard />
+			</div>
 		</div>
 	);
 }
