@@ -141,6 +141,14 @@ describe("listAgents", () => {
 			/boom/,
 		);
 	});
+
+	it("threads townRoot through to execGt cwd", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn([
+			{ stdout: STATUS_JSON, exitCode: 0 },
+		]);
+		await listAgents({ townRoot: "/Users/demo/town" }, {}, { spawn: spawnFn });
+		expect(calls[0]?.options.cwd).toBe("/Users/demo/town");
+	});
 });
 
 const BEAD_JSON = JSON.stringify([

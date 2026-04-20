@@ -6,6 +6,7 @@ import type {
 import { cn } from "@spectralset/ui/utils";
 import { useMemo, useState } from "react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { AgentDetailDrawer, type AgentSelection } from "./AgentDetailDrawer";
 
@@ -89,10 +90,21 @@ function titleCase(v: string): string {
 }
 
 export function AgentCVPanel() {
-	const listQuery = electronTrpc.gastown.agents.list.useQuery(undefined, {
-		refetchInterval: 5000,
+	// The `agents` tRPC subrouter — unlike the parent gastown router — has no
+	// cached-probe fallback for townPath. Thread it from the renderer: the
+	// user override (localStorage) wins, else the probe-detected townRoot.
+	const townPathOverride = useGastownTownPath();
+	const probeQuery = electronTrpc.gastown.probe.useQuery(undefined, {
 		refetchOnWindowFocus: false,
 	});
+	const townPath = townPathOverride || probeQuery.data?.townRoot || undefined;
+	const listQuery = electronTrpc.gastown.agents.list.useQuery(
+		townPath ? { townPath } : undefined,
+		{
+			refetchInterval: 5000,
+			refetchOnWindowFocus: false,
+		},
+	);
 	const [selected, setSelected] = useState<AgentSelection | null>(null);
 
 	const agents = listQuery.data ?? [];
