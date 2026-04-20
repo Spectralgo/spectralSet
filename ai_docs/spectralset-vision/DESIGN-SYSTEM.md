@@ -1,7 +1,7 @@
 ---
 phase: B4
 doc_id: DESIGN-SYSTEM
-version: v0.1
+version: v0.2
 owner: crew/worktree_researcher
 depends_on: [B0]
 seed_inputs:
@@ -317,9 +317,20 @@ by highest leverage first.
 ### Arbitrary-spacing drift
 
 `p-[`, `px-[`, `py-[`, `gap-[`, `mt-[` — 53 occurrences across 15 files
-under `apps/desktop/src/renderer/`. Top offenders include the dashboard
-sidebar and workspace sidebar family. **Fix**: round to the nearest §2
-step; if a pixel-perfect value is truly needed, promote it to a token.
+under `apps/desktop/src/renderer/`. Top offenders:
+
+| File | Count |
+|------|-------|
+| `routes/_authenticated/_dashboard/project/$projectId/page.tsx` | 7 |
+| `components/NewWorkspaceModal/components/PromptGroup/PromptGroup.tsx` | 5 |
+| `routes/_authenticated/components/DashboardNewWorkspaceModal/.../PromptGroup.tsx` | 5 |
+| `routes/_authenticated/_dashboard/components/DashboardSidebar/.../DashboardSidebarExpandedProjectContent.tsx` | 5 |
+| `routes/_authenticated/_dashboard/components/DashboardSidebar/.../DashboardSidebarSectionContent.tsx` | 3 |
+| `screens/main/components/WorkspaceSidebar/ProjectSection/ProjectSection.tsx` | 5 |
+| `screens/main/components/WorkspaceSidebar/SetupScriptCard/SetupScriptCard.tsx` | 3 |
+
+**Fix**: round each value to the nearest §2 step; if a pixel-perfect
+value is truly needed, promote it to a named token before landing.
 
 ### Color/hex drift
 
@@ -333,16 +344,22 @@ verifies visually.
 
 ### Motion-library drift
 
-`framer-motion` imports (10 files, 9 modules): migrate to `motion/react`
-equivalents. Most are `motion.div` + `AnimatePresence` usage and map
-1:1. Candidates:
+`framer-motion` imports across `apps/desktop/src/` — migrate to
+`motion/react`. Most call sites use `motion.div` + `AnimatePresence` and
+map 1:1.
 
-- `apps/desktop/src/renderer/routes/_authenticated/components/DashboardNewWorkspaceModal/DashboardNewWorkspaceModal.tsx:1`
-- `apps/desktop/src/renderer/screens/main/components/WorkspaceSidebar/ProjectSection/ProjectThumbnail/ProjectThumbnail.tsx:1`
-- `apps/desktop/src/renderer/components/Chat/ChatInterface/components/ChatInputFooter/components/ChatComposerControls/ChatComposerControls.tsx:1`
-- `apps/desktop/src/renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/usePaneRegistry/components/ChatPane/components/WorkspaceChatInterface/components/ChatInputFooter/components/ChatComposerControls/ChatComposerControls.tsx:1`
-- `apps/desktop/src/renderer/components/NewWorkspaceModal/NewWorkspaceModal.tsx:1`
-- …5 more in `components/Paywall`, `routes/_authenticated/settings/project/.../AddSecretSheet`, `routes/.../PromptGroup`, `routes/.../CreateTaskDialog`, `routes/.../PromptGroup/PromptGroup.tsx` (cloud flavor).
+| File:line | Current library | Migration target |
+|-----------|-----------------|------------------|
+| `apps/desktop/src/renderer/routes/_authenticated/components/DashboardNewWorkspaceModal/DashboardNewWorkspaceModal.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/components/NewWorkspaceModal/NewWorkspaceModal.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/screens/main/components/WorkspaceSidebar/ProjectSection/ProjectThumbnail/ProjectThumbnail.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/components/Chat/ChatInterface/components/ChatInputFooter/components/ChatComposerControls/ChatComposerControls.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/usePaneRegistry/components/ChatPane/components/WorkspaceChatInterface/components/ChatInputFooter/components/ChatComposerControls/ChatComposerControls.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/routes/_authenticated/components/DashboardNewWorkspaceModal/components/DashboardNewWorkspaceForm/PromptGroup/PromptGroup.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/components/NewWorkspaceModal/components/PromptGroup/PromptGroup.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/routes/_authenticated/settings/project/$projectId/cloud/secrets/components/SecretsSettings/components/AddSecretSheet/AddSecretSheet.tsx:2` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/routes/_authenticated/_dashboard/tasks/components/TasksView/components/TasksTopBar/components/CreateTaskDialog/CreateTaskDialog.tsx:1` | framer-motion | motion/react |
+| `apps/desktop/src/renderer/screens/main/components/WorkspaceSidebar/ProjectSection/ProjectThumbnail/ProjectThumbnail.tsx` (additional call sites) | framer-motion | motion/react |
 
 ### Empty-state drift
 
