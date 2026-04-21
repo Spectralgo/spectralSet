@@ -29,6 +29,7 @@ import type {
 import { createGastownMailRouter } from "./mail";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 import { resolveTownPath } from "./resolve-town-path";
+import { createGastownTodayRouter } from "./today";
 
 export { resolveTownPath } from "./resolve-town-path";
 
@@ -415,6 +416,9 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 			resolveTownPathFn: resolveEffectiveTownPath,
 		}),
 		mail: createGastownMailRouter({
+			resolveTownPathFn: resolveEffectiveTownPath,
+		}),
+		today: createGastownTodayRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
 		}),
 		reconcile: publicProcedure
