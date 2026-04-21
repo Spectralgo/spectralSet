@@ -1,7 +1,7 @@
 ---
 phase: B3
 doc_id: spec-rejection-triage
-version: v0.1
+version: v0.2
 owner: polecat/opal
 depends_on: [B0, B1, B4, B2-ug-04-code-review-handoff]
 seed_inputs:
@@ -19,7 +19,7 @@ seed_inputs:
   - ai_docs/spectralset-vision/inspiration.md#4.1
   - ai_docs/spectralset-vision/inspiration.md#4.5
 required_sections_present: true
-section_count_self_check: 7
+section_count_self_check: 8
 overseer_review_requested: 2026-04-20
 ---
 
@@ -86,6 +86,56 @@ the refinery log link is tertiary (underlined text). Group heading is pure
 typography (`text-subtitle`, DESIGN-SYSTEM §1); the chip inside carries the
 color. No boxed section dividers.
 
+## 1a. Wireframe — Drawer open
+
+Card focused + `Enter` (or `Open full refinery log` clicked) → rejection
+drawer slides in from the right. The card list stays visible behind it
+(IA §5). The drawer is a **log-plus** surface: primary payload is the
+full refinery log viewer; secondary payloads are this branch's rejection
+history and a one-shot respin shortcut. No other affordances — any action
+not listed here belongs on the card itself.
+
+```
+┌─ sidebar ─┬─ /rejection-triage ──────────────┬─ Drawer ──────────────────┐
+│           │                                  │ polecat/jasper-rebrand-…  │
+│ Today  12 │ Rejection Triage                 │ ember-on-amber chip       │
+│ Incidents │ 4 rejections · by root cause     │ ─────────────────────     │
+│ Rejection │ ──────────────────────────────   │                           │
+│   Triage 4│ stale-imports (3)                │ Refinery log              │
+│ Mail    5 │ ─────────────────────────        │ [ Jump to first error ]   │
+│ Agents    │ ┌ jasper-rebrand-mobile  ⟳ ───┐  │                           │
+│ Convoys   │ │ stale-imports               │  │ ▌  17:04:12 typecheck     │
+│           │ │ packages/mobile/src/foo.ts  │  │ ▌  17:04:12   packages/…  │
+│           │ └─────────────────────────────┘  │ ▌  17:04:13   error TS2…  │
+│           │ ┌ onyx-rebrand-docs   (colla.) ┐ │ ▌  17:04:13     42 │ ret  │
+│           │ ┌ quartz-rebrand-web  (colla.) ┐ │ ▌  17:04:13        │   ^^ │
+│           │                                  │ ▌  … (scrollable)         │
+│           │ test-regression (1)              │                           │
+│           │ ──────────────────               │ History for this branch   │
+│           │ ┌ obsidian-auth-ref.  (colla.) ┐ │ · 1st rejection · 2h ago  │
+│           │                                  │ · (this)     · now       │
+│           │ Resubmitted (2) ▸                │                           │
+│           │                                  │ [ Sling fresh polecat ]   │
+│           │                                  │                           │
+└───────────┴──────────────────────────────────┴───────────────────────────┘
+```
+
+Drawer contents, top to bottom:
+
+1. **Header** — branch label + chip (same as card), collapsing on scroll.
+2. **Refinery log viewer** — full log, virtualized, monospace, filterable
+   by level. `[ Jump to first error ]` button anchors the viewport to the
+   first `error`/`FAIL` line (keyboard `G E`). Primary payload.
+3. **History for this branch** — compact list of prior rejections of the
+   same branch (latest last), each a timestamp + chip + "open" link that
+   swaps the drawer to that rejection. No edit affordances.
+4. **Sling fresh polecat** — shortcut to the Respin preview (same popover
+   as the card's primary action), for operators who arrived via the log
+   and don't want to close the drawer first.
+
+The drawer is **log-plus-two-appendages**, not a settings panel. No
+editing, no quarantine controls, no mute toggles — those live on the card.
+
 ## 2. Component inventory
 
 All primitives compose from shadcn/ui + DESIGN-SYSTEM tokens. Names are
@@ -107,6 +157,8 @@ B5/C reviewers can pick shared primitives without being boxed in.
 | Secondary action | Button (ghost) | `fg-default`, outline on focus only |
 | Tertiary link | underlined `<a>` | `text-body`, `fg-muted` |
 | Drawer | `Sheet` (shadcn) | `bg-raised`, width 480–560, `dur-medium` enter |
+| Popover | `Popover` (shadcn) | `bg-overlay` (§3), `dur-fast` (§6) — Respin preview, Nuke confirm |
+| Toast | Toast (DESIGN-SYSTEM §5 pattern) | `bg-raised`, `dur-fast` enter, `dur-medium` linger — self-fix editor / resubmit outcomes |
 | Row-scoped palette | `Command` overlay (shadcn) | `bg-overlay` (§3), global Cmd-Shift-K |
 | Empty state | Empty-state template (DESIGN-SYSTEM §5) | `text-subtitle` + `space-12` |
 | Error banner | Banner (danger) | `accent-danger` @ 15% bg |
@@ -141,6 +193,7 @@ Full catalog. Tone: declarative, verb-forward, no exclamation marks
 - Count meta: `{N} rejection(s) · grouped by root cause` (zero → empty state)
 - Group-by toggle: label `Group by`; options `Root cause`, `Rig`, `Age`
 - Resubmitted fold: `Resubmitted ({N}) ▸`
+- Muted fold: `Muted ({N}) ▸` (collapsed by default; introduced by §5 "Mute")
 
 **Group heading**
 
@@ -181,6 +234,13 @@ Full catalog. Tone: declarative, verb-forward, no exclamation marks
 - Unparseable log: chip falls back to `other`; Respin preview shows `Manual spec — no delta detected. Edit the brief before confirming.`
 
 **Row-scoped palette** (Cmd-Shift-K): `Respin fresh polecat`, `Self-fix locally`, `Open full refinery log`, `Nuke polecat`, `Mute {chip} from this rig`.
+
+**Nuke confirm** (in-panel popover — `N` on a focused card or palette entry `Nuke polecat`; IA modal rule 3: destructive confirms stay in-panel).
+
+- Header: `Nuke {branch}?`
+- Body: `This terminates the polecat session and deletes its worktree. The rejection card stays for audit.`
+- Confirm button: `Nuke polecat`
+- Cancel button: `Keep it`
 
 ## 4. Keyboard shortcuts
 
@@ -236,6 +296,27 @@ the cockpit groups by the key, does not synthesize correlation client-side.
 - **Nuke polecat** → Quarantine Pill morphs to `nuked`. Agents surface
   reflects the change through the shared polecat-state subscription (IA §4),
   not a duplicate write from this surface.
+
+**Self-fix intermediate state.** `Self-fix locally` spawns an editor
+(toast: `Opening {path}:{line} in your editor`) and flips the card to an
+`editing` state — card stays in its group, gains an inline `editing`
+pill (`bg-inset` + `fg-muted`) and retains keyboard focus so `j`/`k`
+still navigate. The button swap `Self-fix locally` → `Push & resubmit`
+is triggered by a short-lived `git log --oneline {branch}` poll (every
+3s while the card is in `editing`; throttled to 30s after five minutes)
+rather than a file watcher — the signal we care about is "operator made
+a local commit on this branch," not raw file edits, so polling `git log`
+is both cheap and correct. Clicking the card (`F` a second time)
+re-opens the same editor entry without changing state. **Cleanup rule:**
+an `editing` card that has not gained a local commit within 24h auto-
+reverts to its original `Self-fix locally` affordance and a toast
+(`Self-fix on {branch} timed out. Re-open if you still want to fix locally.`);
+it does not pile up as an in-progress self-fix forever.
+
+**Resubmitted ({N}) list state.** The fold is a per-operator, per-rig
+preference (key: `(user, rig)`), persisted locally; it auto-decays by
+removing a card when that rejection's follow-up MR lands (merge-queue
+tick), so the list tends to empty on its own without manual curation.
 
 **Stale / re-rejection.** Card older than `branch_cut_at + 48h` gets a
 `stale >48h` meta chip (`fg-subtle`) — informational, not a block.
@@ -297,10 +378,16 @@ via the shared polecat subscription.
 
 ## 7. Open questions for B5 review
 
-1. **Is the 6-chip taxonomy stable?** Chips are parser-set; if `other`
-   becomes the plurality in production, the taxonomy is wrong. Proposal:
-   instrument chip distribution for two weeks post-launch and split the
-   highest-volume `other` sub-pattern into its own chip.
+1. **Refinery parser is a B4/B5 blocker, not a post-launch tuning
+   question.** Chip classification (§5 "Server-side derived fields") is
+   load-bearing — the card's chip, group key, and the whole respin-vs-
+   self-fix fork all read from a `diagnosis_chip` the refinery must emit.
+   Rejection Triage is not shippable without that parser work landing in
+   B4/B5. B5 reviewers: please treat the refinery log parser as an
+   explicit dependency of this surface, not a concern deferred to
+   instrumentation. The original "instrument for two weeks, split `other`"
+   proposal still holds, but as follow-up tuning — not as the mechanism
+   by which chips exist in the first place.
 
 2. **Should `lint` and `other` share the muted treatment?** `lint` is
    auto-fixable and borderline-noise; `other` is unknown. Lumping them
