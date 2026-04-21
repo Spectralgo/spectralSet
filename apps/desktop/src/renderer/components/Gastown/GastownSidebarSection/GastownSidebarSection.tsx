@@ -12,6 +12,7 @@ import {
 	HiChevronDown,
 	HiChevronRight,
 	HiOutlineEnvelope,
+	HiOutlineSun,
 	HiOutlineTruck,
 	HiOutlineUserGroup,
 } from "react-icons/hi2";
@@ -187,6 +188,19 @@ function GastownSidebarSectionBody() {
 					</CollapsibleTrigger>
 				</div>
 				<CollapsibleContent className="mt-1 space-y-2">
+					<button
+						type="button"
+						onClick={() => navigate({ to: "/today" })}
+						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+						aria-label="Open Today"
+					>
+						<HiOutlineSun className="size-3 shrink-0 text-muted-foreground" />
+						<span className="flex-1 truncate">Today</span>
+						{/* Count badge placeholder — wired in C1-today-02 (gastown.today router). */}
+						<span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+							—
+						</span>
+					</button>
 					<button
 						type="button"
 						onClick={() => navigate({ to: "/gastown/mail" })}
