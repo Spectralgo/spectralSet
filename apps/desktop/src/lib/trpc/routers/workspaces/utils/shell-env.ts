@@ -21,6 +21,20 @@ let fallbackCacheTtlMs = FALLBACK_CACHE_TTL_MS;
 let pathFixAttempted = false;
 let pathFixSucceeded = false;
 
+let loggedEnvSummary = false;
+function logEnvSummaryOnce(): void {
+	if (loggedEnvSummary) return;
+	loggedEnvSummary = true;
+	console.log("[shell-env] cache hydrated", {
+		keys: Object.keys(cachedEnv ?? {}).length,
+		hasPATH: Boolean(cachedEnv?.PATH),
+		hasHOME: Boolean(cachedEnv?.HOME),
+		pathHead: (cachedEnv?.PATH ?? "").slice(0, 120),
+		shell: cachedEnv?.SHELL,
+		isFallback: isFallbackCache,
+	});
+}
+
 class ShellEnvTimeoutError extends Error {
 	constructor(timeoutMs: number) {
 		super(`[shell-env] Timed out after ${timeoutMs}ms`);
@@ -72,6 +86,7 @@ export async function getShellEnvironment(
 		cacheTime = now;
 		isFallbackCache = false;
 		fallbackCacheTtlMs = FALLBACK_CACHE_TTL_MS;
+		logEnvSummaryOnce();
 		return { ...cachedEnv };
 	} catch (error) {
 		const isTimeout = error instanceof ShellEnvTimeoutError;
@@ -91,6 +106,7 @@ export async function getShellEnvironment(
 		fallbackCacheTtlMs = isTimeout
 			? TIMEOUT_FALLBACK_CACHE_TTL_MS
 			: FALLBACK_CACHE_TTL_MS;
+		logEnvSummaryOnce();
 		return { ...fallback };
 	}
 }

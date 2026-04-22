@@ -50,8 +50,13 @@ export interface TmuxGastownLookup {
 async function readTownAndSocketFromTmux(
 	env: NodeJS.ProcessEnv,
 ): Promise<TmuxGastownLookup> {
+	const t0 = Date.now();
 	const SOCKET_GLOB = "spectralgastown-";
 	const sockets = await listTmuxSockets(env);
+	console.log("[gastown-tmux-lookup] start", {
+		socketCount: sockets.length,
+		socketHead: sockets.slice(0, 3),
+	});
 	for (const socket of sockets) {
 		if (!socket.includes(SOCKET_GLOB)) continue;
 		const value = await runTmux(
@@ -60,8 +65,21 @@ async function readTownAndSocketFromTmux(
 		);
 		if (!value) continue;
 		const match = value.match(/^GT_TOWN_ROOT=(.+)$/m);
-		if (match?.[1]) return { townRoot: match[1].trim(), socket };
+		if (match?.[1]) {
+			const lookup = { townRoot: match[1].trim(), socket };
+			console.log("[gastown-tmux-lookup] done", {
+				townRoot: lookup.townRoot,
+				socket: lookup.socket,
+				elapsedMs: Date.now() - t0,
+			});
+			return lookup;
+		}
 	}
+	console.log("[gastown-tmux-lookup] done", {
+		townRoot: undefined,
+		socket: undefined,
+		elapsedMs: Date.now() - t0,
+	});
 	return { townRoot: undefined, socket: undefined };
 }
 

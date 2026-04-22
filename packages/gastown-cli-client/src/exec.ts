@@ -79,6 +79,69 @@ export interface ExecGtDeps {
 	spawn?: SpawnLike;
 }
 
+let livenessProbed = false;
+async function runLivenessProbe(
+	env: NodeJS.ProcessEnv | undefined,
+): Promise<void> {
+	if (livenessProbed) return;
+	livenessProbed = true;
+	const effectiveEnv = env ?? process.env;
+	const whichResult = await new Promise<string>((resolve) => {
+		const child = spawn("/usr/bin/which", ["gt"], {
+			env: effectiveEnv,
+			stdio: ["ignore", "pipe", "pipe"],
+		});
+		let buf = "";
+		child.stdout?.on("data", (d) => {
+			buf += d.toString("utf8");
+		});
+		child.on("error", () => resolve("<which-error>"));
+		child.on("close", () => resolve(buf.trim()));
+		setTimeout(() => {
+			try {
+				child.kill("SIGKILL");
+			} catch {}
+			resolve("<which-timeout>");
+		}, 3000);
+	});
+	const versionResult = await new Promise<{
+		out: string;
+		elapsedMs: number;
+		timedOut: boolean;
+	}>((resolve) => {
+		const t0 = Date.now();
+		const binPath =
+			whichResult && !whichResult.startsWith("<") ? whichResult : "gt";
+		const child = spawn(binPath, ["--version"], {
+			env: effectiveEnv,
+			stdio: ["ignore", "pipe", "pipe"],
+		});
+		let out = "";
+		child.stdout?.on("data", (d) => {
+			out += d.toString("utf8");
+		});
+		let timedOut = false;
+		const timer = setTimeout(() => {
+			timedOut = true;
+			try {
+				child.kill("SIGKILL");
+			} catch {}
+		}, 5000);
+		child.on("error", () => {
+			clearTimeout(timer);
+			resolve({ out: "<version-error>", elapsedMs: Date.now() - t0, timedOut });
+		});
+		child.on("close", () => {
+			clearTimeout(timer);
+			resolve({ out: out.trim(), elapsedMs: Date.now() - t0, timedOut });
+		});
+	});
+	console.log("[gt-spawn] liveness", {
+		which: whichResult,
+		version: versionResult,
+	});
+}
+
 function execBin(
 	bin: string,
 	argv: readonly string[],
@@ -94,6 +157,30 @@ function execBin(
 		env: options.env ?? process.env,
 		stdio: [hasStdin ? "pipe" : "ignore", "pipe", "pipe"],
 	};
+
+	void runLivenessProbe(options.env).catch((e) => {
+		console.error(
+			"[gt-spawn] liveness-err",
+			e instanceof Error ? e.message : String(e),
+		);
+	});
+
+	const startedAt = Date.now();
+	console.log("[gt-spawn] start", {
+		bin,
+		argv: argv.slice(0, 6),
+		cwd: options.cwd ?? "<inherit>",
+		envHas: {
+			PATH: Boolean(options.env?.PATH ?? process.env.PATH),
+			HOME: Boolean(options.env?.HOME ?? process.env.HOME),
+			GT_TOWN_ROOT: Boolean(
+				options.env?.GT_TOWN_ROOT ?? process.env.GT_TOWN_ROOT,
+			),
+			TMUX: Boolean(options.env?.TMUX ?? process.env.TMUX),
+		},
+		pathHead: (options.env?.PATH ?? process.env.PATH ?? "").slice(0, 120),
+		timeoutMs,
+	});
 
 	return new Promise<ExecGtResult>((resolve, reject) => {
 		let child: ReturnType<SpawnLike>;
@@ -117,6 +204,15 @@ function execBin(
 
 		const timer = setTimeout(() => {
 			timedOut = true;
+			console.error("[gt-spawn] TIMEOUT", {
+				bin,
+				argv: argv.slice(0, 6),
+				elapsedMs: Date.now() - startedAt,
+				stdoutBytes: stdout.length,
+				stderrBytes: stderr.length,
+				stderrTail: stderr.slice(-400),
+				pid: child.pid,
+			});
 			child.kill("SIGKILL");
 		}, timeoutMs);
 
@@ -149,6 +245,15 @@ function execBin(
 				return;
 			}
 			const exitCode = code ?? -1;
+			const elapsedMs = Date.now() - startedAt;
+			if (elapsedMs > 1000) {
+				console.log("[gt-spawn] slow-exit", {
+					bin,
+					argv: argv.slice(0, 6),
+					elapsedMs,
+					exitCode,
+				});
+			}
 			resolve({ stdout, stderr, exitCode });
 		});
 
