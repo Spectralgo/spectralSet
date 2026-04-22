@@ -119,3 +119,51 @@ export async function sendMail(
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
 }
+
+export interface ArchiveMailArgs {
+	ids: string[];
+	townRoot?: string;
+}
+
+export async function archiveMessage(
+	args: ArchiveMailArgs,
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<void> {
+	if (args.ids.length === 0) return;
+	const argv: string[] = ["mail", "archive", ...args.ids];
+
+	const cwd = resolveTownCwd(args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+}
+
+export interface MarkMailReadArgs {
+	ids: string[];
+	townRoot?: string;
+}
+
+export async function markMessageRead(
+	args: MarkMailReadArgs,
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<void> {
+	if (args.ids.length === 0) return;
+	const argv: string[] = ["mail", "mark-read", ...args.ids];
+
+	const cwd = resolveTownCwd(args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+}

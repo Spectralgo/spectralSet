@@ -2,7 +2,13 @@ import { describe, expect, it } from "bun:test";
 import type { SpawnOptions } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { GastownCliError } from "./exec";
-import { listInbox, readMessage, sendMail } from "./mail";
+import {
+	archiveMessage,
+	listInbox,
+	markMessageRead,
+	readMessage,
+	sendMail,
+} from "./mail";
 
 interface SpawnCall {
 	bin: string;
@@ -220,6 +226,58 @@ describe("sendMail()", () => {
 				{},
 				{ spawn: spawnFn },
 			),
+		).rejects.toBeInstanceOf(GastownCliError);
+	});
+});
+
+describe("archiveMessage()", () => {
+	it("invokes `gt mail archive <ids...>` with each id as positional arg", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({ exitCode: 0 });
+		await archiveMessage({ ids: ["hq-abc", "hq-def"] }, {}, { spawn: spawnFn });
+		expect(calls[0]?.argv).toEqual(["mail", "archive", "hq-abc", "hq-def"]);
+	});
+
+	it("does not invoke the CLI when ids is empty", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({ exitCode: 0 });
+		await archiveMessage({ ids: [] }, {}, { spawn: spawnFn });
+		expect(calls).toHaveLength(0);
+	});
+
+	it("throws GastownCliError on non-zero exit", async () => {
+		const { spawnFn } = makeRecordingSpawn({
+			stderr: "archive failed",
+			exitCode: 1,
+		});
+		await expect(
+			archiveMessage({ ids: ["hq-abc"] }, {}, { spawn: spawnFn }),
+		).rejects.toBeInstanceOf(GastownCliError);
+	});
+});
+
+describe("markMessageRead()", () => {
+	it("invokes `gt mail mark-read <ids...>` with each id as positional arg", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({ exitCode: 0 });
+		await markMessageRead(
+			{ ids: ["hq-abc", "hq-def"] },
+			{},
+			{ spawn: spawnFn },
+		);
+		expect(calls[0]?.argv).toEqual(["mail", "mark-read", "hq-abc", "hq-def"]);
+	});
+
+	it("does not invoke the CLI when ids is empty", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({ exitCode: 0 });
+		await markMessageRead({ ids: [] }, {}, { spawn: spawnFn });
+		expect(calls).toHaveLength(0);
+	});
+
+	it("throws GastownCliError on non-zero exit", async () => {
+		const { spawnFn } = makeRecordingSpawn({
+			stderr: "mark-read failed",
+			exitCode: 1,
+		});
+		await expect(
+			markMessageRead({ ids: ["hq-abc"] }, {}, { spawn: spawnFn }),
 		).rejects.toBeInstanceOf(GastownCliError);
 	});
 });

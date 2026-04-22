@@ -54,8 +54,12 @@ export {
 	GastownCliTimeoutError,
 } from "./exec";
 export {
+	type ArchiveMailArgs,
+	archiveMessage,
 	type ListInboxArgs,
 	listInbox,
+	type MarkMailReadArgs,
+	markMessageRead,
 	type ReadMailArgs,
 	readMessage,
 	type SendMailArgs,

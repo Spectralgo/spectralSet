@@ -1,8 +1,10 @@
 import {
+	archiveMessage,
 	listInbox,
 	type MailMessage,
 	mailPrioritySchema,
 	mailSendTypeSchema,
+	markMessageRead,
 	readMessage,
 	sendMail,
 } from "@spectralset/gastown-cli-client";
@@ -37,10 +39,17 @@ const sendMailInputSchema = z.object({
 	townPath: townPathSchema,
 });
 
+const mailIdsInputSchema = z.object({
+	ids: z.array(z.string().min(1)).min(1).max(500),
+	townPath: townPathSchema,
+});
+
 interface GastownMailRouterDeps {
 	listInboxFn?: typeof listInbox;
 	readMessageFn?: typeof readMessage;
 	sendMailFn?: typeof sendMail;
+	archiveMessageFn?: typeof archiveMessage;
+	markMessageReadFn?: typeof markMessageRead;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
 }
 
@@ -52,6 +61,8 @@ export const createGastownMailRouter = (deps: GastownMailRouterDeps = {}) => {
 	const listInboxImpl = deps.listInboxFn ?? listInbox;
 	const readMessageImpl = deps.readMessageFn ?? readMessage;
 	const sendMailImpl = deps.sendMailFn ?? sendMail;
+	const archiveMessageImpl = deps.archiveMessageFn ?? archiveMessage;
+	const markMessageReadImpl = deps.markMessageReadFn ?? markMessageRead;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
 
 	return router({
@@ -88,6 +99,30 @@ export const createGastownMailRouter = (deps: GastownMailRouterDeps = {}) => {
 						priority: input.priority,
 						type: input.type,
 						pinned: input.pinned,
+						townRoot: resolveTownPathImpl(input.townPath),
+					},
+					await shellOptions(),
+				);
+				return { ok: true as const };
+			}),
+		archive: publicProcedure
+			.input(mailIdsInputSchema)
+			.mutation(async ({ input }) => {
+				await archiveMessageImpl(
+					{
+						ids: input.ids,
+						townRoot: resolveTownPathImpl(input.townPath),
+					},
+					await shellOptions(),
+				);
+				return { ok: true as const };
+			}),
+		markRead: publicProcedure
+			.input(mailIdsInputSchema)
+			.mutation(async ({ input }) => {
+				await markMessageReadImpl(
+					{
+						ids: input.ids,
 						townRoot: resolveTownPathImpl(input.townPath),
 					},
 					await shellOptions(),
