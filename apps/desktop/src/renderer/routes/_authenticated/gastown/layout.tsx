@@ -38,12 +38,29 @@ function GastownLayout() {
 	// canonical empty-state and has its own fallback to /workspace.
 	useEffect(() => {
 		if (guardShouldRedirect) {
+			console.log("[gastown-layout] redirect fired");
 			navigate({ to: "/today", replace: true });
 		}
 	}, [guardShouldRedirect, navigate]);
 
 	const awaitingData =
 		gastownEnabled === null || (gastownEnabled && probeQuery.isLoading);
+
+	console.log("[gastown-layout]", {
+		gastownEnabled,
+		probeStatus: probeQuery.status,
+		probeIsLoading: probeQuery.isLoading,
+		probeIsError: probeQuery.isError,
+		probeError: probeQuery.error?.message,
+		probe: JSON.stringify(probe),
+		probeFailed,
+		townUnreachable,
+		workspaceNull,
+		guardShouldRedirect,
+		awaitingData,
+		pathname:
+			typeof window === "undefined" ? null : window.location.pathname,
+	});
 
 	if (awaitingData || guardShouldRedirect) {
 		return (
@@ -53,5 +70,6 @@ function GastownLayout() {
 		);
 	}
 
+	console.log("[gastown-layout] outlet render");
 	return <Outlet />;
 }
