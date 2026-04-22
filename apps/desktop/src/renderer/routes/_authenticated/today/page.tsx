@@ -1,12 +1,20 @@
+import type { Rig } from "@spectralset/gastown-cli-client";
 import { Spinner } from "@spectralset/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { MAYOR_ADDRESS } from "renderer/components/Gastown/MailPanel/AddressPicker";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import type { MailMessage } from "renderer/lib/gastown/mail-types";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { MailPile } from "./components/MailPile";
+import {
+	type RigReason,
+	type RigStripRow,
+	RigsStrip,
+} from "./components/RigsStrip";
+import { TodayMasthead } from "./components/TodayMasthead";
 
 // Matches the sidebar's probe cache so both share a single in-flight request.
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
@@ -53,23 +61,24 @@ function TodayPage() {
 		return <TodayNoWorkspace isMac={isMac} />;
 	}
 
+	const lastVerifiedAt = probeQuery.dataUpdatedAt
+		? new Date(probeQuery.dataUpdatedAt)
+		: null;
+
 	return (
-		<div className="flex h-screen w-screen flex-col bg-background">
+		<div
+			data-today-root
+			className="flex h-screen w-screen flex-col bg-background"
+		>
 			<div
 				className="drag h-8 w-full shrink-0 bg-background"
 				style={{ paddingLeft: isMac ? "88px" : "16px" }}
 			/>
+			<MastheadRegion lastVerifiedAt={lastVerifiedAt} />
 			<div className="min-h-0 flex-1 overflow-y-auto px-8 py-6">
-				<div className="mb-6">
-					<h1 className="text-base font-medium text-foreground">Today</h1>
-					<p className="text-xs text-muted-foreground">
-						Last verified just now
-					</p>
-				</div>
-				<RegionPlaceholder label="Triage" />
-				<RegionPlaceholder label="Rigs" />
+				{/* TriageStack placeholder — wired in ss-5d0 */}
+				<RigsRegion />
 				<MailRegion />
-				<RegionPlaceholder label="Verdict" />
 			</div>
 		</div>
 	);
@@ -160,15 +169,72 @@ function TodayNoWorkspace({ isMac }: { isMac: boolean }) {
 	);
 }
 
-function RegionPlaceholder({ label }: { label: string }) {
+/**
+ * Masthead region. `sinceTime` is anchored on mount — per spec-today §5, it
+ * should track the user's last foreground transition via local-db, but that
+ * wiring lands in a later bead. Mount-anchored sinceTime still yields an
+ * honest "since you slept" line (zero counts until the digest stream ticks).
+ */
+function MastheadRegion({ lastVerifiedAt }: { lastVerifiedAt: Date | null }) {
+	const townPath = useGastownTownPath();
+	const [sinceTime] = useState(() => new Date().toISOString());
+	const digestQuery = electronTrpc.gastown.today.digest.useQuery(
+		{ sinceTime, ...(townPath ? { townPath } : {}) },
+		{ refetchInterval: 30_000, refetchOnWindowFocus: false },
+	);
+	const isStale =
+		lastVerifiedAt !== null && Date.now() - lastVerifiedAt.getTime() > 30_000;
 	return (
-		<section aria-label={label} className="mb-8">
-			<h2 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-				{label}
-			</h2>
-			<p className="text-xs text-muted-foreground">No content yet.</p>
+		<TodayMasthead
+			digest={digestQuery.data}
+			lastVerifiedAt={lastVerifiedAt}
+			isStale={isStale}
+		/>
+	);
+}
+
+/**
+ * Rigs strip region. Collapses when the rig list is empty or errors — per
+ * spec-today §3 the parent owns the empty-state copy, but for MVP an empty
+ * town simply hides the strip rather than surfacing a CTA.
+ */
+function RigsRegion() {
+	const townPath = useGastownTownPath();
+	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
+		townPath ? { townPath } : undefined,
+		{ refetchInterval: 5_000, refetchOnWindowFocus: false },
+	);
+	const rows = useMemo<RigStripRow[]>(
+		() => (rigsQuery.data ?? []).map(rigToRow),
+		[rigsQuery.data],
+	);
+	if (rigsQuery.isError || rows.length === 0) return null;
+	return (
+		<section aria-label="Rigs" className="mb-8">
+			<RigsStrip rigs={rows} />
 		</section>
 	);
+}
+
+function rigToRow(rig: Rig): RigStripRow {
+	return { name: rig.name, reason: deriveRigReason(rig) };
+}
+
+// Minimal derivation from `listRigs` output. Precise signals (stalled duration,
+// ready P0 count, refinery flow state, offline last-seen) require additional
+// sources the spec assigns to later beads — this maps the states we can
+// observe today and falls through to "quiet".
+function deriveRigReason(rig: Rig): RigReason {
+	const zombieCount = rig.agents.filter((a) => a.state === "zombie").length;
+	if (zombieCount > 0) return { kind: "zombie", count: zombieCount };
+	const stalledCount = rig.agents.filter((a) => a.state === "stalled").length;
+	if (stalledCount > 0) {
+		return { kind: "stalled", duration: "recent", readyCount: 0 };
+	}
+	if (!rig.witnessRunning && !rig.refineryRunning) {
+		return { kind: "offline", lastSeenRelative: "unknown" };
+	}
+	return { kind: "quiet" };
 }
 
 /**
