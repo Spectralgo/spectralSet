@@ -75,7 +75,18 @@ const externalizedRuntimeModules: ExternalizedRuntimeModule[] = [
 		],
 		asarUnpackGlobs: ["**/node_modules/@libsql/**/*"],
 	},
+	{
+		specifier: "mysql2",
+		materialize: ["mysql2"],
+		packagedCopies: [copyWholeModule("mysql2")],
+		asarUnpackGlobs: ["**/node_modules/mysql2/**/*"],
+	},
 ];
+
+// Subpath specifiers that also need to be externalized from the main bundle,
+// but whose runtime files are already handled by one of the entries above
+// (mysql2/promise lives inside node_modules/mysql2, so no extra copy needed).
+const additionalExternalSpecifiers = ["mysql2/promise"];
 
 const packagedSupportModules = [
 	copyWholeModule("bindings"),
@@ -89,6 +100,7 @@ const packagedSupportModules = [
 
 export const mainExternalizedDependencies = [
 	...externalizedRuntimeModules.map((module) => module.specifier),
+	...additionalExternalSpecifiers,
 	"pg-native",
 ];
 
