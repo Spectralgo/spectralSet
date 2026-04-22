@@ -2,8 +2,12 @@ import { Spinner } from "@spectralset/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { MAYOR_ADDRESS } from "renderer/components/Gastown/MailPanel/AddressPicker";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import type { MailMessage } from "renderer/lib/gastown/mail-types";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
+import { MailPile } from "./components/MailPile";
 
 // Matches the sidebar's probe cache so both share a single in-flight request.
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
@@ -70,7 +74,7 @@ function TodayPage() {
 				</div>
 				<RegionPlaceholder label="Triage" />
 				<RegionPlaceholder label="Rigs" />
-				<RegionPlaceholder label="Mail" />
+				<MailRegion />
 				<RegionPlaceholder label="Verdict" />
 			</div>
 		</div>
@@ -84,6 +88,32 @@ function RegionPlaceholder({ label }: { label: string }) {
 				{label}
 			</h2>
 			<p className="text-xs text-muted-foreground">No content yet.</p>
+		</section>
+	);
+}
+
+/**
+ * Mail pile region. "Unprocessed" = inbox minus pinned (pinned mail lives in
+ * the triage stack per spec-today §5). An empty pile renders nothing so the
+ * row disappears per spec-today §3 ("Mail pile empty: row disappears").
+ */
+function MailRegion() {
+	const townPath = useGastownTownPath();
+	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
+		{
+			address: MAYOR_ADDRESS,
+			unreadOnly: false,
+			...(townPath ? { townPath } : {}),
+		},
+		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
+	);
+	const pile: MailMessage[] = (inboxQuery.data ?? []).filter(
+		(m) => m.priority !== "urgent" && m.priority !== "high",
+	);
+	if (inboxQuery.isError || pile.length === 0) return null;
+	return (
+		<section aria-label="Mail" className="mb-8">
+			<MailPile messages={pile} townPath={townPath || undefined} />
 		</section>
 	);
 }
