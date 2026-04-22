@@ -203,7 +203,10 @@ const ensureProjectInputSchema = z.object({
 // via brew is invisible to plain `spawn("gt", ...)`. Resolve the full
 // shell PATH (cached) and pass it as the exec env on every call.
 async function shellOptions(): Promise<GastownCliClientOptions> {
-	return { env: await getProcessEnvWithShellPath() };
+	return {
+		env: await getProcessEnvWithShellPath(),
+		cwd: process.env.HOME,
+	};
 }
 
 interface GastownRouterDeps {
