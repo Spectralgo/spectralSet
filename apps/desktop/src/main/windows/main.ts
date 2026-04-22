@@ -135,11 +135,25 @@ export async function MainWindow() {
 		window.webContents.setBackgroundThrottling(false);
 	}
 
+	// ss-8ui DIAG: instrument tRPC IPC bridge setup — verify partition/attachWindow/router keys
+	console.log("[ipcHandler] setup", {
+		existed: Boolean(ipcHandler),
+		partition: window.webContents.session.storagePath ?? "?",
+		url: window.webContents.getURL(),
+	});
 	if (ipcHandler) {
 		ipcHandler.attachWindow(window);
 	} else {
+		const appRouter = createAppRouter(getWindow);
+		const record =
+			(appRouter as unknown as { _def?: { record?: Record<string, unknown> } })
+				._def?.record ?? {};
+		console.log("[ipcHandler] createIPCHandler", {
+			routerKeys: Object.keys(record),
+			hasGastown: "gastown" in record,
+		});
 		ipcHandler = createIPCHandler({
-			router: createAppRouter(getWindow),
+			router: appRouter,
 			windows: [window],
 		});
 	}

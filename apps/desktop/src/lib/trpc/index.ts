@@ -13,6 +13,9 @@ const t = initTRPC.create({
 	isServer: true,
 });
 
+// ss-8ui DIAG: confirm transformer is configured on the root initTRPC instance
+console.log("[trpc-init]", { transformer: "superjson", isServer: true });
+
 /**
  * Middleware that captures errors with Sentry
  */

@@ -18,14 +18,40 @@ export function sessionIdLink<TRouter extends AnyRouter>(): TRPCLink<TRouter> {
 		return ({ op, next }) => {
 			const uniqueId = ++globalOperationId;
 
+			// ss-8ui DIAG: does sessionIdLink actually forward every call to the next link?
+			console.log("[session-id-link] enter", {
+				path: op.path,
+				type: op.type,
+				id: uniqueId,
+			});
+
 			return observable((observer) => {
 				return next({
 					...op,
 					id: uniqueId,
 				}).subscribe({
-					next: (result) => observer.next(result),
-					error: (err) => observer.error(err),
-					complete: () => observer.complete(),
+					next: (result) => {
+						console.log("[session-id-link] next", {
+							path: op.path,
+							id: uniqueId,
+						});
+						observer.next(result);
+					},
+					error: (err) => {
+						console.error("[session-id-link] error", {
+							path: op.path,
+							id: uniqueId,
+							message: err.message,
+						});
+						observer.error(err);
+					},
+					complete: () => {
+						console.log("[session-id-link] complete", {
+							path: op.path,
+							id: uniqueId,
+						});
+						observer.complete();
+					},
 				});
 			});
 		};
