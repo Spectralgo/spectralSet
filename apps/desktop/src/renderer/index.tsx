@@ -32,6 +32,15 @@ const router = createRouter({
 	},
 });
 
+console.log("[router] init", {
+	current_href: router.history.location.href,
+	pathname: router.history.location.pathname,
+	win_pathname: window.location.pathname,
+	win_hash: window.location.hash,
+	win_href: window.location.href,
+	ts: Date.now(),
+});
+
 const unsubscribe = router.subscribe("onResolved", (event) => {
 	posthog.capture("$pageview", {
 		$current_url: event.toLocation.pathname,

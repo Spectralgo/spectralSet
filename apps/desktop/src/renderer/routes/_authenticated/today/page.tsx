@@ -19,6 +19,8 @@ import { TodayMasthead } from "./components/TodayMasthead";
 // Matches the sidebar's probe cache so both share a single in-flight request.
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
 
+console.log("[today-page] module loaded", { ts: Date.now() });
+
 export const Route = createFileRoute("/_authenticated/today/")({
 	component: TodayPage,
 });

@@ -49,14 +49,24 @@ function isDashboardPath(pathname: string): boolean {
 }
 
 function DashboardLayout() {
+	const location = useLocation();
+	const pathname = location.pathname;
+	const isDash = isDashboardPath(pathname);
 	console.log("[dashboard-layout] mount", {
-		pathname: window.location.hash,
+		usl_pathname: pathname,
+		usl_href: location.href,
+		win_pathname: window.location.pathname,
+		win_hash: window.location.hash,
+		win_href: window.location.href,
+		isDashboardPath: isDash,
+		branch: isDash ? "Chrome" : "BareOutlet",
 		ts: Date.now(),
 	});
-	const location = useLocation();
-	if (!isDashboardPath(location.pathname)) {
+	if (!isDash) {
+		console.log("[dashboard-layout] returning BareOutlet for", pathname);
 		return <Outlet />;
 	}
+	console.log("[dashboard-layout] returning Chrome for", pathname);
 	return <DashboardLayoutChrome />;
 }
 
