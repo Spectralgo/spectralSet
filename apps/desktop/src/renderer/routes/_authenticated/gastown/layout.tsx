@@ -70,8 +70,7 @@ function GastownLayout() {
 		workspaceNull,
 		guardShouldRedirect,
 		awaitingData,
-		pathname:
-			typeof window === "undefined" ? null : window.location.pathname,
+		pathname: typeof window === "undefined" ? null : window.location.pathname,
 	});
 
 	if (awaitingData || guardShouldRedirect) {
