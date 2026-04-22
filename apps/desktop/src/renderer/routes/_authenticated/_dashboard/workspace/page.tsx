@@ -38,6 +38,12 @@ function WorkspaceIndexPage() {
 			allWorkspaces.find((w) => w.id === lastViewedId) ?? allWorkspaces[0];
 
 		if (targetWorkspace) {
+			console.log("[workspace-auto-navigate] firing", {
+				from: window.location.hash,
+				to: `/workspace/${targetWorkspace.id}`,
+				lastViewedId,
+				stack: new Error().stack?.split("\n").slice(0, 4).join(" | "),
+			});
 			navigate({
 				to: "/workspace/$workspaceId",
 				params: { workspaceId: targetWorkspace.id },

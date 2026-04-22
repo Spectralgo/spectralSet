@@ -44,6 +44,10 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AuthenticatedLayout() {
+	console.log("[auth-layout] mount", {
+		pathname: window.location.hash,
+		ts: Date.now(),
+	});
 	const {
 		data: session,
 		isPending,
@@ -134,6 +138,11 @@ function AuthenticatedLayout() {
 	// Menu navigation subscription
 	electronTrpc.menu.subscribe.useSubscription(undefined, {
 		onData: (event) => {
+			console.log("[auth-layout] menu-event", {
+				type: event.type,
+				data: event.data,
+				currentPath: window.location.hash,
+			});
 			if (event.type === "open-settings") {
 				const section = event.data.section || "account";
 				navigate({ to: `/settings/${section}` as "/settings/account" });

@@ -26,6 +26,10 @@ export const Route = createFileRoute("/_authenticated/_dashboard")({
 });
 
 function DashboardLayout() {
+	console.log("[dashboard-layout] mount", {
+		pathname: window.location.hash,
+		ts: Date.now(),
+	});
 	const navigate = useNavigate();
 	const openNewWorkspaceModal = useOpenNewWorkspaceModal();
 	const { isV2CloudEnabled } = useIsV2CloudEnabled();

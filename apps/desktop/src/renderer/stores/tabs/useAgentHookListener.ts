@@ -94,6 +94,11 @@ export function useAgentHookListener() {
 					state.setPaneStatus(paneId, "idle");
 				}
 			} else if (event.type === NOTIFICATION_EVENTS.FOCUS_TAB) {
+				console.log("[tabs-auto-navigate] trigger", {
+					event: event.type,
+					workspaceId,
+					currentPath: window.location.hash,
+				});
 				navigateToWorkspace(workspaceId, navigate, {
 					search: {
 						tabId: target.tabId,

@@ -24,6 +24,10 @@ export const Route = createFileRoute("/_authenticated/today/")({
 });
 
 function TodayPage() {
+	console.log("[today-page] mount", {
+		pathname: window.location.hash,
+		ts: Date.now(),
+	});
 	const { data: platform } = electronTrpc.window.getPlatform.useQuery();
 	const gastownEnabledQuery =
 		electronTrpc.settings.getGastownEnabled.useQuery();
@@ -43,7 +47,15 @@ function TodayPage() {
 	const awaitingData =
 		gastownEnabled === null || (gastownEnabled && probeQuery.isLoading);
 
+	const branchState = {
+		workspaceNull,
+		probeFailed,
+		townUnreachable,
+		gastownEnabled,
+	};
+
 	if (awaitingData) {
+		console.log("[today-page] branch", "awaitingData", branchState);
 		return (
 			<div className="flex h-screen w-screen items-center justify-center bg-background">
 				<Spinner className="size-5" />
@@ -52,14 +64,18 @@ function TodayPage() {
 	}
 
 	if (gastownEnabled === false) {
+		console.log("[today-page] branch", "gastown-disabled", branchState);
 		return <TodayGastownDisabled isMac={isMac} />;
 	}
 	if (probeFailed || townUnreachable) {
+		console.log("[today-page] branch", "gastown-unreachable", branchState);
 		return <TodayGastownUnreachable isMac={isMac} error={probeQuery.error} />;
 	}
 	if (workspaceNull) {
+		console.log("[today-page] branch", "no-workspace", branchState);
 		return <TodayNoWorkspace isMac={isMac} />;
 	}
+	console.log("[today-page] branch", "main-content", branchState);
 
 	const lastVerifiedAt = probeQuery.dataUpdatedAt
 		? new Date(probeQuery.dataUpdatedAt)
