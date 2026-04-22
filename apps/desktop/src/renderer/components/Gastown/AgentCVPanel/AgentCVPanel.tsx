@@ -110,6 +110,21 @@ export function AgentCVPanel() {
 	const agents = listQuery.data ?? [];
 	const groups = useMemo(() => groupAgents(agents), [agents]);
 
+	console.log("[AgentCVPanel] query", {
+		townPathOverride,
+		probeTownRoot: probeQuery.data?.townRoot,
+		probeStatus: probeQuery.status,
+		resolvedTownPath: townPath,
+		listStatus: listQuery.status,
+		listError: listQuery.error
+			? {
+					message: listQuery.error.message,
+					data: (listQuery.error as unknown as { data?: unknown }).data,
+				}
+			: null,
+		agentsCount: agents.length,
+	});
+
 	return (
 		<div className="flex h-full flex-col">
 			<header className="flex items-center gap-3 border-b border-border/60 px-4 py-3">

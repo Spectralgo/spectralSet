@@ -43,12 +43,31 @@ export const createGastownAgentsRouter = (
 	return router({
 		list: publicProcedure
 			.input(listAgentsInputSchema)
-			.query(async ({ input }) =>
-				listAgentsImpl(
-					{ townRoot: resolveTownPathImpl(input?.townPath) },
-					await shellOptions(),
-				),
-			),
+			.query(async ({ input }) => {
+				const resolved = resolveTownPathImpl(input?.townPath);
+				const opts = await shellOptions();
+				console.log("[gastown-agents.list] input", {
+					input,
+					resolvedTownRoot: resolved,
+					env_keys: Object.keys(opts.env).filter(
+						(k) => k.includes("PATH") || k.includes("GT") || k.includes("HOME"),
+					),
+				});
+				try {
+					const result = await listAgentsImpl({ townRoot: resolved }, opts);
+					console.log("[gastown-agents.list] ok", { count: result.length });
+					return result;
+				} catch (e) {
+					const err = e as Error;
+					console.error("[gastown-agents.list] FAIL", {
+						message: err.message,
+						name: err.name,
+						stack: err.stack?.split("\n").slice(0, 6).join(" | "),
+						cause: (err as unknown as { cause?: unknown }).cause,
+					});
+					throw e;
+				}
+			}),
 		get: publicProcedure.input(getAgentInputSchema).query(async ({ input }) =>
 			getAgentImpl(
 				{
