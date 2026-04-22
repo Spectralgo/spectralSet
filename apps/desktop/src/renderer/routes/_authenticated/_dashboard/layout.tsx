@@ -1,6 +1,7 @@
 import {
 	createFileRoute,
 	Outlet,
+	useLocation,
 	useMatchRoute,
 	useNavigate,
 } from "@tanstack/react-router";
@@ -25,11 +26,41 @@ export const Route = createFileRoute("/_authenticated/_dashboard")({
 	component: DashboardLayout,
 });
 
+// _dashboard is a pathless layout that should ONLY render for its own child
+// URLs (workspace, workspaces, tasks, etc.). TanStack Router's matcher has
+// been observed mounting this layout for sibling routes like /today (see
+// ss-tlc), so gate the chrome on a known URL allow-list and render a bare
+// Outlet when the URL isn't ours. Adding a new _dashboard child means adding
+// its prefix here.
+const DASHBOARD_URL_PREFIXES = [
+	"/workspace",
+	"/workspaces",
+	"/tasks",
+	"/project",
+	"/pending",
+	"/v2-workspace",
+	"/v2-workspaces",
+];
+
+function isDashboardPath(pathname: string): boolean {
+	return DASHBOARD_URL_PREFIXES.some(
+		(p) => pathname === p || pathname.startsWith(`${p}/`),
+	);
+}
+
 function DashboardLayout() {
 	console.log("[dashboard-layout] mount", {
 		pathname: window.location.hash,
 		ts: Date.now(),
 	});
+	const location = useLocation();
+	if (!isDashboardPath(location.pathname)) {
+		return <Outlet />;
+	}
+	return <DashboardLayoutChrome />;
+}
+
+function DashboardLayoutChrome() {
 	const navigate = useNavigate();
 	const openNewWorkspaceModal = useOpenNewWorkspaceModal();
 	const { isV2CloudEnabled } = useIsV2CloudEnabled();
