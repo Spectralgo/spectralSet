@@ -475,16 +475,14 @@ export function resolveRigCwd(
 	townRoot: string | undefined,
 	explicitCwd: string | undefined,
 ): string | undefined {
-	if (explicitCwd) return explicitCwd;
 	const root = townRoot ?? process.env.GT_TOWN_ROOT;
-	if (!root) return undefined;
-	return `${root}/${rig}`;
+	if (root) return `${root}/${rig}`;
+	return explicitCwd ?? undefined;
 }
 
 export function resolveTownCwd(
 	townRoot: string | undefined,
 	explicitCwd: string | undefined,
 ): string | undefined {
-	if (explicitCwd) return explicitCwd;
-	return townRoot ?? process.env.GT_TOWN_ROOT ?? undefined;
+	return townRoot ?? process.env.GT_TOWN_ROOT ?? explicitCwd ?? undefined;
 }

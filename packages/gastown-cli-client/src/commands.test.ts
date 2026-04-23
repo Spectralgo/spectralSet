@@ -9,6 +9,8 @@ import {
 	nuke,
 	peek,
 	probe,
+	resolveRigCwd,
+	resolveTownCwd,
 	sling,
 } from "./index";
 
@@ -275,7 +277,10 @@ describe("rig-scoped calls — townRoot propagation", () => {
 		expect(calls[0]?.options.cwd).toBe("/Users/demo/town/alpha");
 	});
 
-	it("explicit options.cwd wins over townRoot", async () => {
+	// ss-6dl: townRoot takes precedence over explicitCwd so gt commands that
+	// require being inside a town root (rig list, polecat list, peek, etc.)
+	// work even when callers pass a HOME fallback via shellOptions().
+	it("townRoot wins over explicit options.cwd", async () => {
 		const { spawnFn, calls } = makeRecordingSpawn({
 			stdout: PEEK_OUTPUT,
 			exitCode: 0,
@@ -289,7 +294,27 @@ describe("rig-scoped calls — townRoot propagation", () => {
 			{ cwd: "/explicit/override" },
 			{ spawn: spawnFn },
 		);
-		expect(calls[0]?.options.cwd).toBe("/explicit/override");
+		expect(calls[0]?.options.cwd).toBe("/Users/demo/town/alpha");
+	});
+
+	it("explicit options.cwd is used only when no town is known", async () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		delete process.env.GT_TOWN_ROOT;
+		try {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: PEEK_OUTPUT,
+				exitCode: 0,
+			});
+			await peek(
+				{ rig: "alpha", polecat: "quartz" },
+				{ cwd: "/explicit/override" },
+				{ spawn: spawnFn },
+			);
+			expect(calls[0]?.options.cwd).toBe("/explicit/override");
+		} finally {
+			if (prev === undefined) delete process.env.GT_TOWN_ROOT;
+			else process.env.GT_TOWN_ROOT = prev;
+		}
 	});
 
 	it("listWorktrees shells out to git -C .repo.git with rig-scoped cwd", async () => {
@@ -336,6 +361,77 @@ describe("rig-scoped calls — townRoot propagation", () => {
 		} finally {
 			if (prev === undefined) delete process.env.GT_TOWN_ROOT;
 			else process.env.GT_TOWN_ROOT = prev;
+		}
+	});
+});
+
+// ss-6dl: townRoot takes precedence over explicitCwd so gt commands that
+// require being inside a town root (rig list, polecat list, peek, etc.)
+// work even when callers pass a HOME fallback via shellOptions().
+describe("resolveTownCwd priority", () => {
+	it("townRoot wins over explicitCwd", () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		delete process.env.GT_TOWN_ROOT;
+		try {
+			expect(resolveTownCwd("/town", "/home")).toBe("/town");
+		} finally {
+			if (prev !== undefined) process.env.GT_TOWN_ROOT = prev;
+		}
+	});
+
+	it("GT_TOWN_ROOT env wins over explicitCwd when townRoot absent", () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		process.env.GT_TOWN_ROOT = "/env/town";
+		try {
+			expect(resolveTownCwd(undefined, "/home")).toBe("/env/town");
+		} finally {
+			if (prev === undefined) delete process.env.GT_TOWN_ROOT;
+			else process.env.GT_TOWN_ROOT = prev;
+		}
+	});
+
+	it("falls back to explicitCwd when no town is known", () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		delete process.env.GT_TOWN_ROOT;
+		try {
+			expect(resolveTownCwd(undefined, "/home")).toBe("/home");
+		} finally {
+			if (prev !== undefined) process.env.GT_TOWN_ROOT = prev;
+		}
+	});
+});
+
+describe("resolveRigCwd priority", () => {
+	it("townRoot wins over explicitCwd", () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		delete process.env.GT_TOWN_ROOT;
+		try {
+			expect(resolveRigCwd("alpha", "/town", "/home")).toBe("/town/alpha");
+		} finally {
+			if (prev !== undefined) process.env.GT_TOWN_ROOT = prev;
+		}
+	});
+
+	it("GT_TOWN_ROOT env wins over explicitCwd when townRoot absent", () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		process.env.GT_TOWN_ROOT = "/env/town";
+		try {
+			expect(resolveRigCwd("alpha", undefined, "/home")).toBe(
+				"/env/town/alpha",
+			);
+		} finally {
+			if (prev === undefined) delete process.env.GT_TOWN_ROOT;
+			else process.env.GT_TOWN_ROOT = prev;
+		}
+	});
+
+	it("falls back to explicitCwd when no town is known", () => {
+		const prev = process.env.GT_TOWN_ROOT;
+		delete process.env.GT_TOWN_ROOT;
+		try {
+			expect(resolveRigCwd("alpha", undefined, "/home")).toBe("/home");
+		} finally {
+			if (prev !== undefined) process.env.GT_TOWN_ROOT = prev;
 		}
 	});
 });
