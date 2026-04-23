@@ -15,6 +15,11 @@ import {
 	RigsStrip,
 } from "./components/RigsStrip";
 import { TodayMasthead } from "./components/TodayMasthead";
+import {
+	deriveVerdict,
+	filterMailPile,
+	VerdictTail,
+} from "./components/VerdictTail";
 
 // Matches the sidebar's probe cache so both share a single in-flight request.
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
@@ -97,6 +102,7 @@ function TodayPage() {
 				{/* TriageStack placeholder — wired in ss-5d0 */}
 				<RigsRegion />
 				<MailRegion />
+				<VerdictRegion lastVerifiedAt={lastVerifiedAt} />
 			</div>
 		</div>
 	);
@@ -292,6 +298,57 @@ function MailRegion() {
 	return (
 		<section aria-label="Mail" className="mb-8">
 			<MailPile messages={pile} townPath={townPath || undefined} />
+		</section>
+	);
+}
+
+/**
+ * Verdict tail region. Derives the mutually-exclusive state (green / amber /
+ * red) from live triage + rigs + mail-pile signals per spec-today §3. Red
+ * suppresses the tail — the triage stack becomes the tail — per §3.
+ */
+function VerdictRegion({ lastVerifiedAt }: { lastVerifiedAt: Date | null }) {
+	const townPath = useGastownTownPath();
+	const triageQuery = electronTrpc.gastown.today.triage.useQuery(
+		townPath ? { townPath } : undefined,
+		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
+	);
+	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
+		townPath ? { townPath } : undefined,
+		{ refetchInterval: 5_000, refetchOnWindowFocus: false },
+	);
+	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
+		{
+			address: MAYOR_ADDRESS,
+			unreadOnly: false,
+			...(townPath ? { townPath } : {}),
+		},
+		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
+	);
+	const isLoading =
+		triageQuery.isLoading || rigsQuery.isLoading || inboxQuery.isLoading;
+	const isError =
+		triageQuery.isError || rigsQuery.isError || inboxQuery.isError;
+	const cards = triageQuery.data?.cards ?? [];
+	const rigs = rigsQuery.data ?? [];
+	const amberRigCount = rigs.filter(
+		(r) =>
+			r.agents.some((a) => a.state === "stalled" || a.state === "zombie") ||
+			(!r.witnessRunning && !r.refineryRunning),
+	).length;
+	const state = deriveVerdict({
+		triageSeverities: cards.map((c) => c.severity),
+		amberRigCount,
+		mailPileCount: filterMailPile(inboxQuery.data).length,
+	});
+	return (
+		<section aria-label="Verdict" className="mb-8">
+			<VerdictTail
+				state={state}
+				lastVerifiedAt={lastVerifiedAt}
+				loading={isLoading}
+				error={isError}
+			/>
 		</section>
 	);
 }
