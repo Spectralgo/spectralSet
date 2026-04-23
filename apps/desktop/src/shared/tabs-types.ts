@@ -13,7 +13,21 @@ export type PaneType =
 	| "webview"
 	| "file-viewer"
 	| "chat"
-	| "devtools";
+	| "devtools"
+	| "gastown-today"
+	| "gastown-mail"
+	| "gastown-convoys"
+	| "gastown-agents";
+
+/**
+ * Narrow literal type for Gas Town pane kinds.
+ * Reused by store actions and dispatch switches.
+ */
+export type GastownPaneKind =
+	| "gastown-today"
+	| "gastown-mail"
+	| "gastown-convoys"
+	| "gastown-agents";
 
 /**
  * Pane status for agent lifecycle indicators
@@ -146,6 +160,15 @@ export interface Pane {
 		workspaceId: string;
 		state: "running" | "stopped-by-user" | "stopped-by-exit";
 		command?: string;
+	};
+	gastownMail?: {
+		initialFilter?: string;
+	};
+	gastownConvoys?: {
+		selectedConvoyId?: string;
+	};
+	gastownAgents?: {
+		rigFilter?: string;
 	};
 }
 
