@@ -6,6 +6,7 @@ import type {
 	BrowserLoadError,
 	ChatLaunchConfig,
 	FileViewerMode,
+	GastownPaneKind,
 	Pane,
 	PaneStatus,
 	PaneType,
@@ -13,7 +14,7 @@ import type {
 } from "shared/tabs-types";
 
 // Re-export shared types
-export type { Pane, PaneStatus, PaneType };
+export type { GastownPaneKind, Pane, PaneStatus, PaneType };
 
 /**
  * Snapshot of a closed tab + its panes, used for "reopen closed tab".
@@ -55,6 +56,13 @@ export interface SplitPaneOptions {
 
 export interface AddChatTabOptions {
 	launchConfig?: ChatLaunchConfig | null;
+}
+
+export interface AddGastownPaneOptions {
+	kind: GastownPaneKind;
+	gastownMail?: { initialFilter?: string };
+	gastownConvoys?: { selectedConvoyId?: string };
+	gastownAgents?: { rigFilter?: string };
 }
 
 export interface AddTabWithMultiplePanesOptions {
@@ -104,6 +112,10 @@ export interface TabsStore extends TabsState {
 	addChatTab: (
 		workspaceId: string,
 		options?: AddChatTabOptions,
+	) => { tabId: string; paneId: string };
+	addGastownPane: (
+		workspaceId: string,
+		options: AddGastownPaneOptions,
 	) => { tabId: string; paneId: string };
 	addTabWithMultiplePanes: (
 		workspaceId: string,

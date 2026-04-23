@@ -17,16 +17,25 @@ import {
 	type DiffLayout,
 	type FileViewerMode,
 	type FileViewerState,
+	type GastownPaneKind,
 } from "shared/tabs-types";
 import type {
 	AddChatTabOptions,
 	AddFileViewerPaneOptions,
+	AddGastownPaneOptions,
 	FileViewerReuseScope,
 	Pane,
 	PaneType,
 	Tab,
 	TabsState,
 } from "./types";
+
+export const GASTOWN_PANE_DEFAULT_NAMES: Record<GastownPaneKind, string> = {
+	"gastown-today": "Today",
+	"gastown-mail": "Mail",
+	"gastown-convoys": "Convoys",
+	"gastown-agents": "Agents",
+};
 
 export const resolveFileViewerMode = ({
 	filePath,
@@ -240,6 +249,30 @@ export const createFileViewerPane = (
 		name: fileName,
 		fileViewer,
 	};
+};
+
+export const createGastownPane = (
+	tabId: string,
+	kind: GastownPaneKind,
+	options?: Omit<AddGastownPaneOptions, "kind">,
+): Pane => {
+	const id = generateId("pane");
+	const pane: Pane = {
+		id,
+		tabId,
+		type: kind,
+		name: GASTOWN_PANE_DEFAULT_NAMES[kind],
+	};
+	if (kind === "gastown-mail" && options?.gastownMail) {
+		pane.gastownMail = options.gastownMail;
+	}
+	if (kind === "gastown-convoys" && options?.gastownConvoys) {
+		pane.gastownConvoys = options.gastownConvoys;
+	}
+	if (kind === "gastown-agents" && options?.gastownAgents) {
+		pane.gastownAgents = options.gastownAgents;
+	}
+	return pane;
 };
 
 export const createChatPane = (

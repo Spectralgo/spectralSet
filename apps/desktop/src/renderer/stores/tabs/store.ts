@@ -21,7 +21,9 @@ import {
 } from "./actions/move-pane";
 import type {
 	AddFileViewerPaneOptions,
+	AddGastownPaneOptions,
 	AddTabWithMultiplePanesOptions,
+	Tab,
 	TabsState,
 	TabsStore,
 } from "./types";
@@ -36,11 +38,13 @@ import {
 	createChatTabWithPane,
 	createDevToolsPane,
 	createFileViewerPane,
+	createGastownPane,
 	createPane,
 	createTabWithPane,
 	equalizeSplitPercentages,
 	extractPaneIdsFromLayout,
 	findReusableFileViewerPane,
+	GASTOWN_PANE_DEFAULT_NAMES,
 	generateId,
 	generateTabName,
 	getAdjacentPaneId,
@@ -276,6 +280,70 @@ export const useTabsStore = create<TabsStore>()(
 
 					posthog.capture("panel_opened", {
 						panel_type: "chat",
+						workspace_id: workspaceId,
+						pane_id: pane.id,
+					});
+
+					return { tabId: tab.id, paneId: pane.id };
+				},
+
+				addGastownPane: (
+					workspaceId: string,
+					options: AddGastownPaneOptions,
+				) => {
+					const state = get();
+					const workspaceTabIds = new Set(
+						state.tabs
+							.filter((t) => t.workspaceId === workspaceId)
+							.map((t) => t.id),
+					);
+					const sameKindCount = Object.values(state.panes).filter(
+						(p) => p.type === options.kind && workspaceTabIds.has(p.tabId),
+					).length;
+					const defaultName = GASTOWN_PANE_DEFAULT_NAMES[options.kind];
+					const tabName =
+						sameKindCount > 0
+							? `${defaultName} ${sameKindCount + 1}`
+							: defaultName;
+
+					const tabId = generateId("tab");
+					const pane = createGastownPane(tabId, options.kind, options);
+					const tab: Tab = {
+						id: tabId,
+						name: tabName,
+						workspaceId,
+						layout: pane.id,
+						createdAt: Date.now(),
+					};
+
+					const currentActiveId = state.activeTabIds[workspaceId];
+					const historyStack = state.tabHistoryStacks[workspaceId] || [];
+					const newHistoryStack = currentActiveId
+						? [
+								currentActiveId,
+								...historyStack.filter((id) => id !== currentActiveId),
+							]
+						: historyStack;
+
+					set({
+						tabs: [...state.tabs, tab],
+						panes: { ...state.panes, [pane.id]: pane },
+						activeTabIds: {
+							...state.activeTabIds,
+							[workspaceId]: tab.id,
+						},
+						focusedPaneIds: {
+							...state.focusedPaneIds,
+							[tab.id]: pane.id,
+						},
+						tabHistoryStacks: {
+							...state.tabHistoryStacks,
+							[workspaceId]: newHistoryStack,
+						},
+					});
+
+					posthog.capture("panel_opened", {
+						panel_type: options.kind,
 						workspace_id: workspaceId,
 						pane_id: pane.id,
 					});
@@ -2146,7 +2214,7 @@ export const useTabsStore = create<TabsStore>()(
 			}),
 			{
 				name: "tabs-storage",
-				version: 9,
+				version: 10,
 				storage: trpcTabsStorage,
 				migrate: (persistedState, version) => {
 					const state = persistedState as TabsState;
@@ -2190,6 +2258,8 @@ export const useTabsStore = create<TabsStore>()(
 							normalizePersistedChatPane(pane);
 						}
 					}
+					// v9 → v10: no schema changes; records the crossover point
+					// where gastown-* pane kinds became valid.
 					return state;
 				},
 				merge: (persistedState, currentState) => {

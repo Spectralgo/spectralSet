@@ -6,6 +6,7 @@ import {
 	applyFileViewerOpenOptionsToPane,
 	buildMultiPaneLayout,
 	createChatPane,
+	createGastownPane,
 	fileViewerTargetsMatch,
 	findPanePath,
 	findReusableFileViewerPane,
@@ -809,5 +810,46 @@ describe("createChatPane", () => {
 			metadata: { model: "gpt-5" },
 			retryCount: 2,
 		});
+	});
+});
+
+describe("createGastownPane", () => {
+	it("creates a Today pane with default name and no kind-specific bag", () => {
+		const pane = createGastownPane("tab-1", "gastown-today");
+		expect(pane.tabId).toBe("tab-1");
+		expect(pane.type).toBe("gastown-today");
+		expect(pane.name).toBe("Today");
+		expect(pane.gastownMail).toBeUndefined();
+		expect(pane.gastownConvoys).toBeUndefined();
+		expect(pane.gastownAgents).toBeUndefined();
+	});
+
+	it("attaches gastownMail bag only for gastown-mail kind", () => {
+		const mail = createGastownPane("tab-m", "gastown-mail", {
+			gastownMail: { initialFilter: "inbox" },
+		});
+		expect(mail.name).toBe("Mail");
+		expect(mail.gastownMail).toEqual({ initialFilter: "inbox" });
+
+		const today = createGastownPane("tab-t", "gastown-today", {
+			gastownMail: { initialFilter: "inbox" },
+		});
+		expect(today.gastownMail).toBeUndefined();
+	});
+
+	it("attaches gastownConvoys bag only for gastown-convoys kind", () => {
+		const convoys = createGastownPane("tab-c", "gastown-convoys", {
+			gastownConvoys: { selectedConvoyId: "cv-1" },
+		});
+		expect(convoys.name).toBe("Convoys");
+		expect(convoys.gastownConvoys).toEqual({ selectedConvoyId: "cv-1" });
+	});
+
+	it("attaches gastownAgents bag only for gastown-agents kind", () => {
+		const agents = createGastownPane("tab-a", "gastown-agents", {
+			gastownAgents: { rigFilter: "spectralSet" },
+		});
+		expect(agents.name).toBe("Agents");
+		expect(agents.gastownAgents).toEqual({ rigFilter: "spectralSet" });
 	});
 });
