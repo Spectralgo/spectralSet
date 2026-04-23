@@ -1,5 +1,9 @@
 import { Spinner } from "@spectralset/ui/spinner";
-import { createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	useLocation,
+	useNavigate,
+} from "@tanstack/react-router";
 import { useEffect } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 
