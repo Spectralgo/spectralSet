@@ -117,12 +117,17 @@ function GastownSidebarSectionBody() {
 				return;
 			}
 			const rigPrefix = getRigPrefix(agent.rig);
-			const sessionName = buildTmuxSessionName(rigPrefix, agent.name);
+			const sessionName = buildTmuxSessionName(
+				rigPrefix,
+				agent.role,
+				agent.name,
+			);
 			try {
 				await attachToAgent(
 					{
 						rig: agent.rig,
 						polecat: agent.name,
+						kind: agent.role,
 						rigPrefix,
 						tmuxSocket,
 						workspaceId: activeWorkspaceId,

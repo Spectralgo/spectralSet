@@ -39,8 +39,8 @@ mock.module("renderer/lib/gastown", () => ({
 		tabId: "t",
 		paneId: "p",
 	}),
-	buildTmuxSessionName: (prefix: string, polecat: string) =>
-		`${prefix}-${polecat}`,
+	buildTmuxSessionName: (prefix: string, _kind: string, name: string) =>
+		`${prefix}-${name}`,
 }));
 
 mock.module("renderer/lib/gastown/rig-prefix", () => ({

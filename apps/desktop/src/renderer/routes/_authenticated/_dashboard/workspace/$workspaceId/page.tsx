@@ -144,11 +144,12 @@ function WorkspacePage() {
 		attachedPolecatRef.current = key;
 
 		const rigPrefix = getRigPrefix(rig);
-		const sessionName = buildTmuxSessionName(rigPrefix, polecatName);
+		const sessionName = buildTmuxSessionName(rigPrefix, "polecat", polecatName);
 		void attachToAgent(
 			{
 				rig,
 				polecat: polecatName,
+				kind: "polecat",
 				rigPrefix,
 				tmuxSocket,
 				workspaceId,

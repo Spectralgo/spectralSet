@@ -255,12 +255,17 @@ function ActionsRow({ detail }: { detail: AgentDetail }) {
 			return;
 		}
 		const rigPrefix = getRigPrefix(detail.rig);
-		const sessionName = buildTmuxSessionName(rigPrefix, detail.name);
+		const sessionName = buildTmuxSessionName(
+			rigPrefix,
+			detail.kind,
+			detail.name,
+		);
 		try {
 			await attachToAgent(
 				{
 					rig: detail.rig,
 					polecat: detail.name,
+					kind: detail.kind,
 					rigPrefix,
 					tmuxSocket,
 					workspaceId,

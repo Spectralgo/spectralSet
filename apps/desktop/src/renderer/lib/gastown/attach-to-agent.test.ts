@@ -21,8 +21,30 @@ function makeDeps(
 }
 
 describe("buildTmuxSessionName", () => {
-	it("joins prefix + polecat with a hyphen", () => {
-		expect(buildTmuxSessionName("ss", "jasper")).toBe("ss-jasper");
+	it("polecat → <rigPrefix>-<name>", () => {
+		expect(buildTmuxSessionName("ss", "polecat", "jasper")).toBe("ss-jasper");
+	});
+	it("crew → <rigPrefix>-crew-<name>", () => {
+		expect(buildTmuxSessionName("ss", "crew", "worktree_researcher")).toBe(
+			"ss-crew-worktree_researcher",
+		);
+	});
+	it("witness → <rigPrefix>-witness (name ignored)", () => {
+		expect(buildTmuxSessionName("ss", "witness", "witness")).toBe("ss-witness");
+	});
+	it("refinery → <rigPrefix>-refinery (name ignored)", () => {
+		expect(buildTmuxSessionName("ss", "refinery", "refinery")).toBe(
+			"ss-refinery",
+		);
+	});
+	it("mayor → hq-mayor (rigPrefix ignored)", () => {
+		expect(buildTmuxSessionName("ss", "mayor", "mayor")).toBe("hq-mayor");
+	});
+	it("deacon → hq-deacon", () => {
+		expect(buildTmuxSessionName("ss", "deacon", "deacon")).toBe("hq-deacon");
+	});
+	it("boot → hq-boot", () => {
+		expect(buildTmuxSessionName("ss", "boot", "boot")).toBe("hq-boot");
 	});
 });
 
@@ -50,6 +72,7 @@ describe("attachToAgent", () => {
 			{
 				rig: "spectralSet",
 				polecat: "onyx",
+				kind: "polecat",
 				rigPrefix: "ss",
 				tmuxSocket: "spectralgastown-a292c7",
 				workspaceId: "ws-1",
@@ -98,6 +121,7 @@ describe("attachToAgent", () => {
 			{
 				rig: "spectralSet",
 				polecat: "onyx",
+				kind: "polecat",
 				rigPrefix: "ss",
 				tmuxSocket: "spectralgastown-a292c7",
 				workspaceId: "ws-1",

@@ -1,14 +1,18 @@
 /**
- * Opens (or re-focuses) a terminal tab attached to a polecat's tmux
- * session. Called from the Gas Town sidebar when the user clicks a
- * polecat name. Pure async helper — React/store coupling is injected
+ * Opens (or re-focuses) a terminal tab attached to an agent's tmux
+ * session. Called from the Gas Town sidebar when the user clicks an
+ * agent row. Pure async helper — React/store coupling is injected
  * by the caller via the `deps` bundle, mirroring
  * `bootstrapOpenWorktree`.
  */
 
+import type { AgentKind } from "@spectralset/gastown-cli-client";
+
 export interface AttachToAgentOptions {
 	rig: string;
 	polecat: string;
+	/** Agent kind — routes the tmux session name (polecat vs crew vs witness etc.). */
+	kind: AgentKind;
 	/** Rig's bead prefix (e.g. "ss" for spectralSet). Used in the tmux session name. */
 	rigPrefix: string;
 	/** Tmux socket name from `gastown.probe` (e.g. "spectralgastown-a292c7"). */
@@ -59,9 +63,22 @@ export interface AttachToAgentResult {
 
 export function buildTmuxSessionName(
 	rigPrefix: string,
-	polecat: string,
+	kind: AgentKind,
+	name: string,
 ): string {
-	return `${rigPrefix}-${polecat}`;
+	switch (kind) {
+		case "mayor":
+		case "deacon":
+		case "boot":
+			return `hq-${kind}`;
+		case "witness":
+		case "refinery":
+			return `${rigPrefix}-${kind}`;
+		case "crew":
+			return `${rigPrefix}-crew-${name}`;
+		case "polecat":
+			return `${rigPrefix}-${name}`;
+	}
 }
 
 export function buildTmuxAttachCommand(
@@ -93,7 +110,11 @@ export async function attachToAgent(
 		};
 	}
 
-	const sessionName = buildTmuxSessionName(opts.rigPrefix, opts.polecat);
+	const sessionName = buildTmuxSessionName(
+		opts.rigPrefix,
+		opts.kind,
+		opts.polecat,
+	);
 	const command = buildTmuxAttachCommand(opts.tmuxSocket, sessionName);
 	const title = buildAttachTabTitle(opts.polecat, opts.state);
 
