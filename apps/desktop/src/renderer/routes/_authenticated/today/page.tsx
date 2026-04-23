@@ -212,9 +212,9 @@ function MastheadRegion({ lastVerifiedAt }: { lastVerifiedAt: Date | null }) {
 }
 
 /**
- * Rigs strip region. Collapses when the rig list is empty or errors — per
- * spec-today §3 the parent owns the empty-state copy, but for MVP an empty
- * town simply hides the strip rather than surfacing a CTA.
+ * Rigs strip region. Always renders a section so the region is visible during
+ * loading, error, and empty states — spec-today §3 assigns empty-state copy to
+ * the parent (RigsStrip itself stays agnostic and returns null when fed []).
  */
 function RigsRegion() {
 	const townPath = useGastownTownPath();
@@ -226,10 +226,25 @@ function RigsRegion() {
 		() => (rigsQuery.data ?? []).map(rigToRow),
 		[rigsQuery.data],
 	);
-	if (rigsQuery.isError || rows.length === 0) return null;
+	let body: React.ReactNode;
+	if (rigsQuery.isLoading) {
+		body = (
+			<div
+				aria-hidden="true"
+				className="h-4 w-40 animate-pulse rounded bg-muted"
+				data-testid="rigs-region-skeleton"
+			/>
+		);
+	} else if (rigsQuery.isError) {
+		body = <p className="text-sm text-muted-foreground">Rigs unavailable.</p>;
+	} else if (rows.length === 0) {
+		body = <p className="text-sm text-muted-foreground">No rigs active</p>;
+	} else {
+		body = <RigsStrip rigs={rows} />;
+	}
 	return (
-		<section aria-label="Rigs" className="mb-8">
-			<RigsStrip rigs={rows} />
+		<section aria-label="Rigs" className="mb-8" data-testid="rigs-region">
+			{body}
 		</section>
 	);
 }
