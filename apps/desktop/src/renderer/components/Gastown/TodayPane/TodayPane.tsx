@@ -3,6 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
+import { MailPile } from "renderer/routes/_authenticated/today/components/MailPile";
+import { RigsStrip } from "renderer/routes/_authenticated/today/components/RigsStrip";
+import { TodayMasthead } from "renderer/routes/_authenticated/today/components/TodayMasthead";
+import { TriageStack } from "renderer/routes/_authenticated/today/components/TriageStack";
+import { VerdictTail } from "renderer/routes/_authenticated/today/components/VerdictTail";
 import type { BaseTab, Pane } from "shared/tabs-types";
 
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
@@ -42,9 +47,16 @@ export function TodayPane({ pane, tab }: TodayPaneProps) {
 	if (workspaceNull) return <TodayNoWorkspace />;
 
 	return (
-		<div className="flex h-full w-full min-w-[320px] flex-col bg-background">
-			<div className="text-xs text-muted-foreground p-4">
-				TodayPane scaffold (ss-6mlj) — body lands next
+		<div
+			data-today-root
+			className="flex h-full w-full min-w-[320px] flex-col bg-background"
+		>
+			<TodayMasthead digest={undefined} lastVerifiedAt={null} isStale={false} />
+			<div className="min-h-0 flex-1 overflow-y-auto">
+				<TriageStack />
+				<RigsStrip rigs={[]} />
+				<MailPile messages={[]} />
+				<VerdictTail state="all-green" />
 			</div>
 		</div>
 	);
