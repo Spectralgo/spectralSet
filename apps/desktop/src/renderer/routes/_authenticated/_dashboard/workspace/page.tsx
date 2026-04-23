@@ -1,5 +1,5 @@
 import { Spinner } from "@spectralset/ui/spinner";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 
@@ -17,6 +17,7 @@ function LoadingSpinner() {
 
 function WorkspaceIndexPage() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { data: workspaces, isLoading } =
 		electronTrpc.workspaces.getAllGrouped.useQuery();
 
@@ -24,6 +25,12 @@ function WorkspaceIndexPage() {
 	const hasNoWorkspaces = !isLoading && allWorkspaces.length === 0;
 
 	useEffect(() => {
+		// Guard: only run workspace auto-navigate when the user is actually on a
+		// workspace-root URL. If the _dashboard layout is eclipsing a sibling
+		// route like /today (ss-tlc / ss-5v4), we must NOT swap the URL.
+		if (!location.pathname.startsWith("/workspace")) {
+			return;
+		}
 		if (isLoading || !workspaces) return;
 
 		if (allWorkspaces.length === 0) {
@@ -50,7 +57,7 @@ function WorkspaceIndexPage() {
 				replace: true,
 			});
 		}
-	}, [workspaces, isLoading, navigate, allWorkspaces]);
+	}, [workspaces, isLoading, navigate, allWorkspaces, location.pathname]);
 
 	if (hasNoWorkspaces) {
 		return <LoadingSpinner />;
