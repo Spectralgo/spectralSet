@@ -15,6 +15,7 @@ import {
 	RigsStrip,
 } from "./components/RigsStrip";
 import { TodayMasthead } from "./components/TodayMasthead";
+import { TriageStack } from "./components/TriageStack";
 import {
 	deriveVerdict,
 	filterMailPile,
@@ -99,7 +100,7 @@ function TodayPage() {
 			/>
 			<MastheadRegion lastVerifiedAt={lastVerifiedAt} />
 			<div className="min-h-0 flex-1 overflow-y-auto px-8 py-6">
-				{/* TriageStack placeholder — wired in ss-5d0 */}
+				<TriageStack />
 				<RigsRegion />
 				<MailRegion />
 				<VerdictRegion lastVerifiedAt={lastVerifiedAt} />
