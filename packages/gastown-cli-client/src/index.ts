@@ -145,7 +145,16 @@ export async function probe(
 	let statusStdout = "";
 	let statusExit = -1;
 	try {
-		const result = await execGt(["status", "--json"], options, deps);
+		// probe() needs "is gastown reachable?" + the rig list (which is derived
+		// from the response). --fast skips per-agent mail lookups (the dominant
+		// cost — Mayor with 12 unread = ~24s default → ~1.3s with --fast). We
+		// can't drop the tmux scan because the rigs and agent state come from
+		// it; --no-tmux is not a real flag.
+		const result = await execGt(
+			["status", "--json", "--fast"],
+			options,
+			deps,
+		);
 		statusStdout = result.stdout;
 		statusExit = result.exitCode;
 	} catch (err) {

@@ -106,7 +106,11 @@ export async function listAgents(
 	options: ExecGtOptions = {},
 	deps: ExecGtDeps = {},
 ): Promise<AgentSummary[]> {
-	const argv = ["status", "--json"];
+	// listAgents() needs tmux-derived session state (running/idle/dead), but
+	// per-agent mail lookups dominate runtime (Mayor with 12 unread = ~24s
+	// total). --fast keeps tmux scan, skips mail; mail counts load on demand
+	// from the Mail panel, not in the roster.
+	const argv = ["status", "--json", "--fast"];
 	const cwd = resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		argv,

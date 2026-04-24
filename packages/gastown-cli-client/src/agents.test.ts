@@ -113,7 +113,7 @@ describe("listAgents", () => {
 
 		const agents = await listAgents({}, {}, { spawn: spawnFn });
 
-		expect(calls[0]?.argv).toEqual(["status", "--json"]);
+		expect(calls[0]?.argv).toEqual(["status", "--json", "--fast"]);
 		expect(agents.map((a) => `${a.kind}:${a.name}:${a.rig}`)).toEqual([
 			"mayor:mayor:null",
 			"deacon:deacon:null",

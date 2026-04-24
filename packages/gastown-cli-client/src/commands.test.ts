@@ -129,7 +129,7 @@ describe("probe() — gt status --json primary path", () => {
 			tmuxSocket: null,
 		});
 		expect(calls).toHaveLength(1);
-		expect(calls[0]?.argv).toEqual(["status", "--json"]);
+		expect(calls[0]?.argv).toEqual(["status", "--json", "--fast"]);
 	});
 
 	it("falls back to --version when gt status exits non-zero", async () => {
@@ -142,7 +142,7 @@ describe("probe() — gt status --json primary path", () => {
 		expect(result.version).toBe("1.2.3");
 		expect(result.townRoot).toBeNull();
 		expect(result.rigs).toEqual([]);
-		expect(calls[0]?.argv).toEqual(["status", "--json"]);
+		expect(calls[0]?.argv).toEqual(["status", "--json", "--fast"]);
 		expect(calls[1]?.argv).toEqual(["--version"]);
 	});
 
