@@ -68,7 +68,15 @@ export function parseStatus(stdout: string): ParsedStatus {
 			const state = KNOWN_STATES.has(a.state as string)
 				? (a.state as RigAgent["state"])
 				: null;
-			agents.push({ rig: name, name: agentName, role, session, state });
+			const running = a.running === true;
+			agents.push({
+				rig: name,
+				name: agentName,
+				role,
+				session,
+				state,
+				running,
+			});
 		}
 		rigs.push({
 			name,

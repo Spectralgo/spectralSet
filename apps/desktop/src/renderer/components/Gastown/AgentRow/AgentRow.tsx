@@ -46,9 +46,28 @@ interface AgentRowProps {
 	onAttach: (agent: RigAgent) => void;
 }
 
+// Resolve display label + dot color from running + state.
+// gt status reports state="idle" for both "alive and waiting" and "stopped"
+// (no tmux session). The renderer must distinguish them so a stopped agent
+// doesn't look identical to a healthy idle one.
+function resolveDisplay(
+	agent: RigAgent,
+): { label: string; dotClass: string | null } {
+	if (!agent.running) {
+		return { label: "stopped", dotClass: "bg-neutral-600" };
+	}
+	if (agent.state) {
+		return { label: agent.state, dotClass: STATE_DOT_CLASS[agent.state] };
+	}
+	// running=true but no state field (e.g. spectralPaper refinery/witness
+	// before they take any work). Show as "ready" with a neutral dot rather
+	// than falling back to the role name (which is misleading).
+	return { label: "ready", dotClass: "bg-muted-foreground/40" };
+}
+
 export function AgentRow({ agent, onAttach }: AgentRowProps) {
 	const Icon = ROLE_ICON[agent.role];
-	const stateLabel = agent.state ?? ROLE_LABEL[agent.role];
+	const { label, dotClass } = resolveDisplay(agent);
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger asChild>
@@ -61,15 +80,12 @@ export function AgentRow({ agent, onAttach }: AgentRowProps) {
 					<Icon aria-hidden className="size-3 shrink-0 text-muted-foreground" />
 					<span className="truncate font-medium">{agent.name}</span>
 					<span className="min-w-0 flex-1 truncate text-muted-foreground">
-						{stateLabel}
+						{label}
 					</span>
-					{agent.state ? (
+					{dotClass ? (
 						<span
 							aria-hidden
-							className={cn(
-								"size-2 shrink-0 rounded-full",
-								STATE_DOT_CLASS[agent.state],
-							)}
+							className={cn("size-2 shrink-0 rounded-full", dotClass)}
 						/>
 					) : null}
 				</button>

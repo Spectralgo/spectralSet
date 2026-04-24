@@ -8,6 +8,11 @@ export const rigAgentSchema = z.object({
 	state: z
 		.enum(["working", "idle", "done", "stalled", "zombie", "nuked"])
 		.nullable(),
+	// running=true means gt found a live tmux session for this agent.
+	// Distinguishes "idle but alive" from "stopped" — both can have state=idle
+	// per gt's defaults, so the renderer needs `running` to color them
+	// differently in the sidebar.
+	running: z.boolean(),
 });
 
 export type RigAgent = z.infer<typeof rigAgentSchema>;

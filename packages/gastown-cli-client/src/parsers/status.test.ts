@@ -159,6 +159,7 @@ describe("parseStatus", () => {
 			role: "polecat",
 			session: "a-jasper",
 			state: "working",
+			running: false,
 		});
 		expect(agents[1]).toEqual({
 			rig: "alpha",
@@ -166,6 +167,7 @@ describe("parseStatus", () => {
 			role: "refinery",
 			session: "a-refinery",
 			state: "idle",
+			running: false,
 		});
 	});
 });
