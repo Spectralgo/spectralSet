@@ -7,6 +7,7 @@ import {
 	type MosaicBranch,
 	type MosaicNode,
 } from "react-mosaic-component";
+import { TodayPane } from "renderer/components/Gastown/TodayPane";
 import { dragDropManager } from "renderer/lib/dnd";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { requestPaneClose } from "renderer/stores/editor-state/editorCoordinator";
@@ -231,6 +232,12 @@ export function TabView({ tab }: TabViewProps) {
 				);
 			}
 
+			// Route gastown-today panes
+			if (paneInfo.type === "gastown-today") {
+				const pane = allPanes[paneId];
+				if (pane) return <TodayPane pane={pane} tab={tab} />;
+			}
+
 			// Route devtools panes
 			if (paneInfo.type === "devtools" && paneInfo.devtools) {
 				return (
@@ -266,8 +273,8 @@ export function TabView({ tab }: TabViewProps) {
 		},
 		[
 			tabPanes,
-			tab.id,
-			tab.workspaceId,
+			allPanes,
+			tab,
 			worktreePath,
 			splitPaneAuto,
 			splitPaneHorizontal,
