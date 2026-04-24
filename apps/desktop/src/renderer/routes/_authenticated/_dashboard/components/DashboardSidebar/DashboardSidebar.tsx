@@ -135,7 +135,7 @@ export function DashboardSidebar({
 		<div className="flex h-full flex-col border-r border-border bg-muted/45 dark:bg-muted/35">
 			<DashboardSidebarHeader isCollapsed={isCollapsed} />
 
-			<div className="flex-1 overflow-y-auto hide-scrollbar">
+			<div className="flex-1 overflow-y-auto hide-scrollbar min-h-0">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}
@@ -184,8 +184,12 @@ export function DashboardSidebar({
 						document.body,
 					)}
 				</DndContext>
-				{!isCollapsed && <GastownSidebarSection />}
 			</div>
+			{!isCollapsed && (
+				<div className="flex max-h-[50%] min-h-0 flex-shrink-0 flex-col border-t border-border/60">
+					<GastownSidebarSection />
+				</div>
+			)}
 		</div>
 	);
 }

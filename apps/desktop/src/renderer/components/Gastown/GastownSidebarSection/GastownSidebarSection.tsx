@@ -175,9 +175,13 @@ function GastownSidebarSectionBody() {
 	);
 
 	return (
-		<div className="border-t border-border/60 px-2 py-2">
-			<Collapsible open={open} onOpenChange={setOpen}>
-				<div className="flex items-center justify-between gap-2 px-2 py-1">
+		<div className="flex h-full min-h-0 flex-col px-2 py-2">
+			<Collapsible
+				open={open}
+				onOpenChange={setOpen}
+				className="flex min-h-0 flex-1 flex-col"
+			>
+				<div className="flex flex-shrink-0 items-center justify-between gap-2 px-2 py-1">
 					<CollapsibleTrigger className="flex flex-1 items-center gap-1.5 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground">
 						{open ? (
 							<HiChevronDown className="size-3" />
@@ -192,68 +196,72 @@ function GastownSidebarSectionBody() {
 						)}
 					</CollapsibleTrigger>
 				</div>
-				<CollapsibleContent className="mt-1 space-y-2">
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/today" })}
-						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
-						aria-label="Open Today"
-					>
-						<HiOutlineSun className="size-3 shrink-0 text-muted-foreground" />
-						<span className="flex-1 truncate">Today</span>
-						{/* Count badge placeholder — wired in C1-today-02 (gastown.today router). */}
-						<span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
-							—
-						</span>
-					</button>
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/gastown/mail" })}
-						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
-						aria-label="Open Gas Town Mail"
-					>
-						<HiOutlineEnvelope className="size-3 shrink-0 text-muted-foreground" />
-						<span className="truncate">Mail</span>
-					</button>
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/gastown/convoys" })}
-						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
-						aria-label="Open Gas Town Convoys"
-					>
-						<HiOutlineTruck className="size-3 shrink-0 text-muted-foreground" />
-						<span className="truncate">Convoys</span>
-					</button>
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/gastown/agents" })}
-						className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
-						aria-label="Open Gas Town Agents"
-					>
-						<HiOutlineUserGroup className="size-3 shrink-0 text-muted-foreground" />
-						<span className="truncate">Agents</span>
-					</button>
+				<CollapsibleContent className="mt-1 flex min-h-0 flex-1 flex-col">
+					<div className="flex-shrink-0 space-y-2">
+						<button
+							type="button"
+							onClick={() => navigate({ to: "/today" })}
+							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+							aria-label="Open Today"
+						>
+							<HiOutlineSun className="size-3 shrink-0 text-muted-foreground" />
+							<span className="flex-1 truncate">Today</span>
+							{/* Count badge placeholder — wired in C1-today-02 (gastown.today router). */}
+							<span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+								—
+							</span>
+						</button>
+						<button
+							type="button"
+							onClick={() => navigate({ to: "/gastown/mail" })}
+							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+							aria-label="Open Gas Town Mail"
+						>
+							<HiOutlineEnvelope className="size-3 shrink-0 text-muted-foreground" />
+							<span className="truncate">Mail</span>
+						</button>
+						<button
+							type="button"
+							onClick={() => navigate({ to: "/gastown/convoys" })}
+							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+							aria-label="Open Gas Town Convoys"
+						>
+							<HiOutlineTruck className="size-3 shrink-0 text-muted-foreground" />
+							<span className="truncate">Convoys</span>
+						</button>
+						<button
+							type="button"
+							onClick={() => navigate({ to: "/gastown/agents" })}
+							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+							aria-label="Open Gas Town Agents"
+						>
+							<HiOutlineUserGroup className="size-3 shrink-0 text-muted-foreground" />
+							<span className="truncate">Agents</span>
+						</button>
+					</div>
 					{probeQuery.error ? (
-						<div className="px-2 text-xs text-destructive">
+						<div className="mt-2 flex-shrink-0 px-2 text-xs text-destructive">
 							Gas Town unavailable.
 						</div>
 					) : probeQuery.isLoading ? (
-						<p className="px-2 text-xs text-muted-foreground">
+						<p className="mt-2 flex-shrink-0 px-2 text-xs text-muted-foreground">
 							Loading roster…
 						</p>
 					) : rigs.length === 0 ? (
-						<p className="px-2 text-xs text-muted-foreground">
+						<p className="mt-2 flex-shrink-0 px-2 text-xs text-muted-foreground">
 							No rigs yet. Initialize Gas Town to begin.
 						</p>
 					) : (
-						rigs.map((rig) => (
-							<RigGroup
-								key={rig.name}
-								rig={rig.name}
-								agents={rig.agents}
-								onAttach={onAttach}
-							/>
-						))
+						<div className="hide-scrollbar mt-2 min-h-0 flex-1 space-y-2 overflow-y-auto">
+							{rigs.map((rig) => (
+								<RigGroup
+									key={rig.name}
+									rig={rig.name}
+									agents={rig.agents}
+									onAttach={onAttach}
+								/>
+							))}
+						</div>
 					)}
 				</CollapsibleContent>
 			</Collapsible>
