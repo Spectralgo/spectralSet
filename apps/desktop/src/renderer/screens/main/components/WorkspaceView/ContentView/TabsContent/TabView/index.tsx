@@ -7,6 +7,9 @@ import {
 	type MosaicBranch,
 	type MosaicNode,
 } from "react-mosaic-component";
+import { AgentsPane } from "renderer/components/Gastown/AgentsPane";
+import { ConvoysPane } from "renderer/components/Gastown/ConvoysPane";
+import { MailPane } from "renderer/components/Gastown/MailPane";
 import { TodayPane } from "renderer/components/Gastown/TodayPane";
 import { dragDropManager } from "renderer/lib/dnd";
 import { electronTrpc } from "renderer/lib/electron-trpc";
@@ -236,6 +239,19 @@ export function TabView({ tab }: TabViewProps) {
 			if (paneInfo.type === "gastown-today") {
 				const pane = allPanes[paneId];
 				if (pane) return <TodayPane pane={pane} tab={tab} />;
+			}
+
+			if (paneInfo.type === "gastown-mail") {
+				const pane = allPanes[paneId];
+				if (pane) return <MailPane pane={pane} tab={tab} />;
+			}
+			if (paneInfo.type === "gastown-convoys") {
+				const pane = allPanes[paneId];
+				if (pane) return <ConvoysPane pane={pane} tab={tab} />;
+			}
+			if (paneInfo.type === "gastown-agents") {
+				const pane = allPanes[paneId];
+				if (pane) return <AgentsPane pane={pane} tab={tab} />;
 			}
 
 			// Route devtools panes
