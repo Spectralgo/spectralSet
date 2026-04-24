@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Outlet,
@@ -9,11 +10,13 @@ import { useState } from "react";
 import { useIsV2CloudEnabled } from "renderer/hooks/useIsV2CloudEnabled";
 import { useHotkey } from "renderer/hotkeys";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { DashboardSidebar } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar";
 import { ResizablePanel } from "renderer/screens/main/components/ResizablePanel";
 import { WorkspaceSidebar } from "renderer/screens/main/components/WorkspaceSidebar";
 import { DeleteWorkspaceDialog } from "renderer/screens/main/components/WorkspaceSidebar/WorkspaceListItem/components";
 import { useOpenNewWorkspaceModal } from "renderer/stores/new-workspace-modal";
+import { useTabsStore } from "renderer/stores/tabs/store";
 import {
 	COLLAPSED_WORKSPACE_SIDEBAR_WIDTH,
 	DEFAULT_WORKSPACE_SIDEBAR_WIDTH,
@@ -131,6 +134,23 @@ function DashboardLayoutChrome() {
 			}
 		},
 		{ enabled: !!currentWorkspaceId },
+	);
+
+	const gastownEnabledQuery = useQuery({
+		queryKey: ["electron", "settings", "gastownEnabled"] as const,
+		queryFn: () => electronTrpcClient.settings.getGastownEnabled.query(),
+	});
+	const addGastownPane = useTabsStore((s) => s.addGastownPane);
+	useHotkey(
+		"OPEN_TODAY_PANE",
+		() => {
+			if (!currentWorkspaceId) return;
+			addGastownPane(currentWorkspaceId, { kind: "gastown-today" });
+		},
+		{
+			enabled:
+				!!currentWorkspaceId && gastownEnabledQuery.data?.enabled === true,
+		},
 	);
 
 	return (

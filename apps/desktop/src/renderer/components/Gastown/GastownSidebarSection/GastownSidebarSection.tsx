@@ -98,6 +98,7 @@ function GastownSidebarSectionBody() {
 	const addTab = useTabsStore((s) => s.addTab);
 	const setTabAutoTitle = useTabsStore((s) => s.setTabAutoTitle);
 	const setActiveTab = useTabsStore((s) => s.setActiveTab);
+	const addGastownPane = useTabsStore((s) => s.addGastownPane);
 	const createOrAttach = useCreateOrAttachWithTheme();
 	const writeToTerminal = electronTrpc.terminal.write.useMutation();
 	const navigate = useNavigate();
@@ -200,7 +201,10 @@ function GastownSidebarSectionBody() {
 					<div className="flex-shrink-0 space-y-2">
 						<button
 							type="button"
-							onClick={() => navigate({ to: "/today" })}
+							onClick={() => {
+								if (!activeWorkspaceId) return;
+								addGastownPane(activeWorkspaceId, { kind: "gastown-today" });
+							}}
 							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
 							aria-label="Open Today"
 						>

@@ -556,6 +556,18 @@ export const HOTKEYS_REGISTRY = {
 		description: "Copy the workspace path to the clipboard",
 	},
 
+	// Gas Town (cmd+shift+t conflicts with NEW_CHAT; cmd+shift+y until CEO reassigns)
+	OPEN_TODAY_PANE: {
+		key: {
+			mac: "meta+shift+y",
+			windows: "ctrl+shift+y",
+			linux: "ctrl+shift+y",
+		},
+		label: "Open Today Pane",
+		category: "Workspace",
+		description: "Open a Gas Town Today pane in the active workspace",
+	},
+
 	// Help
 	OPEN_SETTINGS: {
 		key: { mac: "meta+comma", windows: "ctrl+comma", linux: "ctrl+comma" },
