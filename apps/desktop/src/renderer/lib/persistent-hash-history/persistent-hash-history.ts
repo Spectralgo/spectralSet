@@ -108,14 +108,15 @@ export interface PersistentHashHistory extends RouterHistory {
 }
 
 export function createPersistentHashHistory(): PersistentHashHistory {
-	const persisted = loadPersistedState();
-
-	const entries: string[] = [...persisted.entries];
-	const timestamps: number[] = entries.map(() => Date.now());
-	const states: LocationState[] = entries.map((_entry, i) =>
-		assignKeyAndIndex(i),
-	);
-	let index = persisted.index;
+	// Always boot at root ("/" redirects to /today, the cockpit).
+	// localStorage entries are still written during the session for in-session
+	// back/forward, but the persisted index is ignored on launch — opening the
+	// app drops you on the main screen, not whatever route the previous session
+	// happened to close on (which may be unreachable after restart).
+	const entries: string[] = ["/"];
+	const timestamps: number[] = [Date.now()];
+	const states: LocationState[] = [assignKeyAndIndex(0)];
+	let index = 0;
 
 	const getLocation = () =>
 		parseHref(entries[index] ?? "/", states[index] ?? assignKeyAndIndex(index));

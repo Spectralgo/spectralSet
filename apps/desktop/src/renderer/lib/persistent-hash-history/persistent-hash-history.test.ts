@@ -197,7 +197,12 @@ describe("createPersistentHashHistory", () => {
 			expect(stored.index).toBe(2);
 		});
 
-		it("restores from localStorage on new instance", () => {
+		it("ignores persisted state on boot — always lands on root regardless of last session", () => {
+			// We persist entries during the session for back/forward, but on a fresh
+			// boot the user should land on the main screen (root → /today), never on
+			// whatever route the previous session happened to close on. Routes like
+			// /workspace/$id or /gastown/agents may be unreachable after restart and
+			// trap the app in an empty state.
 			storage.set(
 				"router-history",
 				JSON.stringify({
@@ -207,8 +212,8 @@ describe("createPersistentHashHistory", () => {
 			);
 
 			const history = createPersistentHashHistory();
-			expect(history.length).toBe(3);
-			expect(history.location.pathname).toBe("/tasks");
+			expect(history.length).toBe(1);
+			expect(history.location.pathname).toBe("/");
 		});
 
 		it("falls back to / when localStorage is empty", () => {
@@ -303,7 +308,10 @@ describe("createPersistentHashHistory", () => {
 			expect(history.location.pathname).toBe("/");
 		});
 
-		it("accepts entries that are all valid non-empty strings", () => {
+		it("ignores valid persisted entries on boot — boots fresh at root", () => {
+			// Even when persisted entries are well-formed, they are intentionally
+			// dropped on boot so the user lands on the cockpit, not the previous
+			// session's last URL. See the "ignores persisted state" test above.
 			storage.set(
 				"router-history",
 				JSON.stringify({
@@ -313,8 +321,8 @@ describe("createPersistentHashHistory", () => {
 			);
 
 			const history = createPersistentHashHistory();
-			expect(history.length).toBe(3);
-			expect(history.location.pathname).toBe("/workspace/abc");
+			expect(history.length).toBe(1);
+			expect(history.location.pathname).toBe("/");
 		});
 	});
 
