@@ -6,7 +6,7 @@ import {
 } from "@spectralset/ui/collapsible";
 import { toast } from "@spectralset/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	HiChevronDown,
@@ -101,7 +101,6 @@ function GastownSidebarSectionBody() {
 	const addGastownPane = useTabsStore((s) => s.addGastownPane);
 	const createOrAttach = useCreateOrAttachWithTheme();
 	const writeToTerminal = electronTrpc.terminal.write.useMutation();
-	const navigate = useNavigate();
 
 	const onAttach = useCallback(
 		async (agent: RigAgent) => {
@@ -217,7 +216,13 @@ function GastownSidebarSectionBody() {
 						</button>
 						<button
 							type="button"
-							onClick={() => navigate({ to: "/gastown/mail" })}
+							onClick={() => {
+								if (!activeWorkspaceId) {
+									toast("Open a workspace first");
+									return;
+								}
+								addGastownPane(activeWorkspaceId, { kind: "gastown-mail" });
+							}}
 							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
 							aria-label="Open Gas Town Mail"
 						>
@@ -226,7 +231,13 @@ function GastownSidebarSectionBody() {
 						</button>
 						<button
 							type="button"
-							onClick={() => navigate({ to: "/gastown/convoys" })}
+							onClick={() => {
+								if (!activeWorkspaceId) {
+									toast("Open a workspace first");
+									return;
+								}
+								addGastownPane(activeWorkspaceId, { kind: "gastown-convoys" });
+							}}
 							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
 							aria-label="Open Gas Town Convoys"
 						>
@@ -235,7 +246,13 @@ function GastownSidebarSectionBody() {
 						</button>
 						<button
 							type="button"
-							onClick={() => navigate({ to: "/gastown/agents" })}
+							onClick={() => {
+								if (!activeWorkspaceId) {
+									toast("Open a workspace first");
+									return;
+								}
+								addGastownPane(activeWorkspaceId, { kind: "gastown-agents" });
+							}}
 							className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
 							aria-label="Open Gas Town Agents"
 						>

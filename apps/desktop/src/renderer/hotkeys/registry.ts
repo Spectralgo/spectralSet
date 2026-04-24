@@ -567,6 +567,37 @@ export const HOTKEYS_REGISTRY = {
 		category: "Workspace",
 		description: "Open a Gas Town Today pane in the active workspace",
 	},
+	OPEN_MAIL_PANE: {
+		key: {
+			mac: "meta+shift+m",
+			windows: "ctrl+shift+m",
+			linux: "ctrl+shift+m",
+		},
+		label: "Open Mail Pane",
+		category: "Workspace",
+		description: "Open a Gas Town Mail pane in the active workspace",
+	},
+	// cmd+shift+c collides with COPY_PATH; CEO to reassign in spec-today hotkey section.
+	OPEN_CONVOYS_PANE: {
+		key: {
+			mac: "meta+shift+c",
+			windows: "ctrl+shift+c",
+			linux: "ctrl+shift+c",
+		},
+		label: "Open Convoys Pane",
+		category: "Workspace",
+		description: "Open a Gas Town Convoys pane in the active workspace",
+	},
+	OPEN_AGENTS_PANE: {
+		key: {
+			mac: "meta+shift+a",
+			windows: "ctrl+shift+a",
+			linux: "ctrl+shift+a",
+		},
+		label: "Open Agents Pane",
+		category: "Workspace",
+		description: "Open a Gas Town Agents pane in the active workspace",
+	},
 
 	// Help
 	OPEN_SETTINGS: {

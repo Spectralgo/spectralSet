@@ -141,16 +141,36 @@ function DashboardLayoutChrome() {
 		queryFn: () => electronTrpcClient.settings.getGastownEnabled.query(),
 	});
 	const addGastownPane = useTabsStore((s) => s.addGastownPane);
+	const gastownHotkeyOpts = {
+		enabled: !!currentWorkspaceId && gastownEnabledQuery.data?.enabled === true,
+	};
 	useHotkey(
 		"OPEN_TODAY_PANE",
-		() => {
-			if (!currentWorkspaceId) return;
-			addGastownPane(currentWorkspaceId, { kind: "gastown-today" });
-		},
-		{
-			enabled:
-				!!currentWorkspaceId && gastownEnabledQuery.data?.enabled === true,
-		},
+		() =>
+			currentWorkspaceId &&
+			addGastownPane(currentWorkspaceId, { kind: "gastown-today" }),
+		gastownHotkeyOpts,
+	);
+	useHotkey(
+		"OPEN_MAIL_PANE",
+		() =>
+			currentWorkspaceId &&
+			addGastownPane(currentWorkspaceId, { kind: "gastown-mail" }),
+		gastownHotkeyOpts,
+	);
+	useHotkey(
+		"OPEN_CONVOYS_PANE",
+		() =>
+			currentWorkspaceId &&
+			addGastownPane(currentWorkspaceId, { kind: "gastown-convoys" }),
+		gastownHotkeyOpts,
+	);
+	useHotkey(
+		"OPEN_AGENTS_PANE",
+		() =>
+			currentWorkspaceId &&
+			addGastownPane(currentWorkspaceId, { kind: "gastown-agents" }),
+		gastownHotkeyOpts,
 	);
 
 	return (
