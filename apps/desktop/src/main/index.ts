@@ -54,6 +54,9 @@ if (IS_DEV) {
 	if (workspaceName) {
 		app.setName(`Superset (${workspaceName})`);
 	}
+	// Enable Chrome DevTools Protocol so agent-browser can connect for UX audit
+	// dogfooding (agent-browser connect 9222 → snapshot/click/screenshot).
+	app.commandLine.appendSwitch("remote-debugging-port", "9222");
 }
 
 // Dev mode: register with execPath + app script so macOS launches Electron with our entry point
