@@ -55,8 +55,14 @@ if (IS_DEV) {
 		app.setName(`Superset (${workspaceName})`);
 	}
 	// Enable Chrome DevTools Protocol so agent-browser can connect for UX audit
-	// dogfooding (agent-browser connect 9222 → snapshot/click/screenshot).
-	app.commandLine.appendSwitch("remote-debugging-port", "9222");
+	// dogfooding. Configurable via CDP_PORT env var; defaults to 9222 but a
+	// common collision (Chrome, other Electron apps). Set CDP_PORT=0 to disable
+	// or any other port to move it. Pass-through env so the user can pick.
+	const cdpPort = process.env.CDP_PORT ?? "9222";
+	if (cdpPort !== "0") {
+		app.commandLine.appendSwitch("remote-debugging-port", cdpPort);
+		console.log(`[main] CDP enabled on :${cdpPort} (set CDP_PORT to override)`);
+	}
 }
 
 // Dev mode: register with execPath + app script so macOS launches Electron with our entry point
