@@ -298,6 +298,14 @@ interface RigGroupProps {
 
 function RigGroup({ rig, agents, onAttach }: RigGroupProps) {
 	const [open, setOpen] = useState(true);
+	const workingAgents = useMemo(
+		() => agents.filter((a) => a.state === "working"),
+		[agents],
+	);
+	const otherAgents = useMemo(
+		() => agents.filter((a) => a.state !== "working"),
+		[agents],
+	);
 	return (
 		<Collapsible open={open} onOpenChange={setOpen}>
 			<CollapsibleTrigger className="flex w-full items-center gap-1 px-2 py-0.5 text-left text-[11px] font-medium text-muted-foreground hover:text-foreground">
@@ -317,13 +325,27 @@ function RigGroup({ rig, agents, onAttach }: RigGroupProps) {
 						No agents.
 					</p>
 				) : (
-					agents.map((agent) => (
-						<AgentRow
-							key={`${agent.rig}/${agent.role}/${agent.name}`}
-							agent={agent}
-							onAttach={onAttach}
-						/>
-					))
+					<>
+						{workingAgents.length > 0 && (
+							<p className="px-2 pt-1 text-[10px] text-muted-foreground">
+								Working ({workingAgents.length})
+							</p>
+						)}
+						{workingAgents.map((agent) => (
+							<AgentRow
+								key={`${agent.rig}/${agent.role}/${agent.name}`}
+								agent={agent}
+								onAttach={onAttach}
+							/>
+						))}
+						{otherAgents.map((agent) => (
+							<AgentRow
+								key={`${agent.rig}/${agent.role}/${agent.name}`}
+								agent={agent}
+								onAttach={onAttach}
+							/>
+						))}
+					</>
 				)}
 			</CollapsibleContent>
 		</Collapsible>
@@ -334,9 +356,6 @@ function sortAgents(agents: RigAgent[]): RigAgent[] {
 	return [...agents].sort((a, b) => {
 		const roleDiff = ROLE_ORDER[a.role] - ROLE_ORDER[b.role];
 		if (roleDiff !== 0) return roleDiff;
-		const aWorking = a.state === "working" ? 0 : 1;
-		const bWorking = b.state === "working" ? 0 : 1;
-		if (aWorking !== bWorking) return aWorking - bWorking;
 		return a.name.localeCompare(b.name);
 	});
 }
