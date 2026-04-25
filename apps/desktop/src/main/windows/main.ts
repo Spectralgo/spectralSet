@@ -38,6 +38,44 @@ import { getWorkspaceRuntimeRegistry } from "../lib/workspace-runtime";
 // Singleton IPC handler to prevent duplicate handlers on window reopen (macOS)
 let ipcHandler: ReturnType<typeof createIPCHandler> | null = null;
 
+// Defense-in-depth for stale-bundle drift: assert the built main bundle still
+// registers every tRPC path the renderer depends on. If a subrouter is added
+// to source but the packaged bundle is stale, this emits a LOUD console error
+// at launch so the drift is visible immediately instead of surfacing as an
+// opaque "No query-procedure on path X" at call time.
+const REQUIRED_PATHS = [
+	"gastown.probe",
+	"gastown.agents.list",
+	"gastown.convoys.list",
+	"gastown.mail.inbox",
+	"gastown.today.digest",
+] as const;
+
+function enumerateRouterPaths(
+	router: { _def?: { record?: Record<string, unknown> } },
+	prefix = "",
+): string[] {
+	const record = router._def?.record ?? {};
+	const out: string[] = [];
+	for (const [key, value] of Object.entries(record)) {
+		const path = prefix ? `${prefix}.${key}` : key;
+		if (value && typeof value === "object" && "_def" in value) {
+			const inner = enumerateRouterPaths(
+				value as { _def?: { record?: Record<string, unknown> } },
+				path,
+			);
+			if (inner.length === 0) {
+				out.push(path);
+			} else {
+				out.push(...inner);
+			}
+		} else {
+			out.push(path);
+		}
+	}
+	return out;
+}
+
 function getWorkspaceNameFromDb(workspaceId: string | undefined): string {
 	if (!workspaceId) return "Workspace";
 	try {
@@ -152,6 +190,32 @@ export async function MainWindow() {
 			routerKeys: Object.keys(record),
 			hasGastown: "gastown" in record,
 		});
+
+		const registeredPaths = new Set(
+			enumerateRouterPaths(
+				appRouter as unknown as {
+					_def?: { record?: Record<string, unknown> };
+				},
+			),
+		);
+		const missing = REQUIRED_PATHS.filter((p) => !registeredPaths.has(p));
+		if (missing.length > 0) {
+			console.error(
+				"[trpc-router-assert] STALE-BUNDLE DRIFT — missing required paths:",
+				missing,
+			);
+			console.error(
+				"[trpc-router-assert] Registered paths (first 30):",
+				[...registeredPaths].sort().slice(0, 30),
+			);
+		} else {
+			console.log(
+				"[trpc-router-assert] OK — all required paths registered (",
+				registeredPaths.size,
+				"total)",
+			);
+		}
+
 		ipcHandler = createIPCHandler({
 			router: appRouter,
 			windows: [window],

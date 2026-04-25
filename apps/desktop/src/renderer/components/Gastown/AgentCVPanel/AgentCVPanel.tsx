@@ -3,6 +3,7 @@ import type {
 	AgentState,
 	AgentSummary,
 } from "@spectralset/gastown-cli-client";
+import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@spectralset/ui/utils";
 import { useMemo, useState } from "react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -93,6 +94,7 @@ export function AgentCVPanel() {
 	// The `agents` tRPC subrouter — unlike the parent gastown router — has no
 	// cached-probe fallback for townPath. Thread it from the renderer: the
 	// user override (localStorage) wins, else the probe-detected townRoot.
+	const navigate = useNavigate();
 	const townPathOverride = useGastownTownPath();
 	const probeQuery = electronTrpc.gastown.probe.useQuery(undefined, {
 		refetchOnWindowFocus: false,
@@ -136,8 +138,17 @@ export function AgentCVPanel() {
 			</header>
 			<div className="min-h-0 flex-1 overflow-y-auto p-4">
 				{listQuery.error ? (
-					<div className="text-xs text-destructive">
-						Failed to load agents. Is Gas Town running?
+					<div className="flex flex-col items-start gap-2">
+						<div className="text-xs text-destructive">
+							Failed to load agents. Is Gas Town running?
+						</div>
+						<button
+							type="button"
+							onClick={() => navigate({ to: "/today" })}
+							className="text-xs text-muted-foreground underline hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+						>
+							← Back to Today
+						</button>
 					</div>
 				) : listQuery.isLoading && agents.length === 0 ? (
 					<div className="text-xs text-muted-foreground">Loading…</div>
