@@ -6,20 +6,12 @@ import { ipcLink } from "trpc-electron/renderer";
 import { electronTrpc } from "./electron-trpc";
 import { sessionIdLink } from "./session-id-link";
 
-// ss-8ui DIAG: log every outgoing tRPC call + result to find where gastown.agents.list is dropped
-const loggingLink: TRPCLink<AppRouter> =
+const errorLoggingLink: TRPCLink<AppRouter> =
 	() =>
 	({ op, next }) =>
 		observable((observer) => {
-			console.log("[trpc-outgoing]", {
-				path: op.path,
-				type: op.type,
-				input: op.input,
-				id: op.id,
-			});
 			const sub = next(op).subscribe({
 				next: (v) => {
-					console.log("[trpc-incoming]", { path: op.path, id: op.id });
 					observer.next(v);
 				},
 				error: (err) => {
@@ -33,7 +25,6 @@ const loggingLink: TRPCLink<AppRouter> =
 					observer.error(err);
 				},
 				complete: () => {
-					console.log("[trpc-complete]", { path: op.path, id: op.id });
 					observer.complete();
 				},
 			});
@@ -42,10 +33,18 @@ const loggingLink: TRPCLink<AppRouter> =
 
 /** Electron tRPC React client for React hooks (used by ElectronTRPCProvider). */
 export const electronReactClient = electronTrpc.createClient({
-	links: [loggingLink, sessionIdLink(), ipcLink({ transformer: superjson })],
+	links: [
+		errorLoggingLink,
+		sessionIdLink(),
+		ipcLink({ transformer: superjson }),
+	],
 });
 
 /** Electron tRPC proxy client for imperative calls from stores/utilities. */
 export const electronTrpcClient = createTRPCProxyClient<AppRouter>({
-	links: [loggingLink, sessionIdLink(), ipcLink({ transformer: superjson })],
+	links: [
+		errorLoggingLink,
+		sessionIdLink(),
+		ipcLink({ transformer: superjson }),
+	],
 });

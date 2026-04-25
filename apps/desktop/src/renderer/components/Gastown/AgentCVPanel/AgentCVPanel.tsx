@@ -3,8 +3,8 @@ import type {
 	AgentState,
 	AgentSummary,
 } from "@spectralset/gastown-cli-client";
-import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@spectralset/ui/utils";
+import { useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
@@ -111,21 +111,6 @@ export function AgentCVPanel() {
 
 	const agents = listQuery.data ?? [];
 	const groups = useMemo(() => groupAgents(agents), [agents]);
-
-	console.log("[AgentCVPanel] query", {
-		townPathOverride,
-		probeTownRoot: probeQuery.data?.townRoot,
-		probeStatus: probeQuery.status,
-		resolvedTownPath: townPath,
-		listStatus: listQuery.status,
-		listError: listQuery.error
-			? {
-					message: listQuery.error.message,
-					data: (listQuery.error as unknown as { data?: unknown }).data,
-				}
-			: null,
-		agentsCount: agents.length,
-	});
 
 	return (
 		<div className="flex h-full flex-col">
