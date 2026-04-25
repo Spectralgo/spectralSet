@@ -120,6 +120,23 @@ describe("parseStatus", () => {
 		);
 	});
 
+	it("sorts rigs by name", () => {
+		const result = parseStatus(
+			JSON.stringify({
+				name: "t",
+				location: "/tmp/t",
+				daemon: { running: true },
+				dolt: { running: true },
+				rigs: [{ name: "gmux" }, { name: "spectralSet" }, { name: "hq" }],
+			}),
+		);
+		expect(result.rigs.map((r) => r.name)).toEqual([
+			"gmux",
+			"hq",
+			"spectralSet",
+		]);
+	});
+
 	it("maps rig agents with mixed roles and drops invalid entries", () => {
 		const fixture = JSON.stringify({
 			name: "town",

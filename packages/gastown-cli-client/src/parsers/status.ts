@@ -88,6 +88,8 @@ export function parseStatus(stdout: string): ParsedStatus {
 		});
 	}
 
+	rigs.sort((a, b) => a.name.localeCompare(b.name));
+
 	return { townName, townRoot, daemonRunning, doltRunning, rigs };
 }
 
