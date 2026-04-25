@@ -114,7 +114,7 @@ export async function listAgents(
 	const cwd = resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		argv,
-		{ ...options, cwd },
+		{ ...options, cwd, readOnly: true },
 		deps,
 	);
 	if (exitCode !== 0) {

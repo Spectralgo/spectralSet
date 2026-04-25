@@ -21,6 +21,16 @@ interface FakeChildOptions {
 	neverExit?: boolean;
 }
 
+interface ControlledSpawnCall {
+	bin: string;
+	argv: readonly string[];
+	options: import("node:child_process").SpawnOptions;
+	stdout: EventEmitter;
+	stderr: EventEmitter;
+	close: (exitCode?: number | null) => void;
+	error: (err: Error) => void;
+}
+
 function makeFakeSpawn(opts: FakeChildOptions) {
 	let killed = false;
 	const child = new EventEmitter() as EventEmitter & {
@@ -61,6 +71,43 @@ function makeFakeSpawn(opts: FakeChildOptions) {
 	}) as unknown as typeof import("node:child_process").spawn;
 
 	return spawnFn;
+}
+
+function makeControlledSpawn() {
+	const calls: ControlledSpawnCall[] = [];
+
+	const spawnFn = ((
+		bin: string,
+		argv: readonly string[],
+		options: import("node:child_process").SpawnOptions,
+	) => {
+		const child = new EventEmitter() as EventEmitter & {
+			stdout: EventEmitter;
+			stderr: EventEmitter;
+			stdin: { on: () => void; end: () => void };
+			kill: () => void;
+		};
+		child.stdout = new EventEmitter();
+		child.stderr = new EventEmitter();
+		child.stdin = { on: () => {}, end: () => {} };
+		child.kill = () => {
+			queueMicrotask(() => child.emit("close", null));
+		};
+
+		calls.push({
+			bin,
+			argv: [...argv],
+			options,
+			stdout: child.stdout,
+			stderr: child.stderr,
+			close: (exitCode = 0) => child.emit("close", exitCode),
+			error: (err) => child.emit("error", err),
+		});
+
+		return child;
+	}) as unknown as typeof import("node:child_process").spawn;
+
+	return { spawnFn, calls };
 }
 
 describe("execGt", () => {
@@ -118,6 +165,164 @@ describe("execGt", () => {
 		expect(err.argv).toEqual(["rig", "list"]);
 		expect(err.exitCode).toBe(3);
 		expect(err.stderr).toBe("bad things");
+	});
+
+	it("shares one in-flight execution for duplicate read-only calls with the same semantic key", async () => {
+		const { spawnFn, calls } = makeControlledSpawn();
+
+		const first = execGt(
+			["status", "--json", "--fast"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+		const second = execGt(
+			["status", "--json", "--fast"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+
+		await Promise.resolve();
+		expect(calls).toHaveLength(1);
+
+		calls[0]?.stdout.emit("data", Buffer.from('{"ok":true}\n'));
+		calls[0]?.close(0);
+
+		const [firstResult, secondResult] = await Promise.all([first, second]);
+		expect(firstResult.stdout).toBe('{"ok":true}\n');
+		expect(secondResult).toEqual(firstResult);
+	});
+
+	it("does not share read-only calls with different cwd, env, stdin, or args", async () => {
+		const { spawnFn, calls } = makeControlledSpawn();
+
+		const requests = [
+			execGt(
+				["rig", "list"],
+				{ cwd: "/town-a", readOnly: true },
+				{ spawn: spawnFn },
+			),
+			execGt(
+				["rig", "list"],
+				{ cwd: "/town-b", readOnly: true },
+				{ spawn: spawnFn },
+			),
+			execGt(
+				["rig", "list"],
+				{
+					cwd: "/town-a",
+					env: { ...process.env, GT_TOWN_ROOT: "/other" },
+					readOnly: true,
+				},
+				{ spawn: spawnFn },
+			),
+			execGt(
+				["rig", "list", "--all"],
+				{ cwd: "/town-a", readOnly: true },
+				{ spawn: spawnFn },
+			),
+			execGt(
+				["rig", "list"],
+				{ cwd: "/town-a", stdin: "context", readOnly: true },
+				{ spawn: spawnFn },
+			),
+		];
+
+		await Promise.resolve();
+		expect(calls).toHaveLength(5);
+
+		calls.forEach((call) => call.close(0));
+		await Promise.all(requests);
+	});
+
+	it("clears read-only singleflight entries after the execution settles", async () => {
+		const { spawnFn, calls } = makeControlledSpawn();
+
+		const first = execGt(
+			["convoy", "list", "--json"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+		await Promise.resolve();
+		calls[0]?.stdout.emit("data", Buffer.from("first\n"));
+		calls[0]?.close(0);
+		await expect(first).resolves.toMatchObject({ stdout: "first\n" });
+
+		const second = execGt(
+			["convoy", "list", "--json"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+		await Promise.resolve();
+		expect(calls).toHaveLength(2);
+		calls[1]?.stdout.emit("data", Buffer.from("second\n"));
+		calls[1]?.close(0);
+		await expect(second).resolves.toMatchObject({ stdout: "second\n" });
+	});
+
+	it("does not retain failed read-only executions forever", async () => {
+		const { spawnFn, calls } = makeControlledSpawn();
+
+		const first = execGt(
+			["mail", "inbox", "--json", "--all"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+		const duplicate = execGt(
+			["mail", "inbox", "--json", "--all"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+		await Promise.resolve();
+		expect(calls).toHaveLength(1);
+		calls[0]?.error(new Error("spawn failed"));
+
+		await expect(first).rejects.toThrow("spawn failed");
+		await expect(duplicate).rejects.toThrow("spawn failed");
+
+		const retry = execGt(
+			["mail", "inbox", "--json", "--all"],
+			{ cwd: "/town", readOnly: true },
+			{ spawn: spawnFn },
+		);
+		await Promise.resolve();
+		expect(calls).toHaveLength(2);
+		calls[1]?.stdout.emit("data", Buffer.from("[]"));
+		calls[1]?.close(0);
+		await expect(retry).resolves.toMatchObject({ stdout: "[]" });
+	});
+
+	it("does not singleflight gt calls unless they explicitly opt in as read-only", async () => {
+		const { spawnFn, calls } = makeControlledSpawn();
+
+		const first = execGt(["mail", "archive", "hq-a"], {}, { spawn: spawnFn });
+		const second = execGt(["mail", "archive", "hq-a"], {}, { spawn: spawnFn });
+
+		await Promise.resolve();
+		expect(calls).toHaveLength(2);
+
+		calls.forEach((call) => call.close(0));
+		await Promise.all([first, second]);
+	});
+
+	it("does not singleflight mutation argv even if a caller marks it read-only", async () => {
+		const { spawnFn, calls } = makeControlledSpawn();
+
+		const first = execGt(
+			["mail", "archive", "hq-a"],
+			{ readOnly: true },
+			{ spawn: spawnFn },
+		);
+		const second = execGt(
+			["mail", "archive", "hq-a"],
+			{ readOnly: true },
+			{ spawn: spawnFn },
+		);
+
+		await Promise.resolve();
+		expect(calls).toHaveLength(2);
+
+		calls.forEach((call) => call.close(0));
+		await Promise.all([first, second]);
 	});
 });
 
