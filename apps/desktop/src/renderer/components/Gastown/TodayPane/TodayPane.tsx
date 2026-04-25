@@ -1,13 +1,26 @@
+import type { Rig } from "@spectralset/gastown-cli-client";
 import { Spinner } from "@spectralset/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { MAYOR_ADDRESS } from "renderer/components/Gastown/MailPanel/AddressPicker";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import type { MailMessage } from "renderer/lib/gastown/mail-types";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { MailPile } from "renderer/routes/_authenticated/today/components/MailPile";
-import { RigsStrip } from "renderer/routes/_authenticated/today/components/RigsStrip";
+import {
+	type RigReason,
+	type RigStripRow,
+	RigsStrip,
+} from "renderer/routes/_authenticated/today/components/RigsStrip";
 import { TodayMasthead } from "renderer/routes/_authenticated/today/components/TodayMasthead";
 import { TriageStack } from "renderer/routes/_authenticated/today/components/TriageStack";
-import { VerdictTail } from "renderer/routes/_authenticated/today/components/VerdictTail";
+import {
+	deriveVerdict,
+	filterMailPile,
+	VerdictTail,
+} from "renderer/routes/_authenticated/today/components/VerdictTail";
 import type { BaseTab, Pane } from "shared/tabs-types";
 
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
@@ -17,7 +30,7 @@ interface TodayPaneProps {
 	tab: BaseTab;
 }
 
-export function TodayPane({ pane, tab }: TodayPaneProps) {
+export function TodayPane(_props: TodayPaneProps) {
 	const gastownEnabledQuery =
 		electronTrpc.settings.getGastownEnabled.useQuery();
 	const gastownEnabled = gastownEnabledQuery.data?.enabled ?? null;
@@ -30,8 +43,78 @@ export function TodayPane({ pane, tab }: TodayPaneProps) {
 	const probeFailed = probeQuery.isError;
 	const townUnreachable = probe !== null && !probe.installed;
 	const workspaceNull = probe !== null && probe.townRoot === null;
+	const townPath = useGastownTownPath();
+	const tp = townPath || undefined;
+	const canQueryToday =
+		gastownEnabled === true &&
+		probe !== null &&
+		probe.installed &&
+		probe.townRoot !== null &&
+		!probeFailed;
+	const [sinceTime] = useState(() => new Date().toISOString());
+	const digestQuery = electronTrpc.gastown.today.digest.useQuery(
+		{ sinceTime, ...(tp ? { townPath: tp } : {}) },
+		{
+			enabled: canQueryToday,
+			refetchInterval: 30_000,
+			refetchOnWindowFocus: false,
+		},
+	);
+	const triageQuery = electronTrpc.gastown.today.triage.useQuery(
+		{ userAddress: MAYOR_ADDRESS, ...(tp ? { townPath: tp } : {}) },
+		{
+			enabled: canQueryToday,
+			refetchInterval: 5_000,
+			refetchOnWindowFocus: false,
+		},
+	);
+	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
+		tp ? { townPath: tp } : undefined,
+		{
+			enabled: canQueryToday,
+			refetchInterval: 5_000,
+			refetchOnWindowFocus: false,
+		},
+	);
+	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
+		{
+			address: MAYOR_ADDRESS,
+			unreadOnly: false,
+			...(tp ? { townPath: tp } : {}),
+		},
+		{
+			enabled: canQueryToday,
+			refetchInterval: 10_000,
+			refetchOnWindowFocus: false,
+		},
+	);
 	const awaitingData =
 		gastownEnabled === null || (gastownEnabled && probeQuery.isLoading);
+	const lastVerifiedAt = probeQuery.dataUpdatedAt
+		? new Date(probeQuery.dataUpdatedAt)
+		: null;
+	const isStale =
+		lastVerifiedAt !== null && Date.now() - lastVerifiedAt.getTime() > 30_000;
+	const rigRows = useMemo<RigStripRow[]>(
+		() => (rigsQuery.data ?? []).map(rigToRow),
+		[rigsQuery.data],
+	);
+	const mailPile: MailMessage[] = filterMailPile(inboxQuery.data).slice();
+	const triageCards = triageQuery.data?.cards ?? [];
+	const amberRigCount = (rigsQuery.data ?? []).filter(
+		(r) =>
+			r.agents.some((a) => a.state === "stalled" || a.state === "zombie") ||
+			(!r.witnessRunning && !r.refineryRunning),
+	).length;
+	const verdictState = deriveVerdict({
+		triageSeverities: triageCards.map((c) => c.severity),
+		amberRigCount,
+		mailPileCount: mailPile.length,
+	});
+	const verdictLoading =
+		triageQuery.isLoading || rigsQuery.isLoading || inboxQuery.isLoading;
+	const verdictError =
+		triageQuery.isError || rigsQuery.isError || inboxQuery.isError;
 
 	if (awaitingData) {
 		return (
@@ -51,15 +134,41 @@ export function TodayPane({ pane, tab }: TodayPaneProps) {
 			data-today-root
 			className="flex h-full w-full min-w-[320px] flex-col bg-background"
 		>
-			<TodayMasthead digest={undefined} lastVerifiedAt={null} isStale={false} />
+			<TodayMasthead
+				digest={digestQuery.data}
+				lastVerifiedAt={lastVerifiedAt}
+				isStale={isStale}
+			/>
 			<div className="min-h-0 flex-1 overflow-y-auto">
-				<TriageStack />
-				<RigsStrip rigs={[]} />
-				<MailPile messages={[]} />
-				<VerdictTail state="all-green" />
+				<TriageStack query={triageQuery} />
+				<RigsStrip rigs={rigRows} />
+				<MailPile messages={mailPile} townPath={tp} />
+				<VerdictTail
+					state={verdictState}
+					lastVerifiedAt={lastVerifiedAt}
+					loading={verdictLoading}
+					error={verdictError}
+				/>
 			</div>
 		</div>
 	);
+}
+
+function rigToRow(rig: Rig): RigStripRow {
+	return { name: rig.name, reason: deriveRigReason(rig) };
+}
+
+function deriveRigReason(rig: Rig): RigReason {
+	const zombieCount = rig.agents.filter((a) => a.state === "zombie").length;
+	if (zombieCount > 0) return { kind: "zombie", count: zombieCount };
+	const stalledCount = rig.agents.filter((a) => a.state === "stalled").length;
+	if (stalledCount > 0) {
+		return { kind: "stalled", duration: "recent", readyCount: 0 };
+	}
+	if (!rig.witnessRunning && !rig.refineryRunning) {
+		return { kind: "offline", lastSeenRelative: "unknown" };
+	}
+	return { kind: "quiet" };
 }
 
 function TodayShell({

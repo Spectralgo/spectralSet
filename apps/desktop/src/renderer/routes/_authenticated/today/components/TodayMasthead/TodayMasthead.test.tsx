@@ -46,12 +46,14 @@ describe("TodayMasthead copy variants", () => {
 	it("first-launch (undefined digest, null verified)", () => {
 		const h = r({ digest: undefined, lastVerifiedAt: null });
 		expect(h).toContain("Today");
-		expect(h).toContain("Welcome back. Fetching overnight…");
+		expect(h).toContain("Welcome back. No overnight digest yet.");
+		expect(h).not.toContain("Fetching overnight");
 		expect(h).not.toContain("Last verified");
 	});
 	it("first-launch flag + last-verified relative", () => {
 		const h = r({ digest: { firstLaunch: true } });
-		expect(h).toContain("Welcome back. Fetching overnight…");
+		expect(h).toContain("Welcome back. No overnight digest yet.");
+		expect(h).not.toContain("Fetching overnight");
 		expect(h).toContain("Last verified 14s ago");
 	});
 	it("populated since-you-slept line", () => {
@@ -68,5 +70,16 @@ describe("TodayMasthead copy variants", () => {
 		const h = r({ digest: { firstLaunch: true }, isStale: true });
 		expect(h).toContain("Stale since 11:04pm");
 		expect(h).not.toContain("Last verified");
+	});
+});
+
+describe("TodayPane masthead wiring", () => {
+	it("does not hard-code an undefined digest into the masthead", async () => {
+		const repoRoot = `${import.meta.dir}/../../../../../../../../..`;
+		const source = await Bun.file(
+			`${repoRoot}/apps/desktop/src/renderer/components/Gastown/TodayPane/TodayPane.tsx`,
+		).text();
+
+		expect(source).not.toContain("digest={undefined}");
 	});
 });

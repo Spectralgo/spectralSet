@@ -15,6 +15,7 @@ import {
 	RigsStrip,
 } from "./components/RigsStrip";
 import { TodayMasthead } from "./components/TodayMasthead";
+import type { TriageStackQueryState } from "./components/TriageStack";
 import { TriageStack } from "./components/TriageStack";
 import {
 	deriveVerdict,
@@ -50,6 +51,42 @@ function TodayPage() {
 	const probeFailed = probeQuery.isError;
 	const townUnreachable = probe !== null && !probe.installed;
 	const workspaceNull = probe !== null && probe.townRoot === null;
+	const townPath = useGastownTownPath();
+	const tp = townPath || undefined;
+	const canQueryToday =
+		gastownEnabled === true &&
+		probe !== null &&
+		probe.installed &&
+		probe.townRoot !== null &&
+		!probeFailed;
+	const triageQuery = electronTrpc.gastown.today.triage.useQuery(
+		{ userAddress: MAYOR_ADDRESS, ...(tp ? { townPath: tp } : {}) },
+		{
+			enabled: canQueryToday,
+			refetchInterval: 5_000,
+			refetchOnWindowFocus: false,
+		},
+	);
+	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
+		tp ? { townPath: tp } : undefined,
+		{
+			enabled: canQueryToday,
+			refetchInterval: 5_000,
+			refetchOnWindowFocus: false,
+		},
+	);
+	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
+		{
+			address: MAYOR_ADDRESS,
+			unreadOnly: false,
+			...(tp ? { townPath: tp } : {}),
+		},
+		{
+			enabled: canQueryToday,
+			refetchInterval: 10_000,
+			refetchOnWindowFocus: false,
+		},
+	);
 
 	const isMac = platform === undefined || platform === "darwin";
 	const awaitingData =
@@ -100,10 +137,15 @@ function TodayPage() {
 			/>
 			<MastheadRegion lastVerifiedAt={lastVerifiedAt} />
 			<div className="min-h-0 flex-1 overflow-y-auto px-8 py-6">
-				<TriageStack />
-				<RigsRegion />
-				<MailRegion />
-				<VerdictRegion lastVerifiedAt={lastVerifiedAt} />
+				<TriageStack query={triageQuery} />
+				<RigsRegion query={rigsQuery} />
+				<MailRegion query={inboxQuery} townPath={tp} />
+				<VerdictRegion
+					lastVerifiedAt={lastVerifiedAt}
+					triageQuery={triageQuery}
+					rigsQuery={rigsQuery}
+					inboxQuery={inboxQuery}
+				/>
 			</div>
 		</div>
 	);
@@ -223,12 +265,11 @@ function MastheadRegion({ lastVerifiedAt }: { lastVerifiedAt: Date | null }) {
  * loading, error, and empty states — spec-today §3 assigns empty-state copy to
  * the parent (RigsStrip itself stays agnostic and returns null when fed []).
  */
-function RigsRegion() {
-	const townPath = useGastownTownPath();
-	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
-		townPath ? { townPath } : undefined,
-		{ refetchInterval: 5_000, refetchOnWindowFocus: false },
-	);
+function RigsRegion({
+	query: rigsQuery,
+}: {
+	query: { data: Rig[] | undefined; isLoading: boolean; isError: boolean };
+}) {
 	const rows = useMemo<RigStripRow[]>(
 		() => (rigsQuery.data ?? []).map(rigToRow),
 		[rigsQuery.data],
@@ -282,16 +323,16 @@ function deriveRigReason(rig: Rig): RigReason {
  * the triage stack per spec-today §5). An empty pile renders nothing so the
  * row disappears per spec-today §3 ("Mail pile empty: row disappears").
  */
-function MailRegion() {
-	const townPath = useGastownTownPath();
-	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
-		{
-			address: MAYOR_ADDRESS,
-			unreadOnly: false,
-			...(townPath ? { townPath } : {}),
-		},
-		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
-	);
+function MailRegion({
+	query: inboxQuery,
+	townPath,
+}: {
+	query: {
+		data: MailMessage[] | undefined;
+		isError: boolean;
+	};
+	townPath: string | undefined;
+}) {
 	const pile: MailMessage[] = (inboxQuery.data ?? []).filter(
 		(m) => m.priority !== "urgent" && m.priority !== "high",
 	);
@@ -308,24 +349,21 @@ function MailRegion() {
  * red) from live triage + rigs + mail-pile signals per spec-today §3. Red
  * suppresses the tail — the triage stack becomes the tail — per §3.
  */
-function VerdictRegion({ lastVerifiedAt }: { lastVerifiedAt: Date | null }) {
-	const townPath = useGastownTownPath();
-	const triageQuery = electronTrpc.gastown.today.triage.useQuery(
-		townPath ? { townPath } : undefined,
-		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
-	);
-	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
-		townPath ? { townPath } : undefined,
-		{ refetchInterval: 5_000, refetchOnWindowFocus: false },
-	);
-	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
-		{
-			address: MAYOR_ADDRESS,
-			unreadOnly: false,
-			...(townPath ? { townPath } : {}),
-		},
-		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
-	);
+function VerdictRegion({
+	lastVerifiedAt,
+	triageQuery,
+	rigsQuery,
+	inboxQuery,
+}: {
+	lastVerifiedAt: Date | null;
+	triageQuery: Pick<TriageStackQueryState, "data" | "isLoading" | "isError">;
+	rigsQuery: { data: Rig[] | undefined; isLoading: boolean; isError: boolean };
+	inboxQuery: {
+		data: MailMessage[] | undefined;
+		isLoading: boolean;
+		isError: boolean;
+	};
+}) {
 	const isLoading =
 		triageQuery.isLoading || rigsQuery.isLoading || inboxQuery.isLoading;
 	const isError =
