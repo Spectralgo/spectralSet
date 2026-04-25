@@ -14,8 +14,11 @@ export type {
 	DoltChangeEvent,
 	DoltSubscriptionTrpcClient,
 	MountDoltSubscriptionArgs,
+	RealtimeStatus,
 } from "./dolt-subscription";
 export {
 	DEFAULT_DATABASE_TO_QUERY_KEYS,
+	getRealtimeStatus,
 	mountDoltSubscription,
+	subscribeRealtimeStatus,
 } from "./dolt-subscription";
