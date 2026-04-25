@@ -5,6 +5,7 @@ export interface DoltClientOptions {
 	port?: number;
 	user?: string;
 	password?: string;
+	connectionLimit?: number;
 }
 
 export interface DatabaseHash {
@@ -28,9 +29,51 @@ const SYSTEM_DBS = new Set([
 ]);
 const isSystemDb = (n: string) => SYSTEM_DBS.has(n) || n.startsWith("dolt_");
 const esc = (n: string) => `\`${n.replace(/`/g, "``")}\``;
+const DEFAULT_CONNECTION_LIMIT = 8;
+const MIN_CONNECTION_LIMIT = 1;
+const MAX_CONNECTION_LIMIT = 32;
+
+type DoltPoolOptions = Parameters<typeof mysql.createPool>[0];
+
+function parseConnectionLimit(value: number | string | undefined): number | null {
+	if (value === undefined) return null;
+	const parsed =
+		typeof value === "number" ? value : Number.parseInt(value.trim(), 10);
+	if (!Number.isFinite(parsed)) return null;
+	return Math.trunc(parsed);
+}
+
+function clampConnectionLimit(value: number): number {
+	return Math.min(
+		MAX_CONNECTION_LIMIT,
+		Math.max(MIN_CONNECTION_LIMIT, value),
+	);
+}
+
+export function resolveDoltPoolOptions(
+	options: Pick<DoltClientOptions, "connectionLimit">,
+): DoltPoolOptions {
+	const configured =
+		parseConnectionLimit(options.connectionLimit) ??
+		parseConnectionLimit(process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT) ??
+		DEFAULT_CONNECTION_LIMIT;
+	const connectionLimit = clampConnectionLimit(configured);
+	return {
+		connectionLimit,
+		waitForConnections: true,
+		queueLimit: 0,
+		maxIdle: connectionLimit,
+		idleTimeout: 60_000,
+		enableKeepAlive: true,
+		keepAliveInitialDelay: 0,
+	};
+}
 
 export class DoltClient {
-	private readonly opts: Required<DoltClientOptions>;
+	private readonly opts: Required<
+		Pick<DoltClientOptions, "host" | "password" | "port" | "user">
+	>;
+	private readonly poolOptions: DoltPoolOptions;
 	private pool: mysql.Pool | null = null;
 
 	constructor(options: DoltClientOptions = {}) {
@@ -40,12 +83,13 @@ export class DoltClient {
 			user: options.user ?? "root",
 			password: options.password ?? "",
 		};
+		this.poolOptions = resolveDoltPoolOptions(options);
 	}
 
 	async connect(): Promise<void> {
 		if (this.pool) return;
 		try {
-			this.pool = mysql.createPool({ ...this.opts, connectionLimit: 2 });
+			this.pool = mysql.createPool({ ...this.opts, ...this.poolOptions });
 			const conn = await this.pool.getConnection();
 			conn.release();
 		} catch (err) {

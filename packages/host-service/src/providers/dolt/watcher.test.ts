@@ -7,6 +7,8 @@ interface FakeClientOptions {
 	databases?: string[];
 	tableHash?: string | null;
 	tableThrows?: boolean;
+	hashOfDatabasesCalls?: string[][];
+	hashOfTableCalls?: Array<{ database: string; table: string }>;
 }
 
 function makeFakeClient(opts: FakeClientOptions): DoltClient {
@@ -15,12 +17,14 @@ function makeFakeClient(opts: FakeClientOptions): DoltClient {
 		connect: async () => {},
 		close: async () => {},
 		listDatabases: async () => opts.databases ?? ["dbA"],
-		hashOfDatabases: async () => {
+		hashOfDatabases: async (databases: string[]) => {
+			opts.hashOfDatabasesCalls?.push(databases);
 			const idx = Math.min(tickIndex, opts.hashes.length - 1);
 			tickIndex += 1;
 			return opts.hashes[idx] ?? [];
 		},
-		hashOfTable: async () => {
+		hashOfTable: async (database: string, table: string) => {
+			opts.hashOfTableCalls?.push({ database, table });
 			if (opts.tableThrows) throw new Error("table hash failed");
 			return opts.tableHash ?? null;
 		},
@@ -99,6 +103,56 @@ describe("DoltWatcher", () => {
 		await waitFor(() => events.length >= 1);
 		await watcher.stop();
 		expect(events[0]?.changedTables).toBeNull();
+	});
+
+	test("filters to active databases and only narrows after a DB hash changes", async () => {
+		const hashOfDatabasesCalls: string[][] = [];
+		const hashOfTableCalls: Array<{ database: string; table: string }> = [];
+		const client = makeFakeClient({
+			databases: ["dbA", "dbB", "dbC"],
+			hashes: [
+				[{ database: "dbB", hash: "A" }],
+				[{ database: "dbB", hash: "A" }],
+				[{ database: "dbB", hash: "B" }],
+			],
+			tableHash: "t1",
+			hashOfDatabasesCalls,
+			hashOfTableCalls,
+		});
+		const watcher = new DoltWatcher(client, {
+			intervalMs: 5,
+			jitterMs: 0,
+			activeDatabases: ["dbB"],
+			narrowTables: ["issues"],
+		});
+		const events: DoltChangeEvent[] = [];
+		watcher.on((e) => events.push(e));
+		watcher.start();
+		await waitFor(() => events.length >= 1);
+		await watcher.stop();
+
+		expect(hashOfDatabasesCalls.length).toBeGreaterThanOrEqual(3);
+		expect(hashOfDatabasesCalls).toEqual(hashOfDatabasesCalls.map(() => ["dbB"]));
+		expect(hashOfTableCalls).toEqual([{ database: "dbB", table: "issues" }]);
+		expect(events).toHaveLength(1);
+	});
+
+	test("uses the lower idle cadence when database hashes stay unchanged", async () => {
+		const hashOfDatabasesCalls: string[][] = [];
+		const client = makeFakeClient({
+			hashes: [[{ database: "dbA", hash: "A" }]],
+			hashOfDatabasesCalls,
+		});
+		const watcher = new DoltWatcher(client, {
+			intervalMs: 5,
+			idleIntervalMs: 30,
+			jitterMs: 0,
+		});
+		watcher.start();
+		await new Promise((r) => setTimeout(r, 22));
+		await watcher.stop();
+
+		expect(hashOfDatabasesCalls.length).toBeLessThanOrEqual(2);
 	});
 
 	test("unsubscribe removes the listener", async () => {
