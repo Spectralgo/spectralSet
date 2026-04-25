@@ -1,8 +1,22 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { DoltClient, DoltClientError } from "./client";
+import { afterAll, afterEach, beforeAll, describe, expect, test } from "bun:test";
+import {
+	DoltClient,
+	DoltClientError,
+	resolveDoltPoolOptions,
+} from "./client";
 
 const HOST = "127.0.0.1";
 const PORT = 3307;
+const ORIGINAL_DOLT_CONNECTION_LIMIT =
+	process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT;
+
+afterEach(() => {
+	if (ORIGINAL_DOLT_CONNECTION_LIMIT === undefined) {
+		delete process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT;
+		return;
+	}
+	process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT = ORIGINAL_DOLT_CONNECTION_LIMIT;
+});
 
 async function probe(): Promise<boolean> {
 	const c = new DoltClient({ host: HOST, port: PORT });
@@ -74,6 +88,36 @@ describeIf("DoltClient (integration)", () => {
 });
 
 describe("DoltClient (unit)", () => {
+	test("defaults to a less restrictive bounded pool", () => {
+		const opts = resolveDoltPoolOptions({});
+		expect(opts.connectionLimit).toBe(8);
+		expect(opts.waitForConnections).toBe(true);
+		expect(opts.queueLimit).toBe(0);
+		expect(opts.maxIdle).toBe(8);
+		expect(opts.idleTimeout).toBeGreaterThan(0);
+		expect(opts.enableKeepAlive).toBe(true);
+	});
+
+	test("uses explicit connection limit before env and clamps unsafe values", () => {
+		process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT = "12";
+		expect(resolveDoltPoolOptions({ connectionLimit: 6 }).connectionLimit).toBe(
+			6,
+		);
+		expect(resolveDoltPoolOptions({ connectionLimit: 999 }).connectionLimit).toBe(
+			32,
+		);
+		expect(resolveDoltPoolOptions({ connectionLimit: 0 }).connectionLimit).toBe(
+			1,
+		);
+		delete process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT;
+	});
+
+	test("uses SPECTRALSET_DOLT_CONNECTION_LIMIT when no option is provided", () => {
+		process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT = "10";
+		expect(resolveDoltPoolOptions({}).connectionLimit).toBe(10);
+		delete process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT;
+	});
+
 	test("throws DoltClientError on unreachable host", async () => {
 		const c = new DoltClient({ host: "127.0.0.1", port: 1 });
 		await expect(c.connect()).rejects.toBeInstanceOf(DoltClientError);
