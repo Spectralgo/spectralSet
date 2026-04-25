@@ -1,14 +1,17 @@
 import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
 import { useMemo, useState } from "react";
-import { MAYOR_ADDRESS } from "renderer/components/Gastown/MailPanel/AddressPicker";
-import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import type { ElectronRouterOutputs } from "renderer/lib/electron-trpc";
-import { electronTrpc } from "renderer/lib/electron-trpc";
 import { useTriageKeybindings } from "./useTriageKeybindings";
 
 export type TriageCard =
 	ElectronRouterOutputs["gastown"]["today"]["triage"]["cards"][number];
+export interface TriageStackQueryState {
+	data: ElectronRouterOutputs["gastown"]["today"]["triage"] | undefined;
+	isLoading: boolean;
+	isError: boolean;
+	refetch: () => Promise<unknown> | unknown;
+}
 
 const ACTIONS = ["Ack", "Open", "Snooze"] as const;
 type Action = (typeof ACTIONS)[number];
@@ -32,13 +35,7 @@ export function cardSource(c: TriageCard): string {
 	return [c.rig, c.polecat].filter(Boolean).join("/") || "—";
 }
 
-export function TriageStack() {
-	const townPath = useGastownTownPath();
-	const tp = townPath || undefined;
-	const query = electronTrpc.gastown.today.triage.useQuery(
-		{ userAddress: MAYOR_ADDRESS, ...(tp ? { townPath: tp } : {}) },
-		{ refetchInterval: 5_000, refetchOnWindowFocus: false },
-	);
+export function TriageStack({ query }: { query: TriageStackQueryState }) {
 	const [dismissed, setDismissed] = useState<ReadonlySet<string>>(new Set());
 	const [focusIdx, setFocusIdx] = useState(0);
 	const visible = useMemo<TriageCard[]>(
@@ -84,7 +81,13 @@ export function TriageStack() {
 		body = (
 			<div className="flex items-center gap-3 text-sm text-destructive">
 				<span>Failed to load triage.</span>
-				<Button size="sm" variant="outline" onClick={() => query.refetch()}>
+				<Button
+					size="sm"
+					variant="outline"
+					onClick={() => {
+						void query.refetch();
+					}}
+				>
 					Retry
 				</Button>
 			</div>

@@ -59,6 +59,30 @@ describe("formatAge", () => {
 	});
 });
 
+describe("Today route query ownership", () => {
+	const repoRoot = `${import.meta.dir}/../../../../../../../../..`;
+	const readRendererFile = (path: string) =>
+		Bun.file(`${repoRoot}/${path}`).text();
+	const count = (source: string, needle: string) =>
+		source.split(needle).length - 1;
+
+	it("hoists mail, rigs, and triage queries once in the route tree", async () => {
+		const page = await readRendererFile(
+			"apps/desktop/src/renderer/routes/_authenticated/today/page.tsx",
+		);
+		const triageStack = await readRendererFile(
+			"apps/desktop/src/renderer/routes/_authenticated/today/components/TriageStack/TriageStack.tsx",
+		);
+
+		expect(count(page, "electronTrpc.gastown.listRigs.useQuery")).toBe(1);
+		expect(count(page, "electronTrpc.gastown.mail.inbox.useQuery")).toBe(1);
+		expect(count(page, "electronTrpc.gastown.today.triage.useQuery")).toBe(1);
+		expect(triageStack).not.toContain(
+			"electronTrpc.gastown.today.triage.useQuery",
+		);
+	});
+});
+
 describe("cardTitle", () => {
 	it("uses title for incidents and rejections", () => {
 		expect(cardTitle(incident())).toBe("Auth subsystem down");

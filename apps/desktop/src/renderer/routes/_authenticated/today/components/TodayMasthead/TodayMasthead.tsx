@@ -36,7 +36,7 @@ export function formatClockTime(d: Date): string {
 
 function sinceYouSleptCopy(digest: DigestPayload | undefined): string {
 	if (digest === undefined || "firstLaunch" in digest) {
-		return "Welcome back. Fetching overnight…";
+		return "Welcome back. No overnight digest yet.";
 	}
 	const time = formatClockTime(new Date(digest.sinceTime));
 	const {
