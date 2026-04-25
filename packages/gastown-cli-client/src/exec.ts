@@ -1,4 +1,5 @@
 import { type SpawnOptions, spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -21,6 +22,7 @@ export interface ExecGtOptions {
 	cwd?: string;
 	env?: NodeJS.ProcessEnv;
 	stdin?: string;
+	readOnly?: boolean;
 }
 
 export interface ExecGtResult {
@@ -78,6 +80,10 @@ export type SpawnLike = typeof spawn;
 export interface ExecGtDeps {
 	spawn?: SpawnLike;
 }
+
+const gtReadOnlySingleflight = new Map<string, Promise<ExecGtResult>>();
+const spawnDepIds = new WeakMap<SpawnLike, number>();
+let nextSpawnDepId = 1;
 
 let livenessProbed = false;
 async function runLivenessProbe(
@@ -271,7 +277,22 @@ export function execGt(
 	options: ExecGtOptions = {},
 	deps: ExecGtDeps = {},
 ): Promise<ExecGtResult> {
-	return execBin("gt", argv, options, deps);
+	if (!options.readOnly || !isSingleflightReadOnlyGtArgv(argv)) {
+		return execBin("gt", argv, options, deps);
+	}
+
+	const key = makeReadOnlyGtKey(argv, options, deps);
+	const existing = gtReadOnlySingleflight.get(key);
+	if (existing) return existing;
+
+	let shared: Promise<ExecGtResult>;
+	shared = execBin("gt", argv, options, deps).finally(() => {
+		if (gtReadOnlySingleflight.get(key) === shared) {
+			gtReadOnlySingleflight.delete(key);
+		}
+	});
+	gtReadOnlySingleflight.set(key, shared);
+	return shared;
 }
 
 export function execBd(
@@ -297,4 +318,58 @@ function isEnoent(err: unknown): boolean {
 		"code" in err &&
 		(err as { code?: string }).code === "ENOENT"
 	);
+}
+
+function makeReadOnlyGtKey(
+	argv: readonly string[],
+	options: ExecGtOptions,
+	deps: ExecGtDeps,
+): string {
+	const payload = {
+		bin: "gt",
+		argv,
+		cwd: options.cwd ?? null,
+		env: stableEnv(options.env ?? process.env),
+		stdin: options.stdin ?? null,
+		timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+		spawnDepId: deps.spawn ? getSpawnDepId(deps.spawn) : null,
+	};
+	return createHash("sha256")
+		.update(JSON.stringify(payload))
+		.digest("base64url");
+}
+
+function stableEnv(env: NodeJS.ProcessEnv): [string, string | null][] {
+	return Object.keys(env)
+		.sort()
+		.map((key) => [key, env[key] ?? null]);
+}
+
+function getSpawnDepId(spawnFn: SpawnLike): number {
+	const existing = spawnDepIds.get(spawnFn);
+	if (existing) return existing;
+	const id = nextSpawnDepId;
+	nextSpawnDepId += 1;
+	spawnDepIds.set(spawnFn, id);
+	return id;
+}
+
+function isSingleflightReadOnlyGtArgv(argv: readonly string[]): boolean {
+	const [command, subcommand] = argv;
+	if (command === "status") {
+		return argv.includes("--json") && argv.includes("--fast");
+	}
+	if (command === "rig") {
+		return subcommand === "list";
+	}
+	if (command === "polecat") {
+		return subcommand === "list";
+	}
+	if (command === "mail") {
+		return subcommand === "inbox";
+	}
+	if (command === "convoy") {
+		return subcommand === "list" || subcommand === "status";
+	}
+	return false;
 }

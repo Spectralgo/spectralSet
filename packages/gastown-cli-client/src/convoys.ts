@@ -40,7 +40,7 @@ export async function listConvoys(
 	const cwd = resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		argv,
-		{ ...options, cwd },
+		{ ...options, cwd, readOnly: true },
 		deps,
 	);
 	if (exitCode !== 0) {
@@ -65,7 +65,7 @@ export async function convoyStatus(
 	const cwd = resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		argv,
-		{ ...options, cwd },
+		{ ...options, cwd, readOnly: true },
 		deps,
 	);
 	if (exitCode !== 0) {

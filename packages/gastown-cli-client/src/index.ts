@@ -152,7 +152,7 @@ export async function probe(
 		// it; --no-tmux is not a real flag.
 		const result = await execGt(
 			["status", "--json", "--fast"],
-			options,
+			{ ...options, readOnly: true },
 			deps,
 		);
 		statusStdout = result.stdout;
@@ -215,7 +215,7 @@ export async function listRigs(
 	const cwd = resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		["rig", "list"],
-		{ ...options, cwd },
+		{ ...options, cwd, readOnly: true },
 		deps,
 	);
 	if (exitCode !== 0) {
@@ -248,7 +248,7 @@ export async function listPolecats(
 		: resolveTownCwd(args.townRoot, options.cwd);
 	const { stdout, stderr, exitCode } = await execGt(
 		argv,
-		{ ...options, cwd },
+		{ ...options, cwd, readOnly: true },
 		deps,
 	);
 	if (exitCode !== 0) {
