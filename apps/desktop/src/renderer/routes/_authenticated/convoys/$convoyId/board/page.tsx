@@ -1,5 +1,12 @@
+import type { ConvoyBead } from "@spectralset/gastown-cli-client";
 import { ToggleGroup, ToggleGroupItem } from "@spectralset/ui/toggle-group";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+	BeadCard,
+	ConvoyBoardShell,
+	type ConvoyBead as ShellBead,
+} from "renderer/components/Gastown/ConvoyBoard";
+import { electronTrpc } from "renderer/lib/electron-trpc";
 
 type BoardMode = "kanban" | "stream";
 interface ConvoyBoardSearch {
@@ -19,10 +26,13 @@ export const Route = createFileRoute(
 
 function ConvoyBoardPage() {
 	const { convoyId } = Route.useParams();
-	const { mode, bead } = Route.useSearch();
+	const { mode } = Route.useSearch();
 	const navigate = Route.useNavigate();
 	const setMode = (next: BoardMode) =>
 		navigate({ search: (p) => ({ ...p, mode: next }), replace: true });
+
+	const beadsQuery = electronTrpc.gastown.convoys.beads.useQuery({ convoyId });
+	const beads = (beadsQuery.data?.beads ?? []) as unknown as ShellBead[];
 
 	return (
 		<div className="flex h-full flex-col">
@@ -39,10 +49,19 @@ function ConvoyBoardPage() {
 					<ToggleGroupItem value="stream">Stream</ToggleGroupItem>
 				</ToggleGroup>
 			</header>
-			<div className="min-h-0 flex-1 p-4 text-xs text-muted-foreground">
-				Mode: {mode}
-				{bead ? ` · Selected: ${bead}` : ""}
-			</div>
+			{beadsQuery.isLoading ? (
+				<div className="p-4 text-xs text-muted-foreground">Loading beads…</div>
+			) : beadsQuery.error ? (
+				<div className="p-4 text-xs text-destructive">
+					Failed to load beads.
+				</div>
+			) : (
+				<ConvoyBoardShell
+					beads={beads}
+					onStatusChange={() => {}}
+					renderCard={(b) => <BeadCard bead={b as unknown as ConvoyBead} />}
+				/>
+			)}
 		</div>
 	);
 }
