@@ -7,6 +7,11 @@ import {
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
+import {
+	createMailInboxCache,
+	defaultMailInboxCache,
+	type MailInboxCache,
+} from "./mail-cache";
 import { resolveTownPath } from "./resolve-town-path";
 
 const townPathSchema = z.string().min(1).optional();
@@ -131,6 +136,8 @@ interface GastownTodayRouterDeps {
 	listAgentsFn?: typeof listAgents;
 	listInboxFn?: typeof listInbox;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
+	inboxCache?: MailInboxCache;
+	listInboxCacheStaleMs?: number;
 	now?: () => number;
 }
 
@@ -142,6 +149,16 @@ export const createGastownTodayRouter = (deps: GastownTodayRouterDeps = {}) => {
 	const listAgentsImpl = deps.listAgentsFn ?? listAgents;
 	const listInboxImpl = deps.listInboxFn ?? listInbox;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
+	const inboxCache =
+		deps.inboxCache ??
+		(deps.listInboxFn || deps.resolveTownPathFn || deps.listInboxCacheStaleMs
+			? createMailInboxCache({
+					listInboxFn: listInboxImpl,
+					resolveTownPathFn: resolveTownPathImpl,
+					shellOptionsFn: shellOptions,
+					staleMs: deps.listInboxCacheStaleMs,
+				})
+			: defaultMailInboxCache);
 	const nowFn = deps.now ?? (() => Date.now());
 
 	return router({
@@ -174,13 +191,10 @@ export const createGastownTodayRouter = (deps: GastownTodayRouterDeps = {}) => {
 			.query(async ({ input }): Promise<{ cards: TriageCard[] }> => {
 				let inbox: MailMessage[] = [];
 				try {
-					inbox = await listInboxImpl(
-						{
-							address: input?.userAddress,
-							townRoot: resolveTownPathImpl(input?.townPath),
-						},
-						await shellOptions(),
-					);
+					inbox = await inboxCache.list({
+						address: input?.userAddress,
+						townPath: input?.townPath,
+					});
 				} catch {
 					inbox = [];
 				}

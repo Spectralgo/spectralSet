@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { ProbeResult } from "@spectralset/gastown-cli-client";
+import type { MailMessage, ProbeResult } from "@spectralset/gastown-cli-client";
 import { createGastownRouter } from "./index";
 
 function makeProbeResult(overrides: Partial<ProbeResult> = {}): ProbeResult {
@@ -12,6 +12,21 @@ function makeProbeResult(overrides: Partial<ProbeResult> = {}): ProbeResult {
 		daemonRunning: true,
 		doltRunning: true,
 		tmuxSocket: null,
+		...overrides,
+	};
+}
+
+function makeMail(overrides: Partial<MailMessage> = {}): MailMessage {
+	return {
+		id: "mail-1",
+		from: "alpha/jasper",
+		to: "mayor/",
+		subject: "Pinned update",
+		body: "",
+		timestamp: "2026-04-25T00:00:00Z",
+		read: false,
+		priority: "urgent",
+		type: "notification",
 		...overrides,
 	};
 }
@@ -332,6 +347,40 @@ describe("createGastownRouter townPath threading", () => {
 			polecat: "jasper",
 			message: "status please",
 			townRoot: "/Users/demo/town",
+		});
+	});
+
+	test("mail and today share the parent inbox cache", async () => {
+		const calls: unknown[] = [];
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			listInboxFn: async (args) => {
+				calls.push(args);
+				return [makeMail()];
+			},
+		});
+		const caller = router.createCaller({});
+
+		await caller.mail.inbox({
+			address: "mayor/",
+			townPath: "/Users/demo/town",
+		});
+		const triage = await caller.today.triage({
+			userAddress: "mayor/",
+			townPath: "/Users/demo/town",
+		});
+
+		expect(calls).toHaveLength(1);
+		expect(calls[0]).toMatchObject({
+			address: "mayor/",
+			townRoot: "/Users/demo/town",
+		});
+		expect(triage.cards[0]).toMatchObject({
+			type: "pinned-mail",
+			id: "mail-1",
 		});
 	});
 });
