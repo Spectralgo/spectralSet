@@ -66,17 +66,23 @@ describe("Today route query ownership", () => {
 	const count = (source: string, needle: string) =>
 		source.split(needle).length - 1;
 
-	it("hoists mail, rigs, and triage queries once in the route tree", async () => {
+	it("hoists mail and triage queries once, deriving rigs from probe", async () => {
 		const page = await readRendererFile(
 			"apps/desktop/src/renderer/routes/_authenticated/today/page.tsx",
+		);
+		const todayPane = await readRendererFile(
+			"apps/desktop/src/renderer/components/Gastown/TodayPane/TodayPane.tsx",
 		);
 		const triageStack = await readRendererFile(
 			"apps/desktop/src/renderer/routes/_authenticated/today/components/TriageStack/TriageStack.tsx",
 		);
 
-		expect(count(page, "electronTrpc.gastown.listRigs.useQuery")).toBe(1);
+		expect(count(page, "electronTrpc.gastown.listRigs.useQuery")).toBe(0);
+		expect(count(todayPane, "electronTrpc.gastown.listRigs.useQuery")).toBe(0);
 		expect(count(page, "electronTrpc.gastown.mail.inbox.useQuery")).toBe(1);
 		expect(count(page, "electronTrpc.gastown.today.triage.useQuery")).toBe(1);
+		expect(page).toContain("probe?.rigs");
+		expect(todayPane).toContain("probe?.rigs");
 		expect(triageStack).not.toContain(
 			"electronTrpc.gastown.today.triage.useQuery",
 		);

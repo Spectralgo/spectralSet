@@ -25,6 +25,7 @@ import {
 
 // Matches the sidebar's probe cache so both share a single in-flight request.
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
+const EMPTY_RIGS: Rig[] = [];
 
 console.log("[today-page] module loaded", { ts: Date.now() });
 
@@ -67,13 +68,14 @@ function TodayPage() {
 			refetchOnWindowFocus: false,
 		},
 	);
-	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
-		tp ? { townPath: tp } : undefined,
-		{
-			enabled: canQueryToday,
-			refetchInterval: 5_000,
-			refetchOnWindowFocus: false,
-		},
+	const rigs = probe?.rigs ?? EMPTY_RIGS;
+	const rigsQuery = useMemo(
+		() => ({
+			data: rigs,
+			isLoading: probeQuery.isLoading,
+			isError: probeQuery.isError,
+		}),
+		[rigs, probeQuery.isLoading, probeQuery.isError],
 	);
 	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
 		{
@@ -301,7 +303,7 @@ function rigToRow(rig: Rig): RigStripRow {
 	return { name: rig.name, reason: deriveRigReason(rig) };
 }
 
-// Minimal derivation from `listRigs` output. Precise signals (stalled duration,
+// Minimal derivation from `probe.rigs` output. Precise signals (stalled duration,
 // ready P0 count, refinery flow state, offline last-seen) require additional
 // sources the spec assigns to later beads — this maps the states we can
 // observe today and falls through to "quiet".
