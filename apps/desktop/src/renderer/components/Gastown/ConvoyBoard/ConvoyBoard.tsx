@@ -7,6 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { useMemo, useState } from "react";
 import { HiOutlineClipboard, HiOutlineTruck } from "react-icons/hi2";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 
 const STATUS_CLASS: Record<string, string> = {
@@ -37,6 +38,7 @@ export function ConvoyBoard() {
 	const navigate = useNavigate();
 	const [showAll, setShowAll] = useState(false);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
+	const townPath = useGastownTownPath() || undefined;
 
 	const handleSelect = (id: string) => {
 		setSelectedId(id);
@@ -44,7 +46,7 @@ export function ConvoyBoard() {
 	};
 
 	const listQuery = electronTrpc.gastown.convoys.list.useQuery(
-		{ all: showAll },
+		{ all: showAll, townPath },
 		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
 	);
 

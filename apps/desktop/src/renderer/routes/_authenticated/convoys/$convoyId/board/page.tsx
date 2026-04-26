@@ -6,6 +6,7 @@ import {
 	ConvoyBoardShell,
 	type ConvoyBead as ShellBead,
 } from "renderer/components/Gastown/ConvoyBoard";
+import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 
 type BoardMode = "kanban" | "stream";
@@ -31,7 +32,11 @@ function ConvoyBoardPage() {
 	const setMode = (next: BoardMode) =>
 		navigate({ search: (p) => ({ ...p, mode: next }), replace: true });
 
-	const beadsQuery = electronTrpc.gastown.convoys.beads.useQuery({ convoyId });
+	const townPath = useGastownTownPath() || undefined;
+	const beadsQuery = electronTrpc.gastown.convoys.beads.useQuery({
+		convoyId,
+		townPath,
+	});
 	const beads = (beadsQuery.data?.beads ?? []) as unknown as ShellBead[];
 
 	return (
