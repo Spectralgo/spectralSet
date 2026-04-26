@@ -1,6 +1,9 @@
 import {
 	type Convoy,
+	type ConvoyBead,
 	convoyStatus,
+	deriveBeadStatus,
+	getConvoyBeads,
 	type ListConvoysArgs,
 	listConvoys,
 } from "@spectralset/gastown-cli-client";
@@ -24,9 +27,21 @@ const convoyStatusInputSchema = z.object({
 	townPath: townPathSchema,
 });
 
+const convoyBeadsInputSchema = z.object({
+	convoyId: z.string().min(1),
+	townPath: townPathSchema,
+});
+
+interface BeadDep {
+	from: string;
+	to: string;
+	type: string;
+}
+
 interface GastownConvoysRouterDeps {
 	listConvoysFn?: typeof listConvoys;
 	convoyStatusFn?: typeof convoyStatus;
+	getConvoyBeadsFn?: typeof getConvoyBeads;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
 	listConvoysCacheStaleMs?: number;
 }
@@ -56,6 +71,7 @@ export const createGastownConvoysRouter = (
 ) => {
 	const listConvoysImpl = deps.listConvoysFn ?? listConvoys;
 	const convoyStatusImpl = deps.convoyStatusFn ?? convoyStatus;
+	const getConvoyBeadsImpl = deps.getConvoyBeadsFn ?? getConvoyBeads;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
 	const listConvoysCacheStaleMs =
 		deps.listConvoysCacheStaleMs ?? DEFAULT_LIST_CONVOYS_CACHE_STALE_MS;
@@ -124,6 +140,36 @@ export const createGastownConvoysRouter = (
 					},
 					await shellOptions(),
 				),
+			),
+		beads: publicProcedure
+			.input(convoyBeadsInputSchema)
+			.query(
+				async ({
+					input,
+				}): Promise<{ beads: ConvoyBead[]; dependencies: BeadDep[] }> => {
+					const townRoot = resolveTownPathImpl(input.townPath);
+					const opts = await shellOptions();
+					try {
+						const beads = await getConvoyBeadsImpl(
+							{ convoyId: input.convoyId, townRoot },
+							opts,
+						);
+						return { beads, dependencies: [] };
+					} catch {
+						const status = await convoyStatusImpl(
+							{ id: input.convoyId, townRoot },
+							opts,
+						);
+						const beads = status.tracked.map<ConvoyBead>((t) => ({
+							id: t.id,
+							title: t.title,
+							status: deriveBeadStatus(t.status),
+							assignee: null,
+							priority: 0,
+						}));
+						return { beads, dependencies: [] };
+					}
+				},
 			),
 	});
 };

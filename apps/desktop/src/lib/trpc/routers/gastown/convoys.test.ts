@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { Convoy } from "@spectralset/gastown-cli-client";
+import type { Convoy, ConvoyBead } from "@spectralset/gastown-cli-client";
 import { createGastownConvoysRouter } from "./convoys";
 
 function convoy(overrides: Partial<Convoy> & Pick<Convoy, "id">): Convoy {
@@ -100,5 +100,70 @@ describe("gastownConvoys.list cache", () => {
 			convoy({ id: "fresh" }),
 		]);
 		expect(calls).toBe(3);
+	});
+});
+
+describe("gastownConvoys.beads", () => {
+	const beadFixture: ConvoyBead = {
+		id: "ss-fast",
+		title: "Fast bead",
+		status: "open",
+		assignee: null,
+		priority: 1,
+	};
+
+	test("returns Dolt fast-path beads on success", async () => {
+		const router = createGastownConvoysRouter({
+			getConvoyBeadsFn: async () => [beadFixture],
+			convoyStatusFn: async () => {
+				throw new Error(
+					"convoyStatus should not be called on fast-path success",
+				);
+			},
+			resolveTownPathFn: () => "/town",
+		});
+		const caller = router.createCaller({});
+
+		await expect(
+			caller.beads({ convoyId: "hq-cv-fast", townPath: "/town" }),
+		).resolves.toEqual({ beads: [beadFixture], dependencies: [] });
+	});
+
+	test("falls back to convoyStatus on schema mismatch", async () => {
+		const router = createGastownConvoysRouter({
+			getConvoyBeadsFn: async () => {
+				throw new Error("schema mismatch");
+			},
+			convoyStatusFn: async () =>
+				convoy({
+					id: "hq-cv-fast",
+					tracked: [
+						{
+							id: "ss-cli",
+							title: "CLI bead",
+							status: "in_progress",
+							dependency_type: "tracks",
+							issue_type: "task",
+						},
+					],
+				}),
+			resolveTownPathFn: () => "/town",
+		});
+		const caller = router.createCaller({});
+
+		const result = await caller.beads({
+			convoyId: "hq-cv-fast",
+			townPath: "/town",
+		});
+		expect(result.dependencies).toEqual([]);
+		expect(result.beads).toEqual([
+			{
+				id: "ss-cli",
+				title: "CLI bead",
+				status: "open",
+				assignee: null,
+				priority: 0,
+			},
+		]);
 	});
 });
