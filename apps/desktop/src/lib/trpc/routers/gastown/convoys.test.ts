@@ -129,6 +129,25 @@ describe("gastownConvoys.beads", () => {
 		).resolves.toEqual({ beads: [beadFixture], dependencies: [] });
 	});
 
+	test("uses discoverTownRoot when townPath input is omitted", async () => {
+		let observedTownRoot: string | undefined;
+		const router = createGastownConvoysRouter({
+			getConvoyBeadsFn: async (args) => {
+				observedTownRoot = args.townRoot;
+				return [beadFixture];
+			},
+			convoyStatusFn: async () => {
+				throw new Error("convoyStatus should not be called on fast-path");
+			},
+			resolveTownPathFn: () => undefined,
+			discoverTownRootFn: () => "/discovered/town",
+		});
+		const caller = router.createCaller({});
+
+		await caller.beads({ convoyId: "hq-cv-fast" });
+		expect(observedTownRoot).toBe("/discovered/town");
+	});
+
 	test("falls back to convoyStatus on schema mismatch", async () => {
 		const router = createGastownConvoysRouter({
 			getConvoyBeadsFn: async () => {

@@ -10,7 +10,7 @@ import {
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
-import { resolveTownPath } from "./resolve-town-path";
+import { discoverTownRoot, resolveTownPath } from "./resolve-town-path";
 
 const townPathSchema = z.string().min(1).optional();
 
@@ -43,6 +43,7 @@ interface GastownConvoysRouterDeps {
 	convoyStatusFn?: typeof convoyStatus;
 	getConvoyBeadsFn?: typeof getConvoyBeads;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
+	discoverTownRootFn?: () => string | undefined;
 	listConvoysCacheStaleMs?: number;
 }
 
@@ -73,6 +74,7 @@ export const createGastownConvoysRouter = (
 	const convoyStatusImpl = deps.convoyStatusFn ?? convoyStatus;
 	const getConvoyBeadsImpl = deps.getConvoyBeadsFn ?? getConvoyBeads;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
+	const discoverTownRootImpl = deps.discoverTownRootFn ?? discoverTownRoot;
 	const listConvoysCacheStaleMs =
 		deps.listConvoysCacheStaleMs ?? DEFAULT_LIST_CONVOYS_CACHE_STALE_MS;
 	const listConvoysCache = new Map<string, ListConvoysCacheEntry>();
@@ -136,7 +138,8 @@ export const createGastownConvoysRouter = (
 				convoyStatusImpl(
 					{
 						id: input.id,
-						townRoot: resolveTownPathImpl(input.townPath),
+						townRoot:
+							resolveTownPathImpl(input.townPath) ?? discoverTownRootImpl(),
 					},
 					await shellOptions(),
 				),
@@ -147,7 +150,8 @@ export const createGastownConvoysRouter = (
 				async ({
 					input,
 				}): Promise<{ beads: ConvoyBead[]; dependencies: BeadDep[] }> => {
-					const townRoot = resolveTownPathImpl(input.townPath);
+					const townRoot =
+						resolveTownPathImpl(input.townPath) ?? discoverTownRootImpl();
 					const opts = await shellOptions();
 					try {
 						const beads = await getConvoyBeadsImpl(
