@@ -217,9 +217,13 @@ export type Convoy = z.infer<typeof convoySchema>;
 
 export const convoyArraySchema = z.array(convoySchema);
 
-// `gt convoy status <id> --json` returns a richer shape than `list`; start
-// permissive via passthrough and tighten once the UI stress-tests it.
-export const convoyStatusSchema = convoySchema;
+// `gt convoy status <id> --json` returns a richer shape than `list` and
+// currently omits `created_at` (upstream gt CLI inconsistency, tracked as
+// gt-convoy-status-missing-created-at). Keep list-side strict; relax only
+// the status schema so the renderer parses it cleanly.
+export const convoyStatusSchema = convoySchema
+	.omit({ created_at: true })
+	.extend({ created_at: z.string().optional() });
 
 export type ConvoyStatus = z.infer<typeof convoyStatusSchema>;
 
