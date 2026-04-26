@@ -45,6 +45,7 @@ export {
 	type ConvoyStatusArgs,
 	convoyStatus,
 	deriveBeadStatus,
+	findTownRoot,
 	type GetConvoyBeadsArgs,
 	getConvoyBeads,
 	type ListConvoysArgs,

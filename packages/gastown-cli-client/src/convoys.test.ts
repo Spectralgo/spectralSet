@@ -139,6 +139,21 @@ function withTownRoot<T>(fn: (townRoot: string) => Promise<T>): Promise<T> {
 	});
 }
 
+// Anchors the test process cwd in a directory outside any Gas Town root and
+// scrubs GT_TOWN_ROOT so the auto-discover walk-up backstop can't resolve one.
+function withNonTownCwd<T>(fn: () => Promise<T>): Promise<T> {
+	const original = process.cwd();
+	const originalEnv = process.env.GT_TOWN_ROOT;
+	const tmp = mkdtempSync(join(tmpdir(), "gastown-non-town-"));
+	delete process.env.GT_TOWN_ROOT;
+	process.chdir(tmp);
+	return fn().finally(() => {
+		process.chdir(original);
+		if (originalEnv !== undefined) process.env.GT_TOWN_ROOT = originalEnv;
+		rmSync(tmp, { recursive: true, force: true });
+	});
+}
+
 describe("listConvoys()", () => {
 	it("uses the hq Dolt tables when a townRoot is available", async () => {
 		await withTownRoot(async (townRoot) => {
@@ -180,39 +195,70 @@ describe("listConvoys()", () => {
 	});
 
 	it("invokes `gt convoy list --json` and parses the array", async () => {
-		const { spawnFn, calls } = makeRecordingSpawn({
-			stdout: CONVOY_LIST_JSON,
-			exitCode: 0,
+		await withNonTownCwd(async () => {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: CONVOY_LIST_JSON,
+				exitCode: 0,
+			});
+			const result = await listConvoys({}, {}, { spawn: spawnFn });
+			expect(calls[0]?.bin).toBe("gt");
+			expect(calls[0]?.argv).toEqual(["convoy", "list", "--json"]);
+			expect(result).toHaveLength(2);
+			expect(result[0]?.id).toBe("hq-cv-v2zu2");
+			expect(result[0]?.tracked[0]?.dependency_type).toBe("tracks");
 		});
-		const result = await listConvoys({}, {}, { spawn: spawnFn });
-		expect(calls[0]?.bin).toBe("gt");
-		expect(calls[0]?.argv).toEqual(["convoy", "list", "--json"]);
-		expect(result).toHaveLength(2);
-		expect(result[0]?.id).toBe("hq-cv-v2zu2");
-		expect(result[0]?.tracked[0]?.dependency_type).toBe("tracks");
 	});
 
 	it("appends --all when args.all is true", async () => {
-		const { spawnFn, calls } = makeRecordingSpawn({
-			stdout: "[]",
-			exitCode: 0,
+		await withNonTownCwd(async () => {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: "[]",
+				exitCode: 0,
+			});
+			await listConvoys({ all: true }, {}, { spawn: spawnFn });
+			expect(calls[0]?.argv).toEqual(["convoy", "list", "--json", "--all"]);
 		});
-		await listConvoys({ all: true }, {}, { spawn: spawnFn });
-		expect(calls[0]?.argv).toEqual(["convoy", "list", "--json", "--all"]);
 	});
 
 	it("appends --status=<value> when args.status is set", async () => {
-		const { spawnFn, calls } = makeRecordingSpawn({
-			stdout: "[]",
-			exitCode: 0,
+		await withNonTownCwd(async () => {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: "[]",
+				exitCode: 0,
+			});
+			await listConvoys({ status: "closed" }, {}, { spawn: spawnFn });
+			expect(calls[0]?.argv).toEqual([
+				"convoy",
+				"list",
+				"--json",
+				"--status=closed",
+			]);
 		});
-		await listConvoys({ status: "closed" }, {}, { spawn: spawnFn });
-		expect(calls[0]?.argv).toEqual([
-			"convoy",
-			"list",
-			"--json",
-			"--status=closed",
-		]);
+	});
+
+	it("walks up from process.cwd() to find the Gas Town root when none is provided", async () => {
+		await withTownRoot(async (townRoot) => {
+			const nestedCwd = join(townRoot, "rig", "polecats", "alice");
+			mkdirSync(nestedCwd, { recursive: true });
+			const original = process.cwd();
+			const originalEnv = process.env.GT_TOWN_ROOT;
+			delete process.env.GT_TOWN_ROOT;
+			process.chdir(nestedCwd);
+			try {
+				const { spawnFn, calls } = makeRecordingSpawn({
+					stdout: DOLT_CONVOY_ROWS_JSON,
+					exitCode: 0,
+				});
+				const result = await listConvoys({}, {}, { spawn: spawnFn });
+				expect(calls[0]?.bin).toBe("dolt");
+				// macOS prepends /private to /var symlinks once cwd is resolved.
+				expect(calls[0]?.options.cwd).toContain(".dolt-data/hq");
+				expect(result).toHaveLength(2);
+			} finally {
+				process.chdir(original);
+				if (originalEnv !== undefined) process.env.GT_TOWN_ROOT = originalEnv;
+			}
+		});
 	});
 
 	it("throws GastownCliError on non-zero exit", async () => {

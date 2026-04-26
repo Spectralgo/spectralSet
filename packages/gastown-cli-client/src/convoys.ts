@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { z } from "zod";
 import {
 	type ExecGtDeps,
@@ -17,23 +17,36 @@ import {
 	convoyStatusSchema,
 } from "./types";
 
+// Walks up from `start` looking for a directory containing `.dolt-data/hq`.
+// Returns the first match (the Gas Town root), or undefined at the filesystem root.
+export function findTownRoot(start: string | undefined): string | undefined {
+	if (!start) return undefined;
+	let dir = start;
+	while (true) {
+		if (existsSync(join(dir, ".dolt-data", "hq"))) return dir;
+		const parent = dirname(dir);
+		if (parent === dir) return undefined;
+		dir = parent;
+	}
+}
+
 function resolveTownCwd(
 	townRoot: string | undefined,
 	explicitCwd: string | undefined,
 ): string | undefined {
-	if (explicitCwd) return explicitCwd;
-	return townRoot ?? process.env.GT_TOWN_ROOT ?? undefined;
+	const direct = explicitCwd ?? townRoot ?? process.env.GT_TOWN_ROOT;
+	return findTownRoot(direct) ?? findTownRoot(process.cwd()) ?? direct;
 }
 
 function resolveTownRootForDolt(
 	townRoot: string | undefined,
 	explicitCwd: string | undefined,
 ): string | undefined {
-	const candidates = [townRoot, process.env.GT_TOWN_ROOT, explicitCwd];
-	return candidates.find((candidate) => {
-		if (!candidate) return false;
-		return existsSync(join(candidate, ".dolt-data", "hq"));
-	});
+	for (const c of [townRoot, process.env.GT_TOWN_ROOT, explicitCwd]) {
+		const found = findTownRoot(c);
+		if (found) return found;
+	}
+	return findTownRoot(process.cwd());
 }
 
 const doltConvoyRowsSchema = z.object({
