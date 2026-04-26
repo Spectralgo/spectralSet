@@ -3,6 +3,7 @@ import {
 	checkRecovery,
 	type GastownCliClientOptions,
 	listBeads,
+	listInbox,
 	listPolecats,
 	listRigs,
 	listWorktrees,
@@ -27,6 +28,7 @@ import type {
 	EnsureProjectResult,
 } from "./ensure-project";
 import { createGastownMailRouter } from "./mail";
+import { createMailInboxCache } from "./mail-cache";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 import { resolveTownPath } from "./resolve-town-path";
 import { createGastownTodayRouter } from "./today";
@@ -219,6 +221,7 @@ interface GastownRouterDeps {
 	checkRecoveryFn?: typeof checkRecovery;
 	nukeFn?: typeof nuke;
 	listWorktreesFn?: typeof listWorktrees;
+	listInboxFn?: typeof listInbox;
 	// Inject the DB-writing reconciliation step; default lazy-imports
 	// from ./apply-reconciliation. Tests pass a spy so the router can be
 	// exercised without dragging in the electron main-process localDb
@@ -250,6 +253,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const checkRecoveryImpl = deps.checkRecoveryFn ?? checkRecovery;
 	const nukeImpl = deps.nukeFn ?? nuke;
 	const listWorktreesImpl = deps.listWorktreesFn ?? listWorktrees;
+	const listInboxImpl = deps.listInboxFn ?? listInbox;
 	const applyReconciliationOverride = deps.applyReconciliationFn;
 	const ensureProjectOverride = deps.ensureProjectFn;
 	const readTmuxTownRootImpl =
@@ -299,6 +303,12 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		if (cachedTownRoot) return cachedTownRoot;
 		return tmuxTownRoot;
 	}
+
+	const inboxCache = createMailInboxCache({
+		listInboxFn: listInboxImpl,
+		resolveTownPathFn: resolveEffectiveTownPath,
+		shellOptionsFn: shellOptions,
+	});
 
 	return router({
 		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
@@ -438,9 +448,11 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		}),
 		mail: createGastownMailRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
+			inboxCache,
 		}),
 		today: createGastownTodayRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
+			inboxCache,
 		}),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)

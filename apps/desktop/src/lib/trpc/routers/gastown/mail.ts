@@ -11,6 +11,11 @@ import {
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
+import {
+	createMailInboxCache,
+	defaultMailInboxCache,
+	type MailInboxCache,
+} from "./mail-cache";
 import { resolveTownPath } from "./resolve-town-path";
 
 const townPathSchema = z.string().min(1).optional();
@@ -51,6 +56,8 @@ interface GastownMailRouterDeps {
 	archiveMessageFn?: typeof archiveMessage;
 	markMessageReadFn?: typeof markMessageRead;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
+	inboxCache?: MailInboxCache;
+	listInboxCacheStaleMs?: number;
 }
 
 async function shellOptions() {
@@ -64,18 +71,25 @@ export const createGastownMailRouter = (deps: GastownMailRouterDeps = {}) => {
 	const archiveMessageImpl = deps.archiveMessageFn ?? archiveMessage;
 	const markMessageReadImpl = deps.markMessageReadFn ?? markMessageRead;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
+	const inboxCache =
+		deps.inboxCache ??
+		(deps.listInboxFn || deps.resolveTownPathFn || deps.listInboxCacheStaleMs
+			? createMailInboxCache({
+					listInboxFn: listInboxImpl,
+					resolveTownPathFn: resolveTownPathImpl,
+					shellOptionsFn: shellOptions,
+					staleMs: deps.listInboxCacheStaleMs,
+				})
+			: defaultMailInboxCache);
 
 	return router({
 		inbox: publicProcedure.input(listInboxInputSchema).query(
 			async ({ input }): Promise<MailMessage[]> =>
-				listInboxImpl(
-					{
-						address: input?.address,
-						unreadOnly: input?.unreadOnly,
-						townRoot: resolveTownPathImpl(input?.townPath),
-					},
-					await shellOptions(),
-				),
+				inboxCache.list({
+					address: input?.address,
+					unreadOnly: input?.unreadOnly,
+					townPath: input?.townPath,
+				}),
 		),
 		read: publicProcedure.input(readMailInputSchema).query(
 			async ({ input }): Promise<MailMessage | null> =>
@@ -103,6 +117,7 @@ export const createGastownMailRouter = (deps: GastownMailRouterDeps = {}) => {
 					},
 					await shellOptions(),
 				);
+				inboxCache.clear();
 				return { ok: true as const };
 			}),
 		archive: publicProcedure
@@ -115,6 +130,7 @@ export const createGastownMailRouter = (deps: GastownMailRouterDeps = {}) => {
 					},
 					await shellOptions(),
 				);
+				inboxCache.clear();
 				return { ok: true as const };
 			}),
 		markRead: publicProcedure
@@ -127,6 +143,7 @@ export const createGastownMailRouter = (deps: GastownMailRouterDeps = {}) => {
 					},
 					await shellOptions(),
 				);
+				inboxCache.clear();
 				return { ok: true as const };
 			}),
 	});

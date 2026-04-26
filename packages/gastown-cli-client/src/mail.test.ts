@@ -1,6 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import type { SpawnOptions } from "node:child_process";
 import { EventEmitter } from "node:events";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { GastownCliError } from "./exec";
 import {
 	archiveMessage,
@@ -104,7 +107,125 @@ const INBOX_JSON = JSON.stringify([
 	},
 ]);
 
+function withTownRoot(fn: (townRoot: string) => Promise<void>): Promise<void> {
+	const townRoot = mkdtempSync(join(tmpdir(), "gastown-mail-test-"));
+	mkdirSync(join(townRoot, ".dolt-data", "hq"), { recursive: true });
+	return fn(townRoot).finally(() => {
+		rmSync(townRoot, { recursive: true, force: true });
+	});
+}
+
+const DOLT_INBOX_JSON = JSON.stringify({
+	rows: [
+		{
+			id: "hq-new",
+			title: "Unread notice",
+			description: "Body one",
+			priority: "2",
+			created_at: "2026-04-26 00:17:39",
+			labels:
+				"delivery-acked-by:mayor/|from:overseer|gt:message|msg-type:notification",
+		},
+		{
+			id: "hq-old",
+			title: "[HIGH] Dolt down",
+			description: "Escalation body",
+			priority: "1",
+			created_at: "2026-04-25 23:14:05",
+			labels:
+				"delivery-acked-by:mayor/|from:spectralSet/witness|gt:message|gt:escalation|msg-type:escalation|read",
+		},
+	],
+});
+
 describe("listInbox()", () => {
+	it("uses Dolt fast path when a town root is available", async () => {
+		await withTownRoot(async (townRoot) => {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: DOLT_INBOX_JSON,
+				exitCode: 0,
+			});
+			const result = await listInbox(
+				{ address: "mayor/", townRoot },
+				{},
+				{ spawn: spawnFn },
+			);
+
+			expect(calls).toHaveLength(1);
+			expect(calls[0]?.bin).toBe("dolt");
+			expect(calls[0]?.options.cwd).toBe(join(townRoot, ".dolt-data", "hq"));
+			expect(calls[0]?.argv.slice(0, 4)).toEqual(["sql", "-r", "json", "-q"]);
+			expect(calls[0]?.argv.at(-1)).toContain("delivery-acked-by:mayor/");
+			expect(calls[0]?.argv.at(-1)).toContain(
+				"order by priority asc, created_at desc, id asc",
+			);
+			expect(result).toEqual([
+				{
+					id: "hq-new",
+					from: "overseer",
+					to: "mayor/",
+					subject: "Unread notice",
+					body: "Body one",
+					timestamp: "2026-04-26T00:17:39Z",
+					read: false,
+					priority: "normal",
+					type: "notification",
+				},
+				{
+					id: "hq-old",
+					from: "spectralSet/witness",
+					to: "mayor/",
+					subject: "[HIGH] Dolt down",
+					body: "Escalation body",
+					timestamp: "2026-04-25T23:14:05Z",
+					read: true,
+					priority: "high",
+					type: "escalation",
+				},
+			]);
+		});
+	});
+
+	it("keeps unreadOnly filtering when using Dolt fast path", async () => {
+		await withTownRoot(async (townRoot) => {
+			const { spawnFn } = makeRecordingSpawn({
+				stdout: DOLT_INBOX_JSON,
+				exitCode: 0,
+			});
+			const result = await listInbox(
+				{ address: "mayor/", unreadOnly: true, townRoot },
+				{},
+				{ spawn: spawnFn },
+			);
+
+			expect(result.map((msg) => msg.id)).toEqual(["hq-new"]);
+		});
+	});
+
+	it("falls back to `gt mail inbox` when Dolt fast path fails", async () => {
+		await withTownRoot(async (townRoot) => {
+			const { spawnFn, calls } = makeRecordingSpawn([
+				{ stderr: "dolt failed", exitCode: 1 },
+				{ stdout: INBOX_JSON, exitCode: 0 },
+			]);
+			const result = await listInbox(
+				{ address: "mayor/", townRoot },
+				{},
+				{ spawn: spawnFn },
+			);
+
+			expect(calls.map((call) => call.bin)).toEqual(["dolt", "gt"]);
+			expect(calls[1]?.argv).toEqual([
+				"mail",
+				"inbox",
+				"mayor/",
+				"--json",
+				"--all",
+			]);
+			expect(result).toHaveLength(2);
+		});
+	});
+
 	it("invokes `gt mail inbox --json --all` and parses the array", async () => {
 		const { spawnFn, calls } = makeRecordingSpawn({
 			stdout: INBOX_JSON,
