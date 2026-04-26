@@ -40,6 +40,7 @@ export {
 	getAgent,
 	type ListAgentsArgs,
 	listAgents,
+	parseAgentSummariesFromStatusJson,
 } from "./agents";
 export {
 	type ConvoyStatusArgs,
@@ -73,6 +74,11 @@ export { RecoveryParseError } from "./parsers/recovery";
 export { SlingParseError } from "./parsers/sling";
 export { StatusParseError } from "./parsers/status";
 export { getRigPrefix } from "./rig-prefix";
+export {
+	type ReadStatusSnapshotArgs,
+	readStatusSnapshot,
+	type StatusSnapshot,
+} from "./status-snapshot";
 export type {
 	AgentDetail,
 	AgentKind,

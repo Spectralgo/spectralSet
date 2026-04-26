@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import {
 	checkRecovery,
 	type GastownCliClientOptions,
+	listAgents,
 	listBeads,
 	listPolecats,
 	listRigs,
@@ -11,6 +12,7 @@ import {
 	nuke,
 	peek,
 	probe,
+	readStatusSnapshot,
 	sling,
 } from "@spectralset/gastown-cli-client";
 import { z } from "zod";
@@ -29,6 +31,7 @@ import type {
 import { createGastownMailRouter } from "./mail";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 import { resolveTownPath } from "./resolve-town-path";
+import { createGastownStatusCache } from "./status-cache";
 import { createGastownTodayRouter } from "./today";
 
 export { resolveTownPath } from "./resolve-town-path";
@@ -219,6 +222,8 @@ interface GastownRouterDeps {
 	checkRecoveryFn?: typeof checkRecovery;
 	nukeFn?: typeof nuke;
 	listWorktreesFn?: typeof listWorktrees;
+	listAgentsFn?: typeof listAgents;
+	readStatusSnapshotFn?: typeof readStatusSnapshot;
 	// Inject the DB-writing reconciliation step; default lazy-imports
 	// from ./apply-reconciliation. Tests pass a spy so the router can be
 	// exercised without dragging in the electron main-process localDb
@@ -250,6 +255,10 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const checkRecoveryImpl = deps.checkRecoveryFn ?? checkRecovery;
 	const nukeImpl = deps.nukeFn ?? nuke;
 	const listWorktreesImpl = deps.listWorktreesFn ?? listWorktrees;
+	const listAgentsImpl = deps.listAgentsFn ?? listAgents;
+	const readStatusSnapshotImpl =
+		deps.readStatusSnapshotFn ??
+		(deps.probeFn || deps.listAgentsFn ? undefined : readStatusSnapshot);
 	const applyReconciliationOverride = deps.applyReconciliationFn;
 	const ensureProjectOverride = deps.ensureProjectFn;
 	const readTmuxTownRootImpl =
@@ -300,6 +309,14 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		return tmuxTownRoot;
 	}
 
+	const statusCache = createGastownStatusCache({
+		probeFn: probeImpl,
+		listAgentsFn: listAgentsImpl,
+		readStatusSnapshotFn: readStatusSnapshotImpl,
+	});
+	const listAgentsCached: typeof listAgents = (args, options) =>
+		statusCache.listAgents(args, options);
+
 	return router({
 		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
 			const opts = await shellOptions();
@@ -314,7 +331,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 				opts.cwd = townRoot;
 				opts.env = { ...(opts.env ?? {}), GT_TOWN_ROOT: townRoot };
 			}
-			const result = await probeImpl(opts);
+			const result = await statusCache.probe(opts);
 			cachedTownRoot = result.townRoot ?? undefined;
 			return { ...result, tmuxSocket: tmuxSocket ?? null };
 		}),
@@ -408,7 +425,9 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 					townRoot: resolveEffectiveTownPath(input.townPath),
 				},
 				await shellOptions(),
-			),
+			).finally(() => {
+				statusCache.clear();
+			}),
 		),
 		listWorktrees: publicProcedure
 			.input(listWorktreesInputSchema)
@@ -432,6 +451,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 			}),
 		agents: createGastownAgentsRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
+			listAgentsFn: listAgentsCached,
 		}),
 		convoys: createGastownConvoysRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
@@ -441,6 +461,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		}),
 		today: createGastownTodayRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
+			listAgentsFn: listAgentsCached,
 		}),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)

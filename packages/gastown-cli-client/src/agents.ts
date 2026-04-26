@@ -101,26 +101,9 @@ export interface ListAgentsArgs {
  * - Rig-scoped agents from `rigs[].agents[]` inherit their rig name and
  *   their role directly maps to the kind (polecat/crew/witness/refinery).
  */
-export async function listAgents(
-	args: ListAgentsArgs = {},
-	options: ExecGtOptions = {},
-	deps: ExecGtDeps = {},
-): Promise<AgentSummary[]> {
-	// listAgents() needs tmux-derived session state (running/idle/dead), but
-	// per-agent mail lookups dominate runtime (Mayor with 12 unread = ~24s
-	// total). --fast keeps tmux scan, skips mail; mail counts load on demand
-	// from the Mail panel, not in the roster.
-	const argv = ["status", "--json", "--fast"];
-	const cwd = resolveTownCwd(args.townRoot, options.cwd);
-	const { stdout, stderr, exitCode } = await execGt(
-		argv,
-		{ ...options, cwd, readOnly: true },
-		deps,
-	);
-	if (exitCode !== 0) {
-		throw new GastownCliError({ argv, exitCode, stdout, stderr });
-	}
-
+export function parseAgentSummariesFromStatusJson(
+	stdout: string,
+): AgentSummary[] {
 	let raw: unknown;
 	try {
 		raw = JSON.parse(stdout);
@@ -159,6 +142,29 @@ export async function listAgents(
 	}
 
 	return results;
+}
+
+export async function listAgents(
+	args: ListAgentsArgs = {},
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<AgentSummary[]> {
+	// listAgents() needs tmux-derived session state (running/idle/dead), but
+	// per-agent mail lookups dominate runtime (Mayor with 12 unread = ~24s
+	// total). --fast keeps tmux scan, skips mail; mail counts load on demand
+	// from the Mail panel, not in the roster.
+	const argv = ["status", "--json", "--fast"];
+	const cwd = resolveTownCwd(args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd, readOnly: true },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+
+	return parseAgentSummariesFromStatusJson(stdout);
 }
 
 export interface GetAgentArgs {

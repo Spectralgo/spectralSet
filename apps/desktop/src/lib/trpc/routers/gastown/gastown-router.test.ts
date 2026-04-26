@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import type { ProbeResult } from "@spectralset/gastown-cli-client";
+import type {
+	AgentSummary,
+	ProbeResult,
+} from "@spectralset/gastown-cli-client";
 import { createGastownRouter } from "./index";
 
 function makeProbeResult(overrides: Partial<ProbeResult> = {}): ProbeResult {
@@ -13,6 +16,21 @@ function makeProbeResult(overrides: Partial<ProbeResult> = {}): ProbeResult {
 		doltRunning: true,
 		tmuxSocket: null,
 		...overrides,
+	};
+}
+
+function makeAgent(name: string): AgentSummary {
+	return {
+		kind: "polecat",
+		name,
+		address: `alpha/${name}`,
+		session: `alpha-${name}`,
+		role: "polecat",
+		rig: "alpha",
+		running: true,
+		state: "working",
+		unreadMail: 0,
+		firstSubject: null,
 	};
 }
 
@@ -333,5 +351,30 @@ describe("createGastownRouter townPath threading", () => {
 			message: "status please",
 			townRoot: "/Users/demo/town",
 		});
+	});
+
+	test("agents.list and today.digest share cached agent status", async () => {
+		const calls: unknown[] = [];
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			listAgentsFn: async (args) => {
+				calls.push(args);
+				return [makeAgent("jasper")];
+			},
+		});
+		const caller = router.createCaller({});
+
+		await caller.agents.list({ townPath: "/Users/demo/town" });
+		const digest = await caller.today.digest({
+			sinceTime: "2026-04-26T00:00:00Z",
+			townPath: "/Users/demo/town",
+		});
+
+		expect(calls).toHaveLength(1);
+		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/town" });
+		expect(digest).toMatchObject({ polecatsAliveCount: 1 });
 	});
 });
