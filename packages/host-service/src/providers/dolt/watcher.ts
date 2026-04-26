@@ -128,7 +128,9 @@ export class DoltWatcher {
 	private async databasesToPoll(): Promise<string[]> {
 		const activeDatabases = this.activeDatabases?.();
 		if (activeDatabases) {
-			return [...new Set(activeDatabases.map((db) => db.trim()).filter(Boolean))];
+			return [
+				...new Set(activeDatabases.map((db) => db.trim()).filter(Boolean)),
+			];
 		}
 		return this.client.listDatabases();
 	}

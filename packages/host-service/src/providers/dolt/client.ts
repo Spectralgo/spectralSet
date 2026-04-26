@@ -35,7 +35,9 @@ const MAX_CONNECTION_LIMIT = 32;
 
 type DoltPoolOptions = Parameters<typeof mysql.createPool>[0];
 
-function parseConnectionLimit(value: number | string | undefined): number | null {
+function parseConnectionLimit(
+	value: number | string | undefined,
+): number | null {
 	if (value === undefined) return null;
 	const parsed =
 		typeof value === "number" ? value : Number.parseInt(value.trim(), 10);
@@ -44,10 +46,7 @@ function parseConnectionLimit(value: number | string | undefined): number | null
 }
 
 function clampConnectionLimit(value: number): number {
-	return Math.min(
-		MAX_CONNECTION_LIMIT,
-		Math.max(MIN_CONNECTION_LIMIT, value),
-	);
+	return Math.min(MAX_CONNECTION_LIMIT, Math.max(MIN_CONNECTION_LIMIT, value));
 }
 
 export function resolveDoltPoolOptions(

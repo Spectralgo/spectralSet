@@ -1,9 +1,12 @@
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "bun:test";
 import {
-	DoltClient,
-	DoltClientError,
-	resolveDoltPoolOptions,
-} from "./client";
+	afterAll,
+	afterEach,
+	beforeAll,
+	describe,
+	expect,
+	test,
+} from "bun:test";
+import { DoltClient, DoltClientError, resolveDoltPoolOptions } from "./client";
 
 const HOST = "127.0.0.1";
 const PORT = 3307;
@@ -15,7 +18,8 @@ afterEach(() => {
 		delete process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT;
 		return;
 	}
-	process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT = ORIGINAL_DOLT_CONNECTION_LIMIT;
+	process.env.SPECTRALSET_DOLT_CONNECTION_LIMIT =
+		ORIGINAL_DOLT_CONNECTION_LIMIT;
 });
 
 async function probe(): Promise<boolean> {
@@ -103,9 +107,9 @@ describe("DoltClient (unit)", () => {
 		expect(resolveDoltPoolOptions({ connectionLimit: 6 }).connectionLimit).toBe(
 			6,
 		);
-		expect(resolveDoltPoolOptions({ connectionLimit: 999 }).connectionLimit).toBe(
-			32,
-		);
+		expect(
+			resolveDoltPoolOptions({ connectionLimit: 999 }).connectionLimit,
+		).toBe(32);
 		expect(resolveDoltPoolOptions({ connectionLimit: 0 }).connectionLimit).toBe(
 			1,
 		);

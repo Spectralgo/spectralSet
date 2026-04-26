@@ -19,7 +19,7 @@ export interface HistoryEntry {
 	timestamp: number;
 }
 
-function loadPersistedState(): PersistedState {
+function _loadPersistedState(): PersistedState {
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw) {

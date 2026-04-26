@@ -132,7 +132,9 @@ describe("DoltWatcher", () => {
 		await watcher.stop();
 
 		expect(hashOfDatabasesCalls.length).toBeGreaterThanOrEqual(3);
-		expect(hashOfDatabasesCalls).toEqual(hashOfDatabasesCalls.map(() => ["dbB"]));
+		expect(hashOfDatabasesCalls).toEqual(
+			hashOfDatabasesCalls.map(() => ["dbB"]),
+		);
 		expect(hashOfTableCalls).toEqual([{ database: "dbB", table: "issues" }]);
 		expect(events).toHaveLength(1);
 	});
