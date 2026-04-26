@@ -22,11 +22,9 @@ export function captureHotkeyFromEvent(event: KeyboardEvent): string | null {
 	if (isIgnorableKey(key)) return null;
 
 	const isFKey = /^f([1-9]|1[0-2])$/.test(key);
-	// On Mac, Option is a legitimate shortcut modifier (e.g. ⌥⌫ for delete-word).
-	// Elsewhere, Alt is the menu key and AltGr masquerades as ctrl+alt, so we
-	// still require ctrl/meta.
-	const altIsAppModifier = PLATFORM === "mac" && event.altKey;
-	if (!isFKey && !event.ctrlKey && !event.metaKey && !altIsAppModifier) {
+	// Non-F-keys require ctrl or meta. Lone Alt would collide with macOS
+	// Option-letter special characters and the OS menu key elsewhere.
+	if (!isFKey && !event.ctrlKey && !event.metaKey) {
 		return null;
 	}
 
