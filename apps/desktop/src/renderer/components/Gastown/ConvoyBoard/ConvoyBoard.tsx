@@ -3,6 +3,7 @@ import { Progress } from "@spectralset/ui/progress";
 import { toast } from "@spectralset/ui/sonner";
 import { Switch } from "@spectralset/ui/switch";
 import { cn } from "@spectralset/ui/utils";
+import { useNavigate } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { useMemo, useState } from "react";
 import { HiOutlineClipboard, HiOutlineTruck } from "react-icons/hi2";
@@ -33,8 +34,14 @@ function safeRelativeTime(value: string): string {
 }
 
 export function ConvoyBoard() {
+	const navigate = useNavigate();
 	const [showAll, setShowAll] = useState(false);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
+
+	const handleSelect = (id: string) => {
+		setSelectedId(id);
+		navigate({ to: `/convoys/${id}/board` as never });
+	};
 
 	const listQuery = electronTrpc.gastown.convoys.list.useQuery(
 		{ all: showAll },
@@ -74,7 +81,7 @@ export function ConvoyBoard() {
 					isLoading={listQuery.isLoading}
 					isError={!!listQuery.error}
 					selectedId={resolvedSelectedId}
-					onSelect={setSelectedId}
+					onSelect={handleSelect}
 				/>
 				<ConvoyDetail id={resolvedSelectedId} />
 			</div>

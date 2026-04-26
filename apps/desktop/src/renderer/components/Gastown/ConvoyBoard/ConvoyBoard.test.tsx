@@ -40,6 +40,10 @@ mock.module("@spectralset/ui/sonner", () => ({
 	toast: { success: () => {}, error: () => {} },
 }));
 
+mock.module("@tanstack/react-router", () => ({
+	useNavigate: () => () => {},
+}));
+
 const { ConvoyBoard } = await import("./ConvoyBoard");
 
 describe("ConvoyBoard", () => {
