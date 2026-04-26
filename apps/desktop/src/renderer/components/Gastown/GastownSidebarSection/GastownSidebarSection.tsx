@@ -279,6 +279,7 @@ function GastownSidebarSectionBody() {
 									key={rig.name}
 									rig={rig.name}
 									agents={rig.agents}
+									townRoot={probeQuery.data?.townRoot}
 									onAttach={onAttach}
 								/>
 							))}
@@ -293,10 +294,11 @@ function GastownSidebarSectionBody() {
 interface RigGroupProps {
 	rig: string;
 	agents: RigAgent[];
+	townRoot: string | null | undefined;
 	onAttach: (agent: RigAgent) => void;
 }
 
-function RigGroup({ rig, agents, onAttach }: RigGroupProps) {
+function RigGroup({ rig, agents, townRoot, onAttach }: RigGroupProps) {
 	const [open, setOpen] = useState(true);
 	const workingAgents = useMemo(
 		() => agents.filter((a) => a.state === "working"),
@@ -335,6 +337,7 @@ function RigGroup({ rig, agents, onAttach }: RigGroupProps) {
 							<AgentRow
 								key={`${agent.rig}/${agent.role}/${agent.name}`}
 								agent={agent}
+								townRoot={townRoot}
 								onAttach={onAttach}
 							/>
 						))}
@@ -342,6 +345,7 @@ function RigGroup({ rig, agents, onAttach }: RigGroupProps) {
 							<AgentRow
 								key={`${agent.rig}/${agent.role}/${agent.name}`}
 								agent={agent}
+								townRoot={townRoot}
 								onAttach={onAttach}
 							/>
 						))}

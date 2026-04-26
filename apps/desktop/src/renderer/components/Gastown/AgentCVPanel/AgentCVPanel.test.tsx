@@ -30,6 +30,7 @@ mock.module("renderer/lib/electron-trpc", () => ({
 			agents: {
 				list: { useQuery: () => listState },
 				get: { useQuery: () => detailState },
+				sessionState: { useSubscription: () => undefined },
 			},
 			probe: { useQuery: () => probeState },
 		},
@@ -157,7 +158,10 @@ describe("AgentCVPanel", () => {
 		expect(html).toContain("obsidian");
 		expect(html).toContain("witness");
 		expect(html).toContain("working");
-		expect(html).toContain("stalled");
+		// AgentRow now folds gt's stalled/zombie/done into the unified
+		// 4-state model (working/idle/budget-locked/stopped); stalled
+		// appears as "idle" when running=true, "stopped" otherwise.
+		expect(html).toContain("idle");
 		expect(html).toContain("3"); // unread mail badge count
 	});
 

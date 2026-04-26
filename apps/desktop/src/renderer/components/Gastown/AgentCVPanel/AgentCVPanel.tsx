@@ -9,6 +9,12 @@ import { useMemo, useState } from "react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import {
+	type ClaudePolecatLiveness,
+	DOT_CLASS,
+	deriveCloneDir,
+	resolveDisplay,
+} from "renderer/lib/gastown/agentDisplay";
 import { AgentDetailDrawer, type AgentSelection } from "./AgentDetailDrawer";
 
 const KIND_EMOJI: Record<AgentKind, string> = {
@@ -21,6 +27,9 @@ const KIND_EMOJI: Record<AgentKind, string> = {
 	crew: "🧑‍🔧",
 };
 
+// Retained for AgentDetailDrawer which still consumes the legacy badge.
+// AgentCard now uses resolveDisplay() + DOT_CLASS for the unified
+// 4-color dot (closes ss-e4zx — sidebar/Agents pane drift).
 export const STATE_BADGE_CLASS: Record<AgentState, string> = {
 	idle: "bg-muted text-muted-foreground",
 	working: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
@@ -29,6 +38,16 @@ export const STATE_BADGE_CLASS: Record<AgentState, string> = {
 	done: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
 	nuked: "bg-muted text-muted-foreground line-through",
 };
+
+// Roles that have a Claude session JSONL we can subscribe to.
+// `deacon` and `boot` aren't part of RigAgent's role enum.
+const SUBSCRIBABLE_KINDS: ReadonlySet<AgentKind> = new Set<AgentKind>([
+	"mayor",
+	"polecat",
+	"crew",
+	"witness",
+	"refinery",
+]);
 
 const TOP_LEVEL_ORDER: AgentKind[] = ["mayor", "deacon", "boot"];
 const RIG_ROLE_ORDER: AgentKind[] = ["refinery", "witness", "crew", "polecat"];
@@ -145,6 +164,7 @@ export function AgentCVPanel() {
 							<GroupSection
 								key={group.title}
 								group={group}
+								townRoot={townPath ?? null}
 								onSelect={setSelected}
 							/>
 						))}
@@ -164,10 +184,11 @@ export function AgentCVPanel() {
 
 interface GroupSectionProps {
 	group: Group;
+	townRoot: string | null | undefined;
 	onSelect: (selection: AgentSelection) => void;
 }
 
-function GroupSection({ group, onSelect }: GroupSectionProps) {
+function GroupSection({ group, townRoot, onSelect }: GroupSectionProps) {
 	return (
 		<section>
 			<h2 className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -178,6 +199,7 @@ function GroupSection({ group, onSelect }: GroupSectionProps) {
 					<AgentCard
 						key={agent.address}
 						agent={agent}
+						townRoot={townRoot}
 						onSelect={() =>
 							onSelect({
 								kind: agent.kind,
@@ -194,10 +216,41 @@ function GroupSection({ group, onSelect }: GroupSectionProps) {
 
 interface AgentCardProps {
 	agent: AgentSummary;
+	townRoot: string | null | undefined;
 	onSelect: () => void;
 }
 
-function AgentCard({ agent, onSelect }: AgentCardProps) {
+function AgentCard({ agent, townRoot, onSelect }: AgentCardProps) {
+	const cloneDir =
+		SUBSCRIBABLE_KINDS.has(agent.kind) && agent.rig
+			? deriveCloneDir({
+					townRoot,
+					role: agent.kind as Exclude<AgentKind, "deacon" | "boot">,
+					rig: agent.rig,
+					name: agent.name,
+				})
+			: agent.kind === "mayor"
+				? deriveCloneDir({
+						townRoot,
+						role: "mayor",
+						rig: "",
+						name: agent.name,
+					})
+				: null;
+	const [jsonlState, setJsonlState] = useState<ClaudePolecatLiveness>();
+	electronTrpc.gastown.agents.sessionState.useSubscription(
+		cloneDir
+			? { rig: agent.rig ?? "", name: agent.name, cloneDir }
+			: (undefined as never),
+		{
+			enabled: Boolean(cloneDir),
+			onData: (event) => setJsonlState(event.state),
+		},
+	);
+	const { label, dotColor } = resolveDisplay(
+		{ running: agent.running, state: agent.state },
+		jsonlState,
+	);
 	return (
 		<button
 			type="button"
@@ -239,12 +292,11 @@ function AgentCard({ agent, onSelect }: AgentCardProps) {
 			</div>
 			<div className="flex items-center gap-2">
 				<span
-					className={cn(
-						"shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium",
-						STATE_BADGE_CLASS[agent.state],
-					)}
-				>
-					{agent.state}
+					aria-hidden
+					className={cn("size-2 shrink-0 rounded-full", DOT_CLASS[dotColor])}
+				/>
+				<span className="text-[10px] font-medium text-muted-foreground">
+					{label}
 				</span>
 				<span className="ml-auto truncate font-mono text-[10px] text-muted-foreground">
 					{agent.session}
