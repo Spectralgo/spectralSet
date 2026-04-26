@@ -1,6 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import type { SpawnOptions } from "node:child_process";
 import { EventEmitter } from "node:events";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { convoyStatus, listConvoys } from "./convoys";
 import { GastownCliError } from "./exec";
 
@@ -101,7 +104,81 @@ const CONVOY_LIST_JSON = JSON.stringify([
 	},
 ]);
 
+const DOLT_CONVOY_ROWS_JSON = JSON.stringify({
+	rows: [
+		{
+			id: "hq-cv-fast",
+			title: "Work: Fast path",
+			status: "open",
+			created_at: "2026-04-26 00:12:02",
+			tracked_id: "ss-fast",
+			tracked_title: "Fast bead",
+			tracked_status: "closed",
+			tracked_issue_type: "task",
+			dependency_type: "tracks",
+		},
+		{
+			id: "hq-cv-empty",
+			title: "Work: Empty convoy",
+			status: "open",
+			created_at: "2026-04-25 23:00:00",
+			tracked_id: null,
+			tracked_title: null,
+			tracked_status: null,
+			tracked_issue_type: null,
+			dependency_type: null,
+		},
+	],
+});
+
+function withTownRoot<T>(fn: (townRoot: string) => Promise<T>): Promise<T> {
+	const townRoot = mkdtempSync(join(tmpdir(), "gastown-town-"));
+	mkdirSync(join(townRoot, ".dolt-data", "hq"), { recursive: true });
+	return fn(townRoot).finally(() => {
+		rmSync(townRoot, { recursive: true, force: true });
+	});
+}
+
 describe("listConvoys()", () => {
+	it("uses the hq Dolt tables when a townRoot is available", async () => {
+		await withTownRoot(async (townRoot) => {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: DOLT_CONVOY_ROWS_JSON,
+				exitCode: 0,
+			});
+			const result = await listConvoys({ townRoot }, {}, { spawn: spawnFn });
+			expect(calls[0]?.bin).toBe("dolt");
+			expect(calls[0]?.argv.slice(0, 4)).toEqual(["sql", "-r", "json", "-q"]);
+			expect(calls[0]?.options.cwd).toBe(join(townRoot, ".dolt-data", "hq"));
+			expect(result).toHaveLength(2);
+			expect(result[0]).toMatchObject({
+				id: "hq-cv-fast",
+				completed: 1,
+				total: 1,
+			});
+			expect(result[0]?.tracked[0]).toMatchObject({
+				id: "ss-fast",
+				title: "Fast bead",
+				status: "closed",
+				issue_type: "task",
+			});
+		});
+	});
+
+	it("falls back to `gt convoy list --json` when the Dolt fast path fails", async () => {
+		await withTownRoot(async (townRoot) => {
+			const { spawnFn, calls } = makeRecordingSpawn([
+				{ stderr: "schema mismatch", exitCode: 1 },
+				{ stdout: CONVOY_LIST_JSON, exitCode: 0 },
+			]);
+			const result = await listConvoys({ townRoot }, {}, { spawn: spawnFn });
+			expect(calls[0]?.bin).toBe("dolt");
+			expect(calls[1]?.bin).toBe("gt");
+			expect(calls[1]?.argv).toEqual(["convoy", "list", "--json"]);
+			expect(result[0]?.id).toBe("hq-cv-v2zu2");
+		});
+	});
+
 	it("invokes `gt convoy list --json` and parses the array", async () => {
 		const { spawnFn, calls } = makeRecordingSpawn({
 			stdout: CONVOY_LIST_JSON,

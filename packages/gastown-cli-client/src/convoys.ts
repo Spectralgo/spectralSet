@@ -1,6 +1,10 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { z } from "zod";
 import {
 	type ExecGtDeps,
 	type ExecGtOptions,
+	execDolt,
 	execGt,
 	GastownCliError,
 } from "./exec";
@@ -19,6 +23,138 @@ function resolveTownCwd(
 	return townRoot ?? process.env.GT_TOWN_ROOT ?? undefined;
 }
 
+function resolveTownRootForDolt(
+	townRoot: string | undefined,
+	explicitCwd: string | undefined,
+): string | undefined {
+	const candidates = [townRoot, process.env.GT_TOWN_ROOT, explicitCwd];
+	return candidates.find((candidate) => {
+		if (!candidate) return false;
+		return existsSync(join(candidate, ".dolt-data", "hq"));
+	});
+}
+
+const doltConvoyRowsSchema = z.object({
+	rows: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string(),
+			status: z.string(),
+			created_at: z.string(),
+			tracked_id: z.string().nullable().optional(),
+			tracked_title: z.string().nullable().optional(),
+			tracked_status: z.string().nullable().optional(),
+			tracked_issue_type: z.string().nullable().optional(),
+			dependency_type: z.string().nullable().optional(),
+		}),
+	),
+});
+
+type DoltConvoyRow = z.infer<typeof doltConvoyRowsSchema>["rows"][number];
+
+function escapeSqlString(value: string): string {
+	return value.replaceAll("'", "''");
+}
+
+function buildDoltListConvoysQuery(args: ListConvoysArgs): string {
+	const filters = ["i.issue_type = 'convoy'"];
+	if (args.status) {
+		filters.push(`i.status = '${escapeSqlString(args.status)}'`);
+	} else if (!args.all) {
+		filters.push("i.status <> 'closed'");
+	}
+	const limitClause = args.all || args.status ? "" : "limit 50";
+
+	return `
+with selected_convoys as (
+  select i.id, i.title, i.status, i.created_at
+  from issues i
+  where ${filters.join(" and ")}
+  order by i.created_at desc, i.id asc
+  ${limitClause}
+)
+select
+  i.id,
+  i.title,
+  i.status,
+  i.created_at,
+  d.depends_on_id as tracked_id,
+  d.type as dependency_type,
+  ti.title as tracked_title,
+  ti.status as tracked_status,
+  ti.issue_type as tracked_issue_type
+from selected_convoys i
+left join dependencies d
+  on d.issue_id = i.id and d.type = 'tracks'
+left join issues ti
+  on ti.id = d.depends_on_id
+order by i.created_at desc, i.id asc, d.created_at asc;
+`.trim();
+}
+
+function normalizeDoltDate(value: string): string {
+	const parsed = new Date(value);
+	if (Number.isNaN(parsed.getTime())) return value;
+	return parsed.toISOString().replace(".000Z", "Z");
+}
+
+function rowsToConvoys(rows: DoltConvoyRow[]): Convoy[] {
+	const byId = new Map<string, Convoy>();
+	for (const row of rows) {
+		let convoy = byId.get(row.id);
+		if (!convoy) {
+			convoy = {
+				id: row.id,
+				title: row.title,
+				status: row.status,
+				created_at: normalizeDoltDate(row.created_at),
+				tracked: [],
+				completed: 0,
+				total: 0,
+			};
+			byId.set(row.id, convoy);
+		}
+		if (!row.tracked_id) continue;
+		convoy.tracked.push({
+			id: row.tracked_id,
+			title: row.tracked_title ?? "",
+			status: row.tracked_status ?? "",
+			dependency_type: row.dependency_type ?? "tracks",
+			issue_type: row.tracked_issue_type ?? "",
+		});
+	}
+
+	for (const convoy of byId.values()) {
+		convoy.total = convoy.tracked.length;
+		convoy.completed = convoy.tracked.filter(
+			(tracked) => tracked.status === "closed",
+		).length;
+	}
+
+	return [...byId.values()];
+}
+
+async function listConvoysFromDolt(
+	args: ListConvoysArgs,
+	options: ExecGtOptions,
+	deps: ExecGtDeps,
+): Promise<Convoy[] | null> {
+	const townRoot = resolveTownRootForDolt(args.townRoot, options.cwd);
+	if (!townRoot) return null;
+
+	const hqDoltDir = join(townRoot, ".dolt-data", "hq");
+	const query = buildDoltListConvoysQuery(args);
+	const { stdout, exitCode } = await execDolt(
+		["sql", "-r", "json", "-q", query],
+		{ ...options, cwd: hqDoltDir, readOnly: true },
+		deps,
+	);
+	if (exitCode !== 0) return null;
+
+	const parsed = doltConvoyRowsSchema.parse(JSON.parse(stdout));
+	return convoyArraySchema.parse(rowsToConvoys(parsed.rows));
+}
+
 export interface ListConvoysArgs {
 	/** Include closed convoys. Default: open-only. */
 	all?: boolean;
@@ -33,6 +169,14 @@ export async function listConvoys(
 	options: ExecGtOptions = {},
 	deps: ExecGtDeps = {},
 ): Promise<Convoy[]> {
+	try {
+		const doltResult = await listConvoysFromDolt(args, options, deps);
+		if (doltResult) return doltResult;
+	} catch {
+		// Fall back to the canonical gt implementation if the Dolt layout or
+		// schema differs from the local-first fast path we expect.
+	}
+
 	const argv: string[] = ["convoy", "list", "--json"];
 	if (args.all) argv.push("--all");
 	if (args.status) argv.push(`--status=${args.status}`);
