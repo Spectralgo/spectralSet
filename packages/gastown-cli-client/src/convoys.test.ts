@@ -4,7 +4,7 @@ import { EventEmitter } from "node:events";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { convoyStatus, listConvoys } from "./convoys";
+import { convoyStatus, deriveBeadStatus, listConvoys } from "./convoys";
 import { GastownCliError } from "./exec";
 
 interface SpawnCall {
@@ -264,5 +264,21 @@ describe("convoyStatus()", () => {
 		await expect(
 			convoyStatus({ id: "hq-missing" }, {}, { spawn: spawnFn }),
 		).rejects.toBeInstanceOf(GastownCliError);
+	});
+});
+
+describe("deriveBeadStatus()", () => {
+	it("preserves hooked, blocked, and closed verbatim", () => {
+		expect(deriveBeadStatus("hooked")).toBe("hooked");
+		expect(deriveBeadStatus("blocked")).toBe("blocked");
+		expect(deriveBeadStatus("closed")).toBe("closed");
+	});
+
+	it("collapses other bd statuses (in_progress/deferred/pinned/open) to open", () => {
+		expect(deriveBeadStatus("open")).toBe("open");
+		expect(deriveBeadStatus("in_progress")).toBe("open");
+		expect(deriveBeadStatus("deferred")).toBe("open");
+		expect(deriveBeadStatus("pinned")).toBe("open");
+		expect(deriveBeadStatus("unknown")).toBe("open");
 	});
 });

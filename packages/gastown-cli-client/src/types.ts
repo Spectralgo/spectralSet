@@ -301,3 +301,21 @@ export const worktreeSchema = z.object({
 });
 
 export type Worktree = z.infer<typeof worktreeSchema>;
+
+// Convoy-board narrowed bead status. Raw bd statuses (in_progress/deferred/
+// pinned) collapse to "open"; "stranded" is derived in the UI when an open
+// bead has no available polecat.
+export type ConvoyBeadStatus =
+	| "open"
+	| "hooked"
+	| "closed"
+	| "blocked"
+	| "stranded";
+
+export interface ConvoyBead {
+	id: string;
+	title: string;
+	status: ConvoyBeadStatus;
+	assignee: string | null;
+	priority: number;
+}

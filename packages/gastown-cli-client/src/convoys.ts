@@ -10,6 +10,8 @@ import {
 } from "./exec";
 import {
 	type Convoy,
+	type ConvoyBead,
+	type ConvoyBeadStatus,
 	type ConvoyStatus,
 	convoyArraySchema,
 	convoyStatusSchema,
@@ -197,6 +199,70 @@ export interface ConvoyStatusArgs {
 	id: string;
 	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
 	townRoot?: string;
+}
+
+// Map raw bd status to the convoy-board's narrowed BeadStatus. "stranded" is
+// not derivable from status alone — the UI promotes "open" beads with no
+// available polecat to "stranded" at render time.
+export function deriveBeadStatus(raw: string): ConvoyBeadStatus {
+	if (raw === "closed" || raw === "blocked" || raw === "hooked") return raw;
+	return "open";
+}
+
+const doltConvoyBeadsSchema = z.object({
+	rows: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string(),
+			status: z.string(),
+			assignee: z.string().nullable().optional(),
+			priority: z.number().int().nullable().optional(),
+		}),
+	),
+});
+
+export interface GetConvoyBeadsArgs {
+	convoyId: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
+export async function getConvoyBeads(
+	args: GetConvoyBeadsArgs,
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<ConvoyBead[]> {
+	const townRoot = resolveTownRootForDolt(args.townRoot, options.cwd);
+	if (!townRoot) {
+		throw new GastownCliError({
+			argv: ["dolt"],
+			exitCode: -1,
+			stdout: "",
+			stderr: "town root required for convoy beads fast path",
+		});
+	}
+	const query = `select i.id, i.title, i.status, i.assignee, i.priority from issues i join dependencies d on d.depends_on_id = i.id where d.issue_id = '${escapeSqlString(args.convoyId)}' and d.type = 'tracks' order by i.created_at desc;`;
+	const { stdout, stderr, exitCode } = await execDolt(
+		["sql", "-r", "json", "-q", query],
+		{ ...options, cwd: join(townRoot, ".dolt-data", "hq"), readOnly: true },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({
+			argv: ["dolt"],
+			exitCode,
+			stdout,
+			stderr,
+		});
+	}
+	const { rows } = doltConvoyBeadsSchema.parse(JSON.parse(stdout));
+	return rows.map((r) => ({
+		id: r.id,
+		title: r.title,
+		status: deriveBeadStatus(r.status),
+		assignee: r.assignee ?? null,
+		priority: r.priority ?? 0,
+	}));
 }
 
 export async function convoyStatus(

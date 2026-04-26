@@ -44,6 +44,9 @@ export {
 export {
 	type ConvoyStatusArgs,
 	convoyStatus,
+	deriveBeadStatus,
+	type GetConvoyBeadsArgs,
+	getConvoyBeads,
 	type ListConvoysArgs,
 	listConvoys,
 } from "./convoys";
@@ -81,6 +84,8 @@ export type {
 	Bead,
 	BeadStatus,
 	Convoy,
+	ConvoyBead,
+	ConvoyBeadStatus,
 	ConvoyStatus,
 	ConvoyTracked,
 	MailMessage,
