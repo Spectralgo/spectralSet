@@ -24,6 +24,7 @@ import {
 import type { BaseTab, Pane } from "shared/tabs-types";
 
 const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
+const EMPTY_RIGS: Rig[] = [];
 
 interface TodayPaneProps {
 	pane: Pane;
@@ -68,13 +69,14 @@ export function TodayPane(_props: TodayPaneProps) {
 			refetchOnWindowFocus: false,
 		},
 	);
-	const rigsQuery = electronTrpc.gastown.listRigs.useQuery(
-		tp ? { townPath: tp } : undefined,
-		{
-			enabled: canQueryToday,
-			refetchInterval: 5_000,
-			refetchOnWindowFocus: false,
-		},
+	const rigs = probe?.rigs ?? EMPTY_RIGS;
+	const rigsQuery = useMemo(
+		() => ({
+			data: rigs,
+			isLoading: probeQuery.isLoading,
+			isError: probeQuery.isError,
+		}),
+		[rigs, probeQuery.isLoading, probeQuery.isError],
 	);
 	const inboxQuery = electronTrpc.gastown.mail.inbox.useQuery(
 		{
