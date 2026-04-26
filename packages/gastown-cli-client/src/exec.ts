@@ -164,12 +164,14 @@ function execBin(
 		stdio: [hasStdin ? "pipe" : "ignore", "pipe", "pipe"],
 	};
 
-	void runLivenessProbe(options.env).catch((e) => {
-		console.error(
-			"[gt-spawn] liveness-err",
-			e instanceof Error ? e.message : String(e),
-		);
-	});
+	if (bin === "gt") {
+		void runLivenessProbe(options.env).catch((e) => {
+			console.error(
+				"[gt-spawn] liveness-err",
+				e instanceof Error ? e.message : String(e),
+			);
+		});
+	}
 
 	const startedAt = Date.now();
 	console.log("[gt-spawn] start", {
@@ -301,6 +303,14 @@ export function execBd(
 	deps: ExecGtDeps = {},
 ): Promise<ExecGtResult> {
 	return execBin("bd", argv, options, deps);
+}
+
+export function execDolt(
+	argv: readonly string[],
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<ExecGtResult> {
+	return execBin("dolt", argv, options, deps);
 }
 
 export function execGit(
