@@ -38,6 +38,7 @@ import type {
 export {
 	type GetAgentArgs,
 	getAgent,
+	getAgentFromSummaries,
 	type ListAgentsArgs,
 	listAgents,
 	parseAgentSummariesFromStatusJson,

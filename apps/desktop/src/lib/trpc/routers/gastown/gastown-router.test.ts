@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type {
+	AgentDetail,
 	AgentSummary,
 	ProbeResult,
 } from "@spectralset/gastown-cli-client";
@@ -376,5 +377,59 @@ describe("createGastownRouter townPath threading", () => {
 		expect(calls).toHaveLength(1);
 		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/town" });
 		expect(digest).toMatchObject({ polecatsAliveCount: 1 });
+	});
+
+	test("agents.get reuses cached agent status after agents.list", async () => {
+		const calls: unknown[] = [];
+		const detailCalls: unknown[] = [];
+		const summary = makeAgent("jasper");
+		const router = createGastownRouter({
+			readTmuxTownRootFn: async () => ({
+				townRoot: undefined,
+				socket: undefined,
+			}),
+			listAgentsFn: async (args) => {
+				calls.push(args);
+				return [summary];
+			},
+			getAgentFromSummariesFn: async (args, summaries) => {
+				detailCalls.push({ args, summaries });
+				return {
+					...summary,
+					agentBeadId: "ss-alpha-polecat-jasper",
+					hookBead: null,
+					activeMr: null,
+					branch: null,
+					cleanupStatus: null,
+					exitType: null,
+					completionTime: null,
+					recentCompletions: [],
+				} satisfies AgentDetail;
+			},
+		});
+		const caller = router.createCaller({});
+
+		await caller.agents.list({ townPath: "/Users/demo/town" });
+		const detail = await caller.agents.get({
+			kind: "polecat",
+			rig: "alpha",
+			name: "jasper",
+			townPath: "/Users/demo/town",
+		});
+
+		expect(calls).toHaveLength(1);
+		expect(calls[0]).toMatchObject({ townRoot: "/Users/demo/town" });
+		expect(detailCalls).toEqual([
+			{
+				args: {
+					kind: "polecat",
+					rig: "alpha",
+					name: "jasper",
+					townRoot: "/Users/demo/town",
+				},
+				summaries: [summary],
+			},
+		]);
+		expect(detail.agentBeadId).toBe("ss-alpha-polecat-jasper");
 	});
 });

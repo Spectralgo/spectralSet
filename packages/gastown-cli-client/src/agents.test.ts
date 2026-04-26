@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { SpawnOptions } from "node:child_process";
 import { EventEmitter } from "node:events";
-import { getAgent, listAgents } from "./agents";
+import { getAgent, getAgentFromSummaries, listAgents } from "./agents";
 
 interface SpawnCall {
 	bin: string;
@@ -161,6 +161,41 @@ const BEAD_JSON = JSON.stringify([
 ]);
 
 describe("getAgent", () => {
+	it("can build detail from supplied summaries without running gt status", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn([
+			{ stdout: BEAD_JSON, exitCode: 0 },
+		]);
+
+		const detail = await getAgentFromSummaries(
+			{ kind: "polecat", rig: "spectralSet", name: "jasper" },
+			[
+				{
+					kind: "polecat",
+					name: "jasper",
+					address: "spectralSet/polecats/jasper",
+					session: "ss-jasper",
+					role: "polecat",
+					rig: "spectralSet",
+					running: true,
+					state: "working",
+					unreadMail: 0,
+					firstSubject: null,
+				},
+			],
+			{},
+			{ spawn: spawnFn },
+		);
+
+		expect(calls).toHaveLength(1);
+		expect(calls[0]?.bin).toBe("bd");
+		expect(calls[0]?.argv).toEqual([
+			"show",
+			"ss-spectralSet-polecat-jasper",
+			"--json",
+		]);
+		expect(detail.activeMr).toBe("ss-mr-123");
+	});
+
 	it("merges summary with parsed bead metadata for a polecat", async () => {
 		const { spawnFn, calls } = makeRecordingSpawn([
 			{ stdout: STATUS_JSON, exitCode: 0 },

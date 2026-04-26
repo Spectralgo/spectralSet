@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import {
 	checkRecovery,
 	type GastownCliClientOptions,
+	getAgentFromSummaries,
 	listAgents,
 	listBeads,
 	listPolecats,
@@ -223,6 +224,7 @@ interface GastownRouterDeps {
 	nukeFn?: typeof nuke;
 	listWorktreesFn?: typeof listWorktrees;
 	listAgentsFn?: typeof listAgents;
+	getAgentFromSummariesFn?: typeof getAgentFromSummaries;
 	readStatusSnapshotFn?: typeof readStatusSnapshot;
 	// Inject the DB-writing reconciliation step; default lazy-imports
 	// from ./apply-reconciliation. Tests pass a spy so the router can be
@@ -256,6 +258,8 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 	const nukeImpl = deps.nukeFn ?? nuke;
 	const listWorktreesImpl = deps.listWorktreesFn ?? listWorktrees;
 	const listAgentsImpl = deps.listAgentsFn ?? listAgents;
+	const getAgentFromSummariesImpl =
+		deps.getAgentFromSummariesFn ?? getAgentFromSummaries;
 	const readStatusSnapshotImpl =
 		deps.readStatusSnapshotFn ??
 		(deps.probeFn || deps.listAgentsFn ? undefined : readStatusSnapshot);
@@ -452,6 +456,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		agents: createGastownAgentsRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
 			listAgentsFn: listAgentsCached,
+			getAgentFromSummariesFn: getAgentFromSummariesImpl,
 		}),
 		convoys: createGastownConvoysRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,

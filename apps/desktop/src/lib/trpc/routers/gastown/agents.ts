@@ -1,6 +1,7 @@
 import {
 	agentKindSchema,
-	getAgent,
+	type getAgent,
+	getAgentFromSummaries,
 	listAgents,
 } from "@spectralset/gastown-cli-client";
 import { z } from "zod";
@@ -26,6 +27,7 @@ const getAgentInputSchema = z.object({
 interface GastownAgentsRouterDeps {
 	listAgentsFn?: typeof listAgents;
 	getAgentFn?: typeof getAgent;
+	getAgentFromSummariesFn?: typeof getAgentFromSummaries;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
 }
 
@@ -37,7 +39,9 @@ export const createGastownAgentsRouter = (
 	deps: GastownAgentsRouterDeps = {},
 ) => {
 	const listAgentsImpl = deps.listAgentsFn ?? listAgents;
-	const getAgentImpl = deps.getAgentFn ?? getAgent;
+	const getAgentImpl = deps.getAgentFn;
+	const getAgentFromSummariesImpl =
+		deps.getAgentFromSummariesFn ?? getAgentFromSummaries;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
 
 	return router({
@@ -59,16 +63,18 @@ export const createGastownAgentsRouter = (
 					throw e;
 				}
 			}),
-		get: publicProcedure.input(getAgentInputSchema).query(async ({ input }) =>
-			getAgentImpl(
-				{
-					kind: input.kind,
-					rig: input.rig,
-					name: input.name,
-					townRoot: resolveTownPathImpl(input.townPath),
-				},
-				await shellOptions(),
-			),
-		),
+		get: publicProcedure.input(getAgentInputSchema).query(async ({ input }) => {
+			const resolved = resolveTownPathImpl(input.townPath);
+			const args = {
+				kind: input.kind,
+				rig: input.rig,
+				name: input.name,
+				townRoot: resolved,
+			};
+			const opts = await shellOptions();
+			if (getAgentImpl) return getAgentImpl(args, opts);
+			const summaries = await listAgentsImpl({ townRoot: resolved }, opts);
+			return getAgentFromSummariesImpl(args, summaries, opts);
+		}),
 	});
 };

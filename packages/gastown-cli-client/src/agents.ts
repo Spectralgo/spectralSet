@@ -234,6 +234,15 @@ export async function getAgent(
 		options,
 		deps,
 	);
+	return getAgentFromSummaries(args, summaries, options, deps);
+}
+
+export async function getAgentFromSummaries(
+	args: GetAgentArgs,
+	summaries: readonly AgentSummary[],
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<AgentDetail> {
 	const match = summaries.find(
 		(a) =>
 			a.kind === args.kind &&
