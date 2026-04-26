@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
 import { EventEmitter } from "node:events";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -155,6 +155,40 @@ describe("execGt", () => {
 		expect(result.stderr).toBe("boom\n");
 	});
 
+	it("suppresses routine spawn logs unless gt spawn debug is enabled", async () => {
+		const prev = process.env.SPECTRALSET_GT_SPAWN_DEBUG;
+		delete process.env.SPECTRALSET_GT_SPAWN_DEBUG;
+		const logSpy = spyOn(console, "log").mockImplementation(() => {});
+		try {
+			const spawnFn = makeFakeSpawn({ stdout: "ok\n", exitCode: 0 });
+			await execGt(["--version"], {}, { spawn: spawnFn });
+			expect(
+				logSpy.mock.calls.some(([label]) => label === "[gt-spawn] start"),
+			).toBe(false);
+		} finally {
+			logSpy.mockRestore();
+			if (prev === undefined) delete process.env.SPECTRALSET_GT_SPAWN_DEBUG;
+			else process.env.SPECTRALSET_GT_SPAWN_DEBUG = prev;
+		}
+	});
+
+	it("emits routine spawn logs when gt spawn debug is enabled", async () => {
+		const prev = process.env.SPECTRALSET_GT_SPAWN_DEBUG;
+		process.env.SPECTRALSET_GT_SPAWN_DEBUG = "1";
+		const logSpy = spyOn(console, "log").mockImplementation(() => {});
+		try {
+			const spawnFn = makeFakeSpawn({ stdout: "ok\n", exitCode: 0 });
+			await execGt(["--version"], {}, { spawn: spawnFn });
+			expect(
+				logSpy.mock.calls.some(([label]) => label === "[gt-spawn] start"),
+			).toBe(true);
+		} finally {
+			logSpy.mockRestore();
+			if (prev === undefined) delete process.env.SPECTRALSET_GT_SPAWN_DEBUG;
+			else process.env.SPECTRALSET_GT_SPAWN_DEBUG = prev;
+		}
+	});
+
 	it("GastownCliError carries argv, exit code, and stderr for callers", () => {
 		const err = new GastownCliError({
 			argv: ["rig", "list"],
@@ -230,7 +264,9 @@ describe("execGt", () => {
 		await Promise.resolve();
 		expect(calls).toHaveLength(5);
 
-		calls.forEach((call) => call.close(0));
+		calls.forEach((call) => {
+			call.close(0);
+		});
 		await Promise.all(requests);
 	});
 
@@ -300,7 +336,9 @@ describe("execGt", () => {
 		await Promise.resolve();
 		expect(calls).toHaveLength(2);
 
-		calls.forEach((call) => call.close(0));
+		calls.forEach((call) => {
+			call.close(0);
+		});
 		await Promise.all([first, second]);
 	});
 
@@ -321,7 +359,9 @@ describe("execGt", () => {
 		await Promise.resolve();
 		expect(calls).toHaveLength(2);
 
-		calls.forEach((call) => call.close(0));
+		calls.forEach((call) => {
+			call.close(0);
+		});
 		await Promise.all([first, second]);
 	});
 });

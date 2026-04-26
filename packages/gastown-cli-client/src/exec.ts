@@ -85,6 +85,10 @@ const gtReadOnlySingleflight = new Map<string, Promise<ExecGtResult>>();
 const spawnDepIds = new WeakMap<SpawnLike, number>();
 let nextSpawnDepId = 1;
 
+function gtSpawnDebugEnabled(): boolean {
+	return process.env.SPECTRALSET_GT_SPAWN_DEBUG === "1";
+}
+
 let livenessProbed = false;
 async function runLivenessProbe(
 	env: NodeJS.ProcessEnv | undefined,
@@ -142,10 +146,12 @@ async function runLivenessProbe(
 			resolve({ out: out.trim(), elapsedMs: Date.now() - t0, timedOut });
 		});
 	});
-	console.log("[gt-spawn] liveness", {
-		which: whichResult,
-		version: versionResult,
-	});
+	if (gtSpawnDebugEnabled()) {
+		console.log("[gt-spawn] liveness", {
+			which: whichResult,
+			version: versionResult,
+		});
+	}
 }
 
 function execBin(
@@ -166,6 +172,7 @@ function execBin(
 
 	if (bin === "gt") {
 		void runLivenessProbe(options.env).catch((e) => {
+			if (!gtSpawnDebugEnabled()) return;
 			console.error(
 				"[gt-spawn] liveness-err",
 				e instanceof Error ? e.message : String(e),
@@ -174,21 +181,23 @@ function execBin(
 	}
 
 	const startedAt = Date.now();
-	console.log("[gt-spawn] start", {
-		bin,
-		argv: argv.slice(0, 6),
-		cwd: options.cwd ?? "<inherit>",
-		envHas: {
-			PATH: Boolean(options.env?.PATH ?? process.env.PATH),
-			HOME: Boolean(options.env?.HOME ?? process.env.HOME),
-			GT_TOWN_ROOT: Boolean(
-				options.env?.GT_TOWN_ROOT ?? process.env.GT_TOWN_ROOT,
-			),
-			TMUX: Boolean(options.env?.TMUX ?? process.env.TMUX),
-		},
-		pathHead: (options.env?.PATH ?? process.env.PATH ?? "").slice(0, 120),
-		timeoutMs,
-	});
+	if (gtSpawnDebugEnabled()) {
+		console.log("[gt-spawn] start", {
+			bin,
+			argv: argv.slice(0, 6),
+			cwd: options.cwd ?? "<inherit>",
+			envHas: {
+				PATH: Boolean(options.env?.PATH ?? process.env.PATH),
+				HOME: Boolean(options.env?.HOME ?? process.env.HOME),
+				GT_TOWN_ROOT: Boolean(
+					options.env?.GT_TOWN_ROOT ?? process.env.GT_TOWN_ROOT,
+				),
+				TMUX: Boolean(options.env?.TMUX ?? process.env.TMUX),
+			},
+			pathHead: (options.env?.PATH ?? process.env.PATH ?? "").slice(0, 120),
+			timeoutMs,
+		});
+	}
 
 	return new Promise<ExecGtResult>((resolve, reject) => {
 		let child: ReturnType<SpawnLike>;
@@ -254,7 +263,7 @@ function execBin(
 			}
 			const exitCode = code ?? -1;
 			const elapsedMs = Date.now() - startedAt;
-			if (elapsedMs > 1000) {
+			if (gtSpawnDebugEnabled() || elapsedMs > 10_000) {
 				console.log("[gt-spawn] slow-exit", {
 					bin,
 					argv: argv.slice(0, 6),
