@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, mock, spyOn } from "bun:test";
 import type { AgentSummary } from "@spectralset/gastown-cli-client";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -44,6 +44,7 @@ mock.module("@spectralset/ui/sonner", () => ({
 }));
 
 mock.module("@tanstack/react-router", () => ({
+	useNavigate: () => () => {},
 	useParams: () => ({}),
 }));
 
@@ -90,6 +91,18 @@ describe("AgentCVPanel", () => {
 		listState = { data: [], isLoading: false, error: null };
 		const html = renderToStaticMarkup(<AgentCVPanel />);
 		expect(html).toContain("No agents.");
+	});
+
+	it("does not log diagnostics during render", () => {
+		const logSpy = spyOn(console, "log").mockImplementation(() => {});
+		listState = { data: [], isLoading: false, error: null };
+
+		try {
+			renderToStaticMarkup(<AgentCVPanel />);
+			expect(logSpy).not.toHaveBeenCalled();
+		} finally {
+			logSpy.mockRestore();
+		}
 	});
 
 	it("renders loading state", () => {
