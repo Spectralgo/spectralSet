@@ -89,6 +89,7 @@ describe("ConvoyBoard", () => {
 
 		const html = renderToStaticMarkup(<ConvoyBoard />);
 		expect(html).toContain("Sprints");
+		expect(html).toContain("Sprint planning for tracked issues.");
 		expect(html).toContain("Sprint summary");
 		expect(html).toContain("Issues");
 		expect(html).toContain("Open");

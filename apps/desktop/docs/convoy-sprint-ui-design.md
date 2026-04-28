@@ -50,4 +50,3 @@ Tests should assert the new product language and layout landmarks:
 - tracked beads render as issues in board columns and the issue table
 - progress still derives from closed tracked issues when aggregate fields are
   absent
-

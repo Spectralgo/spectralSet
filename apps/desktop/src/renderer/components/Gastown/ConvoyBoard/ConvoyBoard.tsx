@@ -7,8 +7,8 @@ import { formatDistanceToNow } from "date-fns";
 import { useMemo, useState } from "react";
 import {
 	HiOutlineClipboard,
+	HiOutlineClipboardDocumentList,
 	HiOutlineSquares2X2,
-	HiOutlineTruck,
 } from "react-icons/hi2";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
@@ -82,11 +82,11 @@ export function ConvoyBoard() {
 	return (
 		<div className="flex h-full flex-col">
 			<header className="flex items-center gap-3 border-b border-border/60 px-4 py-3">
-				<HiOutlineTruck className="size-5 text-muted-foreground" />
+				<HiOutlineClipboardDocumentList className="size-5 text-muted-foreground" />
 				<div>
 					<h1 className="text-sm font-medium">Sprints</h1>
 					<p className="text-[11px] text-muted-foreground">
-						Convoys grouped as sprint work.
+						Sprint planning for tracked issues.
 					</p>
 				</div>
 				<div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
