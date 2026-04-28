@@ -2,7 +2,7 @@ import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
 import { cn } from "@spectralset/ui/utils";
 import { formatDistanceToNow } from "date-fns";
-import { useMemo, useState } from "react";
+import { type ComponentType, useMemo, useState } from "react";
 import {
 	HiOutlineClipboard,
 	HiOutlineEnvelope,
@@ -14,13 +14,20 @@ import {
 	priorityBadgeClass,
 } from "renderer/lib/gastown/mail-types";
 import { AddressPicker, MAYOR_ADDRESS } from "./AddressPicker";
-import { ComposeMailDialog } from "./ComposeMailDialog";
+import {
+	ComposeMailDialog,
+	type ComposeMailDialogProps,
+} from "./ComposeMailDialog";
 
 export interface MailPanelProps {
 	initialAddress?: string;
+	ComposeDialogComponent?: ComponentType<ComposeMailDialogProps>;
 }
 
-export function MailPanel({ initialAddress = MAYOR_ADDRESS }: MailPanelProps) {
+export function MailPanel({
+	initialAddress = MAYOR_ADDRESS,
+	ComposeDialogComponent = ComposeMailDialog,
+}: MailPanelProps) {
 	const [address, setAddress] = useState(initialAddress);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 	const [composeOpen, setComposeOpen] = useState(false);
@@ -61,7 +68,7 @@ export function MailPanel({ initialAddress = MAYOR_ADDRESS }: MailPanelProps) {
 					/>
 				</div>
 			</header>
-			<ComposeMailDialog
+			<ComposeDialogComponent
 				open={composeOpen}
 				onOpenChange={setComposeOpen}
 				initialTo={address}
