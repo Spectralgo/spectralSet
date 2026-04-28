@@ -63,6 +63,7 @@ function ConvoyBoardPage() {
 			) : (
 				<ConvoyBoardShell
 					beads={beads}
+					dependencies={beadsQuery.data?.dependencies ?? []}
 					onStatusChange={() => {}}
 					renderCard={(b) => <BeadCard bead={b as unknown as ConvoyBead} />}
 				/>
