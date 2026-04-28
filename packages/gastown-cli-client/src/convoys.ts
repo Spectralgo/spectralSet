@@ -380,6 +380,60 @@ export async function getBeadDetail(
 	});
 }
 
+export interface CreateConvoyArgs {
+	name: string;
+	issueIds: readonly string[];
+	owned?: boolean;
+	mergeStrategy?: "direct" | "mr" | "local";
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
+export interface CreateConvoyResult {
+	id: string;
+	title: string;
+}
+
+const CONVOY_CREATED_RE = /Created convoy[^\n]*?\s(hq-cv-[A-Za-z0-9]+)/u;
+
+export async function createConvoy(
+	args: CreateConvoyArgs,
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<CreateConvoyResult> {
+	if (args.issueIds.length === 0) {
+		throw new GastownCliError({
+			argv: ["convoy", "create"],
+			exitCode: -1,
+			stdout: "",
+			stderr: "createConvoy requires at least one issue ID",
+		});
+	}
+	const argv: string[] = ["convoy", "create", args.name, ...args.issueIds];
+	if (args.owned) argv.push("--owned");
+	if (args.mergeStrategy) argv.push(`--merge=${args.mergeStrategy}`);
+
+	const cwd = resolveTownCwd(args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execGt(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
+	const match = stdout.match(CONVOY_CREATED_RE);
+	if (!match?.[1]) {
+		throw new GastownCliError({
+			argv,
+			exitCode,
+			stdout,
+			stderr: "could not parse convoy id from gt convoy create output",
+		});
+	}
+	return { id: match[1], title: args.name };
+}
+
 export async function convoyStatus(
 	args: ConvoyStatusArgs,
 	options: ExecGtOptions = {},

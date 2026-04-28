@@ -2,6 +2,7 @@ import {
 	type Convoy,
 	type ConvoyBead,
 	convoyStatus,
+	createConvoy,
 	deriveBeadStatus,
 	getConvoyBeads,
 	type ListConvoysArgs,
@@ -32,6 +33,14 @@ const convoyBeadsInputSchema = z.object({
 	townPath: townPathSchema,
 });
 
+const createConvoyInputSchema = z.object({
+	name: z.string().trim().min(1).max(100),
+	issueIds: z.array(z.string().trim().min(1)).min(1).max(50),
+	owned: z.boolean().optional(),
+	mergeStrategy: z.enum(["direct", "mr", "local"]).optional(),
+	townPath: townPathSchema,
+});
+
 interface BeadDep {
 	from: string;
 	to: string;
@@ -42,6 +51,7 @@ interface GastownConvoysRouterDeps {
 	listConvoysFn?: typeof listConvoys;
 	convoyStatusFn?: typeof convoyStatus;
 	getConvoyBeadsFn?: typeof getConvoyBeads;
+	createConvoyFn?: typeof createConvoy;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
 	discoverTownRootFn?: () => string | undefined;
 	listConvoysCacheStaleMs?: number;
@@ -73,6 +83,7 @@ export const createGastownConvoysRouter = (
 	const listConvoysImpl = deps.listConvoysFn ?? listConvoys;
 	const convoyStatusImpl = deps.convoyStatusFn ?? convoyStatus;
 	const getConvoyBeadsImpl = deps.getConvoyBeadsFn ?? getConvoyBeads;
+	const createConvoyImpl = deps.createConvoyFn ?? createConvoy;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
 	const discoverTownRootImpl = deps.discoverTownRootFn ?? discoverTownRoot;
 	const listConvoysCacheStaleMs =
@@ -144,6 +155,24 @@ export const createGastownConvoysRouter = (
 					await shellOptions(),
 				),
 			),
+		create: publicProcedure
+			.input(createConvoyInputSchema)
+			.mutation(async ({ input }) => {
+				const townRoot =
+					resolveTownPathImpl(input.townPath) ?? discoverTownRootImpl();
+				const result = await createConvoyImpl(
+					{
+						name: input.name,
+						issueIds: input.issueIds,
+						owned: input.owned,
+						mergeStrategy: input.mergeStrategy,
+						townRoot,
+					},
+					await shellOptions(),
+				);
+				listConvoysCache.clear();
+				return result;
+			}),
 		beads: publicProcedure
 			.input(convoyBeadsInputSchema)
 			.query(
