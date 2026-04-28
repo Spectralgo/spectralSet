@@ -5,7 +5,7 @@ import { type ConvoyBead, ConvoyBoardShell } from "./ConvoyBoardShell";
 const renderCard = (b: ConvoyBead) => <div data-bead-id={b.id}>{b.title}</div>;
 
 describe("ConvoyBoardShell", () => {
-	it("renders three columns with empty placeholders when no beads", () => {
+	it("renders three columns with empty placeholders when no issues", () => {
 		const html = renderToStaticMarkup(
 			<ConvoyBoardShell
 				beads={[]}
@@ -16,7 +16,7 @@ describe("ConvoyBoardShell", () => {
 		expect(html).toContain("Open");
 		expect(html).toContain("Hooked");
 		expect(html).toContain("Closed");
-		expect(html.match(/No beads/g)?.length).toBe(3);
+		expect(html.match(/No issues/g)?.length).toBe(3);
 	});
 
 	it("groups beads into the correct columns", () => {
@@ -35,6 +35,6 @@ describe("ConvoyBoardShell", () => {
 		expect(html).toContain("Lay rails");
 		expect(html).toContain("Paint cars");
 		expect(html).toContain("Inspect");
-		expect(html).not.toContain("No beads");
+		expect(html).not.toContain("No issues");
 	});
 });

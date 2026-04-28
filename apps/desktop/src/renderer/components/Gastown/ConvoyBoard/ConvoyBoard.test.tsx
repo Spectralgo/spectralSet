@@ -49,15 +49,17 @@ const { ConvoyBoard } = await import("./ConvoyBoard");
 describe("ConvoyBoard", () => {
 	it("renders empty and error states", () => {
 		listState = { data: [], isLoading: false, error: null };
-		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain("No open convoys.");
+		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain(
+			"No active sprints.",
+		);
 
 		listState = { data: undefined, isLoading: false, error: new Error("x") };
 		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain(
-			"Failed to load convoys",
+			"Failed to load sprints",
 		);
 	});
 
-	it("renders list, auto-selects first convoy, fetches detail, derives progress", () => {
+	it("renders sprint list, auto-selects first sprint, fetches detail, derives progress", () => {
 		const convoy: Convoy = {
 			id: "cv-9",
 			title: "SS-4 epic",
@@ -86,8 +88,15 @@ describe("ConvoyBoard", () => {
 		statusState = { data: convoy, isLoading: false, error: null };
 
 		const html = renderToStaticMarkup(<ConvoyBoard />);
+		expect(html).toContain("Sprints");
+		expect(html).toContain("Sprint summary");
+		expect(html).toContain("Issues");
+		expect(html).toContain("Open");
+		expect(html).toContain("Done");
+		expect(html).toContain("Issue");
+		expect(html).toContain("Relation");
 		expect(html).toContain("SS-4 epic");
-		expect(html).toContain("in_progress");
+		expect(html).toContain("In progress");
 		expect(html).toContain("cv-9");
 		expect(html).toContain("1/2");
 		expect(html).toContain("ss-1");
@@ -107,8 +116,6 @@ describe("ConvoyBoard", () => {
 		};
 		listState = { data: [convoy], isLoading: false, error: null };
 		statusState = { data: convoy, isLoading: false, error: null };
-		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain(
-			"No tracked issues.",
-		);
+		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain("No issues yet.");
 	});
 });

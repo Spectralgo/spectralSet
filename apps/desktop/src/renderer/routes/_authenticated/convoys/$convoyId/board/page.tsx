@@ -42,7 +42,12 @@ function ConvoyBoardPage() {
 	return (
 		<div className="flex h-full flex-col">
 			<header className="flex items-center gap-3 border-b border-border/60 px-4 py-3">
-				<h1 className="font-mono text-sm">{convoyId}</h1>
+				<div>
+					<div className="text-[11px] font-medium uppercase text-muted-foreground">
+						Sprint board
+					</div>
+					<h1 className="font-mono text-sm">{convoyId}</h1>
+				</div>
 				<ToggleGroup
 					type="single"
 					size="sm"
@@ -50,15 +55,15 @@ function ConvoyBoardPage() {
 					onValueChange={(v) => v && setMode(v as BoardMode)}
 					className="ml-auto"
 				>
-					<ToggleGroupItem value="kanban">Kanban</ToggleGroupItem>
+					<ToggleGroupItem value="kanban">Board</ToggleGroupItem>
 					<ToggleGroupItem value="stream">Stream</ToggleGroupItem>
 				</ToggleGroup>
 			</header>
 			{beadsQuery.isLoading ? (
-				<div className="p-4 text-xs text-muted-foreground">Loading beads…</div>
+				<div className="p-4 text-xs text-muted-foreground">Loading issues…</div>
 			) : beadsQuery.error ? (
 				<div className="p-4 text-xs text-destructive">
-					Failed to load beads.
+					Failed to load sprint issues.
 				</div>
 			) : (
 				<ConvoyBoardShell
