@@ -186,3 +186,57 @@ describe("gastownConvoys.beads", () => {
 		]);
 	});
 });
+
+describe("gastownConvoys.create", () => {
+	test("forwards inputs to createConvoyFn and returns the new id", async () => {
+		const calls: unknown[] = [];
+		const router = createGastownConvoysRouter({
+			createConvoyFn: async (args) => {
+				calls.push(args);
+				return { id: "hq-cv-new", title: args.name };
+			},
+			resolveTownPathFn: () => "/town",
+		});
+		const caller = router.createCaller({});
+		const result = await caller.create({
+			name: "Wave R-3",
+			issueIds: ["ss-tjfp"],
+			owned: true,
+			mergeStrategy: "direct",
+			townPath: "/town",
+		});
+		expect(result).toEqual({ id: "hq-cv-new", title: "Wave R-3" });
+		expect(calls[0]).toMatchObject({
+			name: "Wave R-3",
+			issueIds: ["ss-tjfp"],
+			owned: true,
+			mergeStrategy: "direct",
+			townRoot: "/town",
+		});
+	});
+
+	test("invalidates the list cache so a follow-up list hits the backend again", async () => {
+		let listCalls = 0;
+		const router = createGastownConvoysRouter({
+			listConvoysFn: async () => {
+				listCalls += 1;
+				return [convoy({ id: "hq-cv-old" })];
+			},
+			createConvoyFn: async (args) => ({
+				id: "hq-cv-new",
+				title: args.name,
+			}),
+			resolveTownPathFn: () => "/town",
+		});
+		const caller = router.createCaller({});
+		await caller.list({ townPath: "/town" });
+		expect(listCalls).toBe(1);
+		await caller.create({
+			name: "Wave R-3",
+			issueIds: ["ss-tjfp"],
+			townPath: "/town",
+		});
+		await caller.list({ townPath: "/town" });
+		expect(listCalls).toBe(2);
+	});
+});

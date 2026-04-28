@@ -43,9 +43,9 @@ export {
 } from "./agents";
 export {
 	type ConvoyStatusArgs,
-	convoyStatus,
 	type CreateConvoyArgs,
 	type CreateConvoyResult,
+	convoyStatus,
 	createConvoy,
 	deriveBeadStatus,
 	findTownRoot,

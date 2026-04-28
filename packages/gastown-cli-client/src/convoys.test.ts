@@ -4,7 +4,12 @@ import { EventEmitter } from "node:events";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { convoyStatus, deriveBeadStatus, listConvoys } from "./convoys";
+import {
+	convoyStatus,
+	createConvoy,
+	deriveBeadStatus,
+	listConvoys,
+} from "./convoys";
 import { GastownCliError } from "./exec";
 
 interface SpawnCall {
@@ -309,6 +314,84 @@ describe("convoyStatus()", () => {
 		});
 		await expect(
 			convoyStatus({ id: "hq-missing" }, {}, { spawn: spawnFn }),
+		).rejects.toBeInstanceOf(GastownCliError);
+	});
+});
+
+const CREATE_CONVOY_STDOUT =
+	"✓ Created convoy 🚚 hq-cv-abc123\n\n  Name:     Wave R-3\n  Tracking: 1 issues\n  Issues:   ss-tjfp\n  Merge:    direct\n  Owned:    caller-managed lifecycle\n";
+
+describe("createConvoy()", () => {
+	it("invokes `gt convoy create <name> <issues...> --owned --merge=<strategy>` and parses the new id", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({
+			stdout: CREATE_CONVOY_STDOUT,
+			exitCode: 0,
+		});
+		const result = await createConvoy(
+			{
+				name: "Wave R-3",
+				issueIds: ["ss-tjfp"],
+				owned: true,
+				mergeStrategy: "direct",
+			},
+			{},
+			{ spawn: spawnFn },
+		);
+		expect(calls[0]?.bin).toBe("gt");
+		expect(calls[0]?.argv).toEqual([
+			"convoy",
+			"create",
+			"Wave R-3",
+			"ss-tjfp",
+			"--owned",
+			"--merge=direct",
+		]);
+		expect(result).toEqual({ id: "hq-cv-abc123", title: "Wave R-3" });
+	});
+
+	it("omits --owned and --merge when not provided", async () => {
+		const { spawnFn, calls } = makeRecordingSpawn({
+			stdout: CREATE_CONVOY_STDOUT,
+			exitCode: 0,
+		});
+		await createConvoy(
+			{ name: "Wave R-3", issueIds: ["ss-a", "ss-b"] },
+			{},
+			{ spawn: spawnFn },
+		);
+		expect(calls[0]?.argv).toEqual([
+			"convoy",
+			"create",
+			"Wave R-3",
+			"ss-a",
+			"ss-b",
+		]);
+	});
+
+	it("rejects when issueIds is empty (gt requires ≥1)", async () => {
+		const { spawnFn } = makeRecordingSpawn({ stdout: "", exitCode: 0 });
+		await expect(
+			createConvoy({ name: "Empty", issueIds: [] }, {}, { spawn: spawnFn }),
+		).rejects.toBeInstanceOf(GastownCliError);
+	});
+
+	it("throws GastownCliError on non-zero exit", async () => {
+		const { spawnFn } = makeRecordingSpawn({
+			stderr: "boom",
+			exitCode: 1,
+		});
+		await expect(
+			createConvoy({ name: "X", issueIds: ["ss-a"] }, {}, { spawn: spawnFn }),
+		).rejects.toBeInstanceOf(GastownCliError);
+	});
+
+	it("throws GastownCliError when stdout has no convoy id", async () => {
+		const { spawnFn } = makeRecordingSpawn({
+			stdout: "no convoy id here",
+			exitCode: 0,
+		});
+		await expect(
+			createConvoy({ name: "X", issueIds: ["ss-a"] }, {}, { spawn: spawnFn }),
 		).rejects.toBeInstanceOf(GastownCliError);
 	});
 });

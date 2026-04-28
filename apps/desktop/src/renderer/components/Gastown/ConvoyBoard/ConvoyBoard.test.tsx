@@ -20,8 +20,29 @@ let statusState: UseQueryFake<ConvoyStatus> = {
 };
 let lastStatusInput: { id: string } | undefined;
 
+const noopMutation = {
+	mutate: () => {},
+	mutateAsync: async () => undefined,
+	isPending: false,
+	isError: false,
+	error: null,
+	reset: () => {},
+};
+
 mock.module("renderer/lib/electron-trpc", () => ({
 	electronTrpc: {
+		useUtils: () => ({
+			gastown: {
+				convoys: {
+					list: {
+						cancel: async () => {},
+						getData: () => undefined,
+						setData: () => {},
+						invalidate: async () => {},
+					},
+				},
+			},
+		}),
 		gastown: {
 			convoys: {
 				list: { useQuery: () => listState },
@@ -31,6 +52,7 @@ mock.module("renderer/lib/electron-trpc", () => ({
 						return statusState;
 					},
 				},
+				create: { useMutation: () => noopMutation },
 			},
 			beads: {
 				detail: {

@@ -1,4 +1,5 @@
 import type { Convoy, ConvoyTracked } from "@spectralset/gastown-cli-client";
+import { Button } from "@spectralset/ui/button";
 import { Progress } from "@spectralset/ui/progress";
 import { toast } from "@spectralset/ui/sonner";
 import { Switch } from "@spectralset/ui/switch";
@@ -8,11 +9,13 @@ import { useMemo, useState } from "react";
 import {
 	HiOutlineClipboard,
 	HiOutlineClipboardDocumentList,
+	HiOutlinePlus,
 	HiOutlineSquares2X2,
 } from "react-icons/hi2";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { BeadDetailDrawer } from "./BeadDetailDrawer";
+import { CreateSprintModal } from "./CreateSprintModal";
 
 const STATUS_CLASS: Record<string, string> = {
 	open: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
@@ -74,6 +77,8 @@ export function ConvoyBoard() {
 	const [showAll, setShowAll] = useState(false);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 	const [selectedBead, setSelectedBead] = useState<string | null>(null);
+	const [createOpen, setCreateOpen] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
 	const townPath = useGastownTownPath() || undefined;
 
 	const listQuery = electronTrpc.gastown.convoys.list.useQuery(
@@ -81,12 +86,50 @@ export function ConvoyBoard() {
 		{ refetchInterval: 10_000, refetchOnWindowFocus: false },
 	);
 
+	const utils = electronTrpc.useUtils();
+	const createMutation = electronTrpc.gastown.convoys.create.useMutation({
+		onMutate: async (input) => {
+			await utils.gastown.convoys.list.cancel();
+			const queryInput = { all: showAll, townPath };
+			const previous = utils.gastown.convoys.list.getData(queryInput);
+			const optimistic: Convoy = {
+				id: `optimistic-${Date.now()}`,
+				title: input.name,
+				status: "open",
+				created_at: new Date().toISOString(),
+				tracked: [],
+				completed: 0,
+				total: 0,
+			};
+			utils.gastown.convoys.list.setData(queryInput, (prev) =>
+				prev ? [optimistic, ...prev] : [optimistic],
+			);
+			return { previous, queryInput, optimisticId: optimistic.id };
+		},
+		onError: (err, _input, ctx) => {
+			if (ctx) utils.gastown.convoys.list.setData(ctx.queryInput, ctx.previous);
+			setCreateError(err.message ?? "Failed to create sprint");
+		},
+		onSuccess: (result) => {
+			toast.success(`Sprint created · ${result.title}`);
+			setSelectedId(result.id);
+			setCreateOpen(false);
+			setCreateError(null);
+			void utils.gastown.convoys.list.invalidate();
+		},
+	});
+
 	const convoys = listQuery.data ?? [];
 	const resolvedSelectedId = useMemo(
 		() =>
 			convoys.find((c) => c.id === selectedId)?.id ?? convoys[0]?.id ?? null,
 		[convoys, selectedId],
 	);
+
+	const handleOpenChange = (next: boolean) => {
+		setCreateOpen(next);
+		if (!next) setCreateError(null);
+	};
 
 	return (
 		<div className="flex h-full flex-col">
@@ -98,19 +141,30 @@ export function ConvoyBoard() {
 						Sprint planning for tracked issues.
 					</p>
 				</div>
-				<div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
-					<label htmlFor="convoy-show-closed" className="cursor-pointer">
-						Show completed
-					</label>
-					<Switch
-						id="convoy-show-closed"
-						checked={showAll}
-						onCheckedChange={(next) => {
-							setShowAll(next);
-							setSelectedId(null);
-						}}
-						aria-label="Show completed sprints"
-					/>
+				<div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
+					<Button
+						size="sm"
+						variant="outline"
+						className="h-7 gap-1 px-2 text-xs"
+						onClick={() => setCreateOpen(true)}
+					>
+						<HiOutlinePlus className="size-3.5" />
+						New sprint
+					</Button>
+					<div className="flex items-center gap-2">
+						<label htmlFor="convoy-show-closed" className="cursor-pointer">
+							Show completed
+						</label>
+						<Switch
+							id="convoy-show-closed"
+							checked={showAll}
+							onCheckedChange={(next) => {
+								setShowAll(next);
+								setSelectedId(null);
+							}}
+							aria-label="Show completed sprints"
+						/>
+					</div>
 				</div>
 			</header>
 			<div className="flex min-h-0 flex-1">
@@ -126,6 +180,17 @@ export function ConvoyBoard() {
 			<BeadDetailDrawer
 				beadId={selectedBead}
 				onClose={() => setSelectedBead(null)}
+			/>
+			<CreateSprintModal
+				open={createOpen}
+				existingConvoys={convoys}
+				isPending={createMutation.isPending}
+				errorMessage={createError}
+				onOpenChange={handleOpenChange}
+				onSubmit={(input) => {
+					setCreateError(null);
+					createMutation.mutate({ ...input, townPath });
+				}}
 			/>
 		</div>
 	);
