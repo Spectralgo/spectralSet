@@ -39,6 +39,7 @@ mock.module("@spectralset/ui/sonner", () => ({
 }));
 
 const { MailPanel } = await import("./MailPanel");
+const ComposeDialogStub = () => null;
 
 function makeMessage(overrides: Partial<MailMessage> = {}): MailMessage {
 	return {
@@ -58,14 +59,18 @@ function makeMessage(overrides: Partial<MailMessage> = {}): MailMessage {
 describe("MailPanel", () => {
 	it("renders an empty-state when inbox is empty", () => {
 		inboxState = { data: [], isLoading: false, error: null };
-		const html = renderToStaticMarkup(<MailPanel />);
+		const html = renderToStaticMarkup(
+			<MailPanel ComposeDialogComponent={ComposeDialogStub} />,
+		);
 		expect(html).toContain("Inbox is empty.");
 		expect(html).toContain("Select a message to read.");
 	});
 
 	it("shows loading state", () => {
 		inboxState = { data: undefined, isLoading: true, error: null };
-		const html = renderToStaticMarkup(<MailPanel />);
+		const html = renderToStaticMarkup(
+			<MailPanel ComposeDialogComponent={ComposeDialogStub} />,
+		);
 		expect(html).toContain("Loading…");
 	});
 
@@ -75,7 +80,9 @@ describe("MailPanel", () => {
 			isLoading: false,
 			error: new Error("boom"),
 		};
-		const html = renderToStaticMarkup(<MailPanel />);
+		const html = renderToStaticMarkup(
+			<MailPanel ComposeDialogComponent={ComposeDialogStub} />,
+		);
 		expect(html).toContain("Failed to load inbox");
 	});
 
@@ -93,7 +100,9 @@ describe("MailPanel", () => {
 			isLoading: false,
 			error: null,
 		};
-		const html = renderToStaticMarkup(<MailPanel />);
+		const html = renderToStaticMarkup(
+			<MailPanel ComposeDialogComponent={ComposeDialogStub} />,
+		);
 		expect(html).toContain("First");
 		expect(html).toContain("Second");
 		expect(html).toContain("All polecats green.");
@@ -108,7 +117,9 @@ describe("MailPanel", () => {
 			isLoading: false,
 			error: null,
 		};
-		const html = renderToStaticMarkup(<MailPanel />);
+		const html = renderToStaticMarkup(
+			<MailPanel ComposeDialogComponent={ComposeDialogStub} />,
+		);
 		expect(html).toContain("(no subject)");
 	});
 });

@@ -40,7 +40,7 @@ export function ConvoyColumn({
 				{beads.length === 0 ? (
 					<div className="flex flex-col items-center justify-center gap-1 py-8 text-muted-foreground/60">
 						<HiOutlineInbox className="size-5" />
-						<span className="text-[11px]">No beads</span>
+						<span className="text-[11px]">No issues</span>
 					</div>
 				) : (
 					beads.map((b) => <div key={b.id}>{renderCard(b)}</div>)

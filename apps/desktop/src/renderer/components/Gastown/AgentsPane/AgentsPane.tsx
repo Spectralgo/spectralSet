@@ -6,7 +6,7 @@ interface AgentsPaneProps {
 	tab: BaseTab;
 }
 
-export function AgentsPane({ pane, tab }: AgentsPaneProps) {
+export function AgentsPane(_props: AgentsPaneProps) {
 	return (
 		<div
 			data-agents-root

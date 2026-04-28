@@ -93,7 +93,7 @@ export function BeadCard({ bead, onClick, stackCount }: BeadCardProps) {
 		<TooltipProvider>
 			<Tooltip>
 				<TooltipTrigger asChild>{card}</TooltipTrigger>
-				<TooltipContent>no polecat available</TooltipContent>
+				<TooltipContent>No assignee available</TooltipContent>
 			</Tooltip>
 		</TooltipProvider>
 	);

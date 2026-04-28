@@ -6,7 +6,7 @@ interface MailPaneProps {
 	tab: BaseTab;
 }
 
-export function MailPane({ pane, tab }: MailPaneProps) {
+export function MailPane(_props: MailPaneProps) {
 	return (
 		<div
 			data-mail-root
