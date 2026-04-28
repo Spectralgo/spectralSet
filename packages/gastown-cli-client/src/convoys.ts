@@ -9,6 +9,8 @@ import {
 	GastownCliError,
 } from "./exec";
 import {
+	type BeadDetail,
+	beadDetailSchema,
 	type Convoy,
 	type ConvoyBead,
 	type ConvoyBeadStatus,
@@ -276,6 +278,106 @@ export async function getConvoyBeads(
 		assignee: r.assignee ?? null,
 		priority: r.priority ?? 0,
 	}));
+}
+
+const doltBeadDetailSchema = z.object({
+	rows: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string(),
+			description: z.string().nullable().optional(),
+			status: z.string(),
+			priority: z.number().int().nullable().optional(),
+			issue_type: z.string().nullable().optional(),
+			assignee: z.string().nullable().optional(),
+			created_at: z.string().nullable().optional(),
+			updated_at: z.string().nullable().optional(),
+		}),
+	),
+});
+
+const doltBeadConvoysSchema = z.object({
+	rows: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string(),
+			status: z.string(),
+		}),
+	),
+});
+
+export interface GetBeadDetailArgs {
+	beadId: string;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
+export async function getBeadDetail(
+	args: GetBeadDetailArgs,
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<BeadDetail> {
+	const townRoot = resolveTownRootForDolt(args.townRoot, options.cwd);
+	if (!townRoot) {
+		throw new GastownCliError({
+			argv: ["dolt"],
+			exitCode: -1,
+			stdout: "",
+			stderr: "town root required for bead detail fast path",
+		});
+	}
+	const cwd = join(townRoot, ".dolt-data", "hq");
+	const id = escapeSqlString(args.beadId);
+	const beadQuery = `select id, title, description, status, priority, issue_type, assignee, created_at, updated_at from issues where id = '${id}' limit 1;`;
+	const convoysQuery = `select c.id, c.title, c.status from issues c join dependencies d on d.issue_id = c.id and d.type = 'tracks' where d.depends_on_id = '${id}' and c.issue_type = 'convoy' order by c.created_at desc;`;
+	const [beadRes, convoyRes] = await Promise.all([
+		execDolt(
+			["sql", "-r", "json", "-q", beadQuery],
+			{ ...options, cwd, readOnly: true },
+			deps,
+		),
+		execDolt(
+			["sql", "-r", "json", "-q", convoysQuery],
+			{ ...options, cwd, readOnly: true },
+			deps,
+		),
+	]);
+	if (beadRes.exitCode !== 0) {
+		throw new GastownCliError({
+			argv: ["dolt"],
+			exitCode: beadRes.exitCode,
+			stdout: beadRes.stdout,
+			stderr: beadRes.stderr,
+		});
+	}
+	const { rows: beadRows } = doltBeadDetailSchema.parse(
+		JSON.parse(beadRes.stdout),
+	);
+	const row = beadRows[0];
+	if (!row) {
+		throw new GastownCliError({
+			argv: ["dolt"],
+			exitCode: -1,
+			stdout: "",
+			stderr: `bead ${args.beadId} not found`,
+		});
+	}
+	const convoys =
+		convoyRes.exitCode === 0
+			? doltBeadConvoysSchema.parse(JSON.parse(convoyRes.stdout)).rows
+			: [];
+	return beadDetailSchema.parse({
+		id: row.id,
+		title: row.title,
+		description: row.description ?? null,
+		status: row.status,
+		priority: row.priority ?? 0,
+		issueType: row.issue_type ?? null,
+		assignee: row.assignee ?? null,
+		createdAt: row.created_at ? normalizeDoltDate(row.created_at) : null,
+		updatedAt: row.updated_at ? normalizeDoltDate(row.updated_at) : null,
+		convoys,
+	});
 }
 
 export async function convoyStatus(

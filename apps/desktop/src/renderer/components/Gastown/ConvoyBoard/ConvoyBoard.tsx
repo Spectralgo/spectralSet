@@ -12,6 +12,7 @@ import {
 } from "react-icons/hi2";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
+import { BeadDetailDrawer } from "./BeadDetailDrawer";
 
 const STATUS_CLASS: Record<string, string> = {
 	open: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
@@ -65,6 +66,7 @@ function progressPercent(completed: number, total: number): number {
 export function ConvoyBoard() {
 	const [showAll, setShowAll] = useState(false);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
+	const [selectedBead, setSelectedBead] = useState<string | null>(null);
 	const townPath = useGastownTownPath() || undefined;
 
 	const listQuery = electronTrpc.gastown.convoys.list.useQuery(
@@ -112,8 +114,12 @@ export function ConvoyBoard() {
 					selectedId={resolvedSelectedId}
 					onSelect={setSelectedId}
 				/>
-				<ConvoyDetail id={resolvedSelectedId} />
+				<ConvoyDetail id={resolvedSelectedId} onSelectBead={setSelectedBead} />
 			</div>
+			<BeadDetailDrawer
+				beadId={selectedBead}
+				onClose={() => setSelectedBead(null)}
+			/>
 		</div>
 	);
 }
@@ -204,9 +210,10 @@ function ConvoyList({
 
 interface ConvoyDetailProps {
 	id: string | null;
+	onSelectBead: (beadId: string) => void;
 }
 
-function ConvoyDetail({ id }: ConvoyDetailProps) {
+function ConvoyDetail({ id, onSelectBead }: ConvoyDetailProps) {
 	const statusQuery = electronTrpc.gastown.convoys.status.useQuery(
 		{ id: id ?? "" },
 		{ enabled: !!id, refetchInterval: 10_000, refetchOnWindowFocus: false },
@@ -273,8 +280,8 @@ function ConvoyDetail({ id }: ConvoyDetailProps) {
 				</div>
 			</div>
 			<div className="min-h-0 flex-1 overflow-y-auto">
-				<IssueBoard issues={convoy.tracked} />
-				<IssueTable issues={convoy.tracked} />
+				<IssueBoard issues={convoy.tracked} onSelectBead={onSelectBead} />
+				<IssueTable issues={convoy.tracked} onSelectBead={onSelectBead} />
 			</div>
 		</div>
 	);
@@ -303,7 +310,13 @@ function issueColumns(issues: ConvoyTracked[]) {
 	);
 }
 
-function IssueBoard({ issues }: { issues: ConvoyTracked[] }) {
+function IssueBoard({
+	issues,
+	onSelectBead,
+}: {
+	issues: ConvoyTracked[];
+	onSelectBead: (beadId: string) => void;
+}) {
 	if (issues.length === 0) {
 		return (
 			<div className="p-4 text-xs text-muted-foreground">No issues yet.</div>
@@ -336,7 +349,11 @@ function IssueBoard({ issues }: { issues: ConvoyTracked[] }) {
 								</div>
 							) : (
 								bucket.map((issue) => (
-									<IssueCard key={issue.id} issue={issue} />
+									<IssueCard
+										key={issue.id}
+										issue={issue}
+										onSelect={() => onSelectBead(issue.id)}
+									/>
 								))
 							)}
 						</div>
@@ -347,9 +364,20 @@ function IssueBoard({ issues }: { issues: ConvoyTracked[] }) {
 	);
 }
 
-function IssueCard({ issue }: { issue: ConvoyTracked }) {
+function IssueCard({
+	issue,
+	onSelect,
+}: {
+	issue: ConvoyTracked;
+	onSelect: () => void;
+}) {
 	return (
-		<div className="rounded-md border border-border/50 bg-background px-2.5 py-2">
+		<button
+			type="button"
+			onClick={onSelect}
+			className="cursor-pointer rounded-md border border-border/50 bg-background px-2.5 py-2 text-left transition-colors hover:border-border hover:bg-accent focus-visible:border-border focus-visible:bg-accent focus-visible:outline-none"
+			aria-label={`Open detail for ${issue.id}`}
+		>
 			<div className="flex items-center gap-2">
 				<span className="font-mono text-[10px] text-muted-foreground">
 					{issue.id}
@@ -362,13 +390,20 @@ function IssueCard({ issue }: { issue: ConvoyTracked }) {
 			<div className="mt-2 text-[10px] text-muted-foreground">
 				{issue.dependency_type}
 			</div>
-		</div>
+		</button>
 	);
 }
 
-function IssueTable({ issues }: { issues: ConvoyTracked[] }) {
+function IssueTable({
+	issues,
+	onSelectBead,
+}: {
+	issues: ConvoyTracked[];
+	onSelectBead: (beadId: string) => void;
+}) {
 	if (issues.length === 0) return null;
-	const onCopy = async (id: string) => {
+	const onCopy = async (e: React.MouseEvent, id: string) => {
+		e.stopPropagation();
 		try {
 			await navigator.clipboard.writeText(id);
 			toast.success(`Copied ${id}`);
@@ -394,7 +429,11 @@ function IssueTable({ issues }: { issues: ConvoyTracked[] }) {
 					{issues.map((t) => (
 						<tr
 							key={t.id}
-							className="border-b border-border/40 hover:bg-muted/40"
+							onClick={() => onSelectBead(t.id)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") onSelectBead(t.id);
+							}}
+							className="cursor-pointer border-b border-border/40 hover:bg-muted/40"
 						>
 							<td className="px-3 py-1.5 font-mono text-[11px]">{t.id}</td>
 							<td className="max-w-[360px] truncate px-3 py-1.5">{t.title}</td>
@@ -417,7 +456,7 @@ function IssueTable({ issues }: { issues: ConvoyTracked[] }) {
 							<td className="px-2 py-1.5">
 								<button
 									type="button"
-									onClick={() => onCopy(t.id)}
+									onClick={(e) => onCopy(e, t.id)}
 									aria-label={`Copy ${t.id}`}
 									className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:bg-accent focus-visible:outline-none"
 								>

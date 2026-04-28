@@ -323,3 +323,20 @@ export interface ConvoyBead {
 	assignee: string | null;
 	priority: number;
 }
+
+export const beadDetailSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	description: z.string().nullable(),
+	status: z.string(),
+	priority: z.number().int(),
+	issueType: z.string().nullable(),
+	assignee: z.string().nullable(),
+	createdAt: z.string().nullable(),
+	updatedAt: z.string().nullable(),
+	convoys: z.array(
+		z.object({ id: z.string(), title: z.string(), status: z.string() }),
+	),
+});
+
+export type BeadDetail = z.infer<typeof beadDetailSchema>;

@@ -22,6 +22,7 @@ import type {
 	applyReconciliation as ApplyReconciliationFn,
 	ReconcileResult,
 } from "./apply-reconciliation";
+import { createGastownBeadsRouter } from "./beads";
 import { createGastownConvoysRouter } from "./convoys";
 import type {
 	ensureProject as EnsureProjectFn,
@@ -441,6 +442,9 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 				});
 			}),
 		agents: createGastownAgentsRouter({
+			resolveTownPathFn: resolveEffectiveTownPath,
+		}),
+		beads: createGastownBeadsRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
 		}),
 		convoys: createGastownConvoysRouter({

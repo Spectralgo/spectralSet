@@ -32,6 +32,11 @@ mock.module("renderer/lib/electron-trpc", () => ({
 					},
 				},
 			},
+			beads: {
+				detail: {
+					useQuery: () => ({ data: undefined, isLoading: false, error: null }),
+				},
+			},
 		},
 	},
 }));
