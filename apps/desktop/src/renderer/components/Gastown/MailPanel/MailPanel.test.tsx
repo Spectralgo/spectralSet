@@ -38,6 +38,10 @@ mock.module("@spectralset/ui/sonner", () => ({
 	toast: { success: () => {}, error: () => {} },
 }));
 
+mock.module("./ComposeMailDialog", () => ({
+	ComposeMailDialog: () => null,
+}));
+
 const { MailPanel } = await import("./MailPanel");
 
 function makeMessage(overrides: Partial<MailMessage> = {}): MailMessage {

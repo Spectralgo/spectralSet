@@ -6,7 +6,7 @@ interface ConvoysPaneProps {
 	tab: BaseTab;
 }
 
-export function ConvoysPane({ pane, tab }: ConvoysPaneProps) {
+export function ConvoysPane(_props: ConvoysPaneProps) {
 	return (
 		<div
 			data-convoys-root
