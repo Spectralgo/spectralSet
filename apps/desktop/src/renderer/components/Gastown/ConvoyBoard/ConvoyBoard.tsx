@@ -19,6 +19,15 @@ const STATUS_CLASS: Record<string, string> = {
 	in_progress: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
 	closed: "bg-muted text-muted-foreground",
 	blocked: "bg-red-500/15 text-red-600 dark:text-red-400",
+	hooked: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+	open: "Open",
+	in_progress: "In progress",
+	closed: "Done",
+	blocked: "Blocked",
+	hooked: "Hooked",
 };
 
 const ISSUE_STATUS_ORDER = [
@@ -33,13 +42,11 @@ function statusClass(status: string): string {
 	return STATUS_CLASS[status] ?? "bg-muted text-muted-foreground";
 }
 
-function statusLabel(status: string): string {
-	if (status === "closed") return "Done";
-	if (status === "in_progress") return "In progress";
-	return status
-		.split("_")
-		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-		.join(" ");
+export function statusLabel(status: string): string {
+	const known = STATUS_LABELS[status];
+	if (known) return known;
+	if (!status) return "Unknown";
+	return `Unknown · ${status}`;
 }
 
 function progressCounts(c: Pick<Convoy, "completed" | "total" | "tracked">): {
