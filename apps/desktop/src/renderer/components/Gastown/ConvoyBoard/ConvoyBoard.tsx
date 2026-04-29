@@ -347,18 +347,25 @@ function ConvoyDetail({ id, onSelectBead }: ConvoyDetailProps) {
 			</div>
 		);
 	}
-	if (statusQuery.isLoading) {
-		return (
-			<div className="flex flex-1 items-center justify-center p-8 text-xs text-muted-foreground">
-				Loading sprint…
-			</div>
-		);
-	}
 	const convoy = statusQuery.data;
-	if (!convoy) {
+	const errorCode = (
+		statusQuery.error as { data?: { code?: string } } | null | undefined
+	)?.data?.code;
+	const isNotFound = errorCode === "NOT_FOUND";
+	if (isNotFound) {
 		return (
 			<div className="flex flex-1 items-center justify-center p-8 text-xs text-destructive">
 				Sprint not found.
+			</div>
+		);
+	}
+	// Treat undefined data as loading (covers initial load, refetch on id
+	// change, and non-404 transport errors). Non-404 errors surface via the
+	// global GastownOfflineBanner; we keep this pane neutral.
+	if (!convoy) {
+		return (
+			<div className="flex flex-1 items-center justify-center p-8 text-xs text-muted-foreground">
+				Loading sprint…
 			</div>
 		);
 	}

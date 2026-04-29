@@ -6,7 +6,9 @@ interface UseQueryFake<T> {
 	data: T | undefined;
 	isLoading: boolean;
 	error: unknown;
+	isError?: boolean;
 	isFetching?: boolean;
+	isPending?: boolean;
 	refetch?: () => unknown;
 }
 
@@ -152,6 +154,36 @@ describe("ConvoyBoard", () => {
 		listState = { data: [convoy], isLoading: false, error: null };
 		statusState = { data: convoy, isLoading: false, error: null };
 		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain("No issues yet.");
+	});
+
+	it("distinguishes mid-selection refetch from a true 404 in ConvoyDetail", () => {
+		const convoy: Convoy = {
+			id: "cv-9",
+			title: "SS-4 epic",
+			status: "in_progress",
+			created_at: "2026-04-19T20:00:00Z",
+			tracked: [],
+		};
+		listState = { data: [convoy], isLoading: false, error: null };
+		// Mid-selection refetch: data transitively undefined, isLoading false.
+		// Without the fix this would falsely flash 'Sprint not found' between sprints.
+		statusState = {
+			data: undefined,
+			isLoading: false,
+			isFetching: true,
+			error: null,
+		};
+		const refetching = renderToStaticMarkup(<ConvoyBoard />);
+		expect(refetching).toContain("Loading sprint");
+		expect(refetching).not.toContain("Sprint not found");
+		// Genuine 404 from the server still surfaces the red not-found UI.
+		statusState = {
+			data: undefined,
+			isLoading: false,
+			isError: true,
+			error: { data: { code: "NOT_FOUND" } },
+		};
+		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain("Sprint not found");
 	});
 
 	it("names unresolved tracked issue references instead of rendering blank status columns", () => {

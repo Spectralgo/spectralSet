@@ -4,11 +4,13 @@ import {
 	convoyStatus,
 	createConvoy,
 	deriveBeadStatus,
+	GastownCliError,
 	getConvoyBeads,
 	type ListConvoysArgs,
 	listConvoys,
 	updateConvoyBeadStatus,
 } from "@spectralset/gastown-cli-client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
 import { getProcessEnvWithShellPath } from "../workspaces/utils/shell-env";
@@ -156,16 +158,30 @@ export const createGastownConvoysRouter = (
 			),
 		status: publicProcedure
 			.input(convoyStatusInputSchema)
-			.query(async ({ input }) =>
-				convoyStatusImpl(
-					{
-						id: input.id,
-						townRoot:
-							resolveTownPathImpl(input.townPath) ?? discoverTownRootImpl(),
-					},
-					await shellOptions(),
-				),
-			),
+			.query(async ({ input }) => {
+				try {
+					return await convoyStatusImpl(
+						{
+							id: input.id,
+							townRoot:
+								resolveTownPathImpl(input.townPath) ?? discoverTownRootImpl(),
+						},
+						await shellOptions(),
+					);
+				} catch (error) {
+					if (
+						error instanceof GastownCliError &&
+						/not found/i.test(error.stderr)
+					) {
+						throw new TRPCError({
+							code: "NOT_FOUND",
+							message: `Sprint ${input.id} not found`,
+							cause: error,
+						});
+					}
+					throw error;
+				}
+			}),
 		create: publicProcedure
 			.input(createConvoyInputSchema)
 			.mutation(async ({ input }) => {
