@@ -5,7 +5,6 @@ import { InboxIcon } from "lucide-react";
 import { useState } from "react";
 import { MAIL_INBOX_QUERY_KEY } from "renderer/components/Gastown/MailPanel/ComposeMailDialog";
 import { useOptimisticMutation } from "renderer/hooks/useOptimisticMutation";
-import { electronTrpc } from "renderer/lib/electron-trpc";
 import type { MailMessage } from "renderer/lib/gastown/mail-types";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { useMailPileKeybindings } from "./useMailPileKeybindings";
@@ -45,8 +44,18 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 		);
 		qc.invalidateQueries({ queryKey: MAIL_INBOX_QUERY_KEY });
 	};
-	const archive = electronTrpc.gastown.mail.archive.useMutation({
-		onSuccess: done("Archived"),
+	const archive = useOptimisticMutation<
+		{ ok: true },
+		Error,
+		{ ids: string[]; townPath?: string },
+		MailMessage[]
+	>({
+		mutationFn: (input) =>
+			electronTrpcClient.gastown.mail.archive.mutate(input),
+		queryKey: MAIL_INBOX_QUERY_KEY,
+		applyOptimistic: (prev, vars) =>
+			prev?.filter((m) => !vars.ids.includes(m.id)),
+		onSuccess: (r, v) => done("Archived")(r, v),
 		onError: (e) => toast.error(e.message || "Archive failed"),
 	});
 	const markRead = useOptimisticMutation<
