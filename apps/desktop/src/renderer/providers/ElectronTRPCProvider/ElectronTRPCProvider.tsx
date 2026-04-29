@@ -1,13 +1,36 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { toast } from "@spectralset/ui/sonner";
+import {
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from "@tanstack/react-query";
+import {
+	createGastownToastCoalescer,
+	nextRetryDelay,
+	shouldRetryQuery,
+} from "renderer/lib/electron-query-retry";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { electronReactClient } from "../../lib/trpc-client";
 
-// Shared QueryClient for tRPC hooks and router loaders
+// gastown.* queries opt into exponential-backoff retry (10s/20s/40s/60s/60s)
+// because `gt` is an external CLI that the user can kill/restart at will.
+// Per-query overrides (e.g. useGastownProbe sets `retry: false`) still win.
+// Mutations stay at `retry: false` — replaying mail.send / nuke / convoy.create
+// is an idempotency hazard.
+const coalescer = createGastownToastCoalescer(toast);
+
+const queryCache = new QueryCache({
+	onError: (_err, query) => coalescer.onQueryError(query.queryKey),
+	onSuccess: (_data, query) => coalescer.onQuerySuccess(query.queryKey),
+});
+
 const queryClient = new QueryClient({
+	queryCache,
 	defaultOptions: {
 		queries: {
 			networkMode: "always",
-			retry: false,
+			retry: shouldRetryQuery,
+			retryDelay: nextRetryDelay,
 		},
 		mutations: {
 			networkMode: "always",
