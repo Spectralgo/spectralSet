@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HiOutlineWifi } from "react-icons/hi2";
 import { GastownOfflineBanner } from "renderer/components/Gastown/GastownOfflineBanner";
+import { InflightIndicator } from "renderer/components/Gastown/InflightIndicator";
 import { NewWorkspaceModal } from "renderer/components/NewWorkspaceModal";
 import { Paywall } from "renderer/components/Paywall";
 import { useUpdateListener } from "renderer/components/UpdateToast";
@@ -204,6 +205,7 @@ function AuthenticatedLayout() {
 					>
 						<AgentHooks />
 						<GastownOfflineBanner />
+						<InflightIndicator />
 						<Outlet />
 						<WorkspaceInitEffects />
 						{isV2CloudEnabled ? (
