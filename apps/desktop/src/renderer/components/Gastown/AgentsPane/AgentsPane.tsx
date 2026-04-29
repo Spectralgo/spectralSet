@@ -1,4 +1,5 @@
 import { AgentCVPanel } from "renderer/components/Gastown/AgentCVPanel";
+import { PaneErrorBoundary } from "renderer/components/Shell/PaneErrorBoundary";
 import type { BaseTab, Pane } from "shared/tabs-types";
 
 interface AgentsPaneProps {
@@ -12,7 +13,9 @@ export function AgentsPane(_props: AgentsPaneProps) {
 			data-agents-root
 			className="flex h-full w-full min-w-[320px] flex-col bg-background"
 		>
-			<AgentCVPanel />
+			<PaneErrorBoundary>
+				<AgentCVPanel />
+			</PaneErrorBoundary>
 		</div>
 	);
 }
