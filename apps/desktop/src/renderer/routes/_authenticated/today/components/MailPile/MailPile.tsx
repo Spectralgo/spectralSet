@@ -44,6 +44,10 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 		);
 		qc.invalidateQueries({ queryKey: MAIL_INBOX_QUERY_KEY });
 	};
+	const failToast = (verb: string) => (_e: Error, v: { ids: string[] }) => {
+		const n = v.ids.length;
+		toast.error(`${verb} failed for ${n} item${n === 1 ? "" : "s"} · retry`);
+	};
 	const archive = useOptimisticMutation<
 		{ ok: true },
 		Error,
@@ -56,7 +60,7 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 		applyOptimistic: (prev, vars) =>
 			prev?.filter((m) => !vars.ids.includes(m.id)),
 		onSuccess: (r, v) => done("Archived")(r, v),
-		onError: (e) => toast.error(e.message || "Archive failed"),
+		onError: failToast("Archive"),
 	});
 	const markRead = useOptimisticMutation<
 		{ ok: true },
@@ -70,7 +74,7 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 		applyOptimistic: (prev, vars) =>
 			prev?.map((m) => (vars.ids.includes(m.id) ? { ...m, read: true } : m)),
 		onSuccess: (r, v) => done("Marked")(r, v),
-		onError: (e) => toast.error(e.message || "Mark-read failed"),
+		onError: failToast("Mark-read"),
 	});
 	const busy = archive.isPending || markRead.isPending;
 	const onBulkArchive = () => {
