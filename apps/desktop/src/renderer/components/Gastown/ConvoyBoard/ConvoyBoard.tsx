@@ -4,9 +4,12 @@ import { Progress } from "@spectralset/ui/progress";
 import { toast } from "@spectralset/ui/sonner";
 import { Switch } from "@spectralset/ui/switch";
 import { cn } from "@spectralset/ui/utils";
+import { useNavigate } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { useMemo, useState } from "react";
 import {
+	HiOutlineArrowPath,
+	HiOutlineArrowTopRightOnSquare,
 	HiOutlineClipboard,
 	HiOutlineClipboardDocumentList,
 	HiOutlinePlus,
@@ -41,15 +44,30 @@ const ISSUE_STATUS_ORDER = [
 	"closed",
 ] as const;
 
-function statusClass(status: string): string {
-	return STATUS_CLASS[status] ?? "bg-muted text-muted-foreground";
+function displayText(
+	value: string | null | undefined,
+	fallback: string,
+): string {
+	const trimmed = value?.trim();
+	return trimmed ? trimmed : fallback;
 }
 
-export function statusLabel(status: string): string {
-	const known = STATUS_LABELS[status];
+function normalizeStatus(status: string | null | undefined): string {
+	return displayText(status, "uncategorized");
+}
+
+function statusClass(status: string | null | undefined): string {
+	return (
+		STATUS_CLASS[normalizeStatus(status)] ?? "bg-muted text-muted-foreground"
+	);
+}
+
+export function statusLabel(status: string | null | undefined): string {
+	const normalized = normalizeStatus(status);
+	if (normalized === "uncategorized") return "Uncategorized";
+	const known = STATUS_LABELS[normalized];
 	if (known) return known;
-	if (!status) return "Unknown";
-	return `Unknown · ${status}`;
+	return `Unknown · ${normalized}`;
 }
 
 function progressCounts(c: Pick<Convoy, "completed" | "total" | "tracked">): {
@@ -57,7 +75,9 @@ function progressCounts(c: Pick<Convoy, "completed" | "total" | "tracked">): {
 	total: number;
 } {
 	const total = c.total ?? c.tracked.length;
-	const fromTracked = c.tracked.filter((t) => t.status === "closed").length;
+	const fromTracked = c.tracked.filter(
+		(t) => normalizeStatus(t.status) === "closed",
+	).length;
 	const completed = c.completed != null ? c.completed : fromTracked;
 	return { completed, total };
 }
@@ -125,6 +145,7 @@ export function ConvoyBoard() {
 			convoys.find((c) => c.id === selectedId)?.id ?? convoys[0]?.id ?? null,
 		[convoys, selectedId],
 	);
+	const isRefreshing = Boolean(listQuery.isFetching && !listQuery.isLoading);
 
 	const handleOpenChange = (next: boolean) => {
 		setCreateOpen(next);
@@ -141,7 +162,7 @@ export function ConvoyBoard() {
 						Sprint planning for tracked issues.
 					</p>
 				</div>
-				<div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
+				<div className="ml-auto flex items-center gap-3">
 					<Button
 						size="sm"
 						variant="outline"
@@ -151,7 +172,21 @@ export function ConvoyBoard() {
 						<HiOutlinePlus className="size-3.5" />
 						New sprint
 					</Button>
-					<div className="flex items-center gap-2">
+					<Button
+						type="button"
+						variant="ghost"
+						size="xs"
+						onClick={() => {
+							void listQuery.refetch();
+						}}
+						disabled={listQuery.isLoading}
+					>
+						<HiOutlineArrowPath
+							className={cn("size-3.5", isRefreshing && "animate-spin")}
+						/>
+						{isRefreshing ? "Refreshing" : "Refresh"}
+					</Button>
+					<div className="flex items-center gap-2 text-xs text-muted-foreground">
 						<label htmlFor="convoy-show-closed" className="cursor-pointer">
 							Show completed
 						</label>
@@ -172,6 +207,7 @@ export function ConvoyBoard() {
 					convoys={convoys}
 					isLoading={listQuery.isLoading}
 					isError={!!listQuery.error}
+					showAll={showAll}
 					selectedId={resolvedSelectedId}
 					onSelect={setSelectedId}
 				/>
@@ -200,6 +236,7 @@ interface ConvoyListProps {
 	convoys: Convoy[];
 	isLoading: boolean;
 	isError: boolean;
+	showAll: boolean;
 	selectedId: string | null;
 	onSelect: (id: string) => void;
 }
@@ -208,13 +245,21 @@ function ConvoyList({
 	convoys,
 	isLoading,
 	isError,
+	showAll,
 	selectedId,
 	onSelect,
 }: ConvoyListProps) {
+	const sprintScope = showAll ? "total" : "active";
+	const countLabel = `${convoys.length} ${sprintScope} sprint${
+		convoys.length === 1 ? "" : "s"
+	} found`;
 	const body = isLoading ? (
 		<div className="p-4 text-xs text-muted-foreground">Loading sprints…</div>
 	) : convoys.length === 0 || isError ? (
-		<div className="p-4 text-xs text-muted-foreground">No active sprints.</div>
+		<div className="space-y-1 p-4 text-xs text-muted-foreground">
+			<div>No {sprintScope} sprints found.</div>
+			<div>Refresh after creating a convoy in Gas Town.</div>
+		</div>
 	) : (
 		convoys.map((c) => {
 			const { completed, total } = progressCounts(c);
@@ -268,8 +313,15 @@ function ConvoyList({
 	);
 	return (
 		<div className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-border/60 bg-muted/10">
-			<div className="border-b border-border/40 px-3 py-2 text-[11px] font-medium uppercase text-muted-foreground">
-				Sprint backlog
+			<div className="border-b border-border/40 px-3 py-2">
+				<div className="text-[11px] font-medium uppercase text-muted-foreground">
+					Sprint backlog
+				</div>
+				{!isLoading && !isError ? (
+					<div className="mt-0.5 text-[11px] text-muted-foreground">
+						{countLabel}
+					</div>
+				) : null}
 			</div>
 			{body}
 		</div>
@@ -282,6 +334,7 @@ interface ConvoyDetailProps {
 }
 
 function ConvoyDetail({ id, onSelectBead }: ConvoyDetailProps) {
+	const navigate = useNavigate();
 	const statusQuery = electronTrpc.gastown.convoys.status.useQuery(
 		{ id: id ?? "" },
 		{ enabled: !!id, refetchInterval: 10_000, refetchOnWindowFocus: false },
@@ -313,6 +366,13 @@ function ConvoyDetail({ id, onSelectBead }: ConvoyDetailProps) {
 	const { completed, total } = progressCounts(convoy);
 	const percent = progressPercent(completed, total);
 	const remaining = Math.max(0, total - completed);
+	const openIssueBoard = () => {
+		void navigate({
+			to: "/convoys/$convoyId/board",
+			params: { convoyId: convoy.id },
+			search: { mode: "kanban" },
+		});
+	};
 
 	return (
 		<div className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -329,11 +389,24 @@ function ConvoyDetail({ id, onSelectBead }: ConvoyDetailProps) {
 					>
 						{statusLabel(convoy.status)}
 					</span>
+					<Button
+						type="button"
+						variant="outline"
+						size="xs"
+						className="ml-auto"
+						onClick={openIssueBoard}
+					>
+						<HiOutlineArrowTopRightOnSquare className="size-3.5" />
+						Open issue board
+					</Button>
 				</div>
 				<h2 className="truncate text-base font-semibold">{convoy.title}</h2>
 				<div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
 					<span className="font-mono">{convoy.id}</span>
 					<span>{safeRelativeTime(convoy.created_at)}</span>
+					<span>
+						{total} tracked issue reference{total === 1 ? "" : "s"}
+					</span>
 				</div>
 				<div className="mt-4 flex items-center gap-3">
 					<Progress value={percent} className="h-1.5 flex-1" />
@@ -368,9 +441,10 @@ function issueColumns(issues: ConvoyTracked[]) {
 	const grouped = new Map<string, ConvoyTracked[]>();
 	for (const status of ISSUE_STATUS_ORDER) grouped.set(status, []);
 	for (const issue of issues) {
-		const bucket = grouped.get(issue.status);
+		const status = normalizeStatus(issue.status);
+		const bucket = grouped.get(status);
 		if (bucket) bucket.push(issue);
-		else grouped.set(issue.status, [issue]);
+		else grouped.set(status, [issue]);
 	}
 	return [...grouped.entries()].filter(
 		([status, bucket]) =>
@@ -451,12 +525,14 @@ function IssueCard({
 					{issue.id}
 				</span>
 				<span className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
-					{issue.issue_type}
+					{displayText(issue.issue_type, "Unknown type")}
 				</span>
 			</div>
-			<p className="mt-1 line-clamp-2 text-xs leading-snug">{issue.title}</p>
+			<p className="mt-1 line-clamp-2 text-xs leading-snug">
+				{displayText(issue.title, "Issue details unavailable")}
+			</p>
 			<div className="mt-2 text-[10px] text-muted-foreground">
-				{issue.dependency_type}
+				{displayText(issue.dependency_type, "tracks")}
 			</div>
 		</button>
 	);
@@ -504,7 +580,9 @@ function IssueTable({
 							className="cursor-pointer border-b border-border/40 hover:bg-muted/40"
 						>
 							<td className="px-3 py-1.5 font-mono text-[11px]">{t.id}</td>
-							<td className="max-w-[360px] truncate px-3 py-1.5">{t.title}</td>
+							<td className="max-w-[360px] truncate px-3 py-1.5">
+								{displayText(t.title, "Issue details unavailable")}
+							</td>
 							<td className="px-3 py-1.5">
 								<span
 									className={cn(
@@ -516,10 +594,10 @@ function IssueTable({
 								</span>
 							</td>
 							<td className="px-3 py-1.5 text-[11px] text-muted-foreground">
-								{t.issue_type}
+								{displayText(t.issue_type, "Unknown type")}
 							</td>
 							<td className="px-3 py-1.5 text-[11px] text-muted-foreground">
-								{t.dependency_type}
+								{displayText(t.dependency_type, "tracks")}
 							</td>
 							<td className="px-2 py-1.5">
 								<button

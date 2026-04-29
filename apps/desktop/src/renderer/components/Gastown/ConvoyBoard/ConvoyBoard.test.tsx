@@ -6,6 +6,8 @@ interface UseQueryFake<T> {
 	data: T | undefined;
 	isLoading: boolean;
 	error: unknown;
+	isFetching?: boolean;
+	refetch?: () => unknown;
 }
 
 let listState: UseQueryFake<Convoy[]> = {
@@ -77,14 +79,14 @@ describe("ConvoyBoard", () => {
 	it("renders empty and error states", () => {
 		listState = { data: [], isLoading: false, error: null };
 		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain(
-			"No active sprints.",
+			"No active sprints found.",
 		);
 
 		// Error state defers to the global GastownOfflineBanner; the list itself
 		// shows the empty state instead of a per-pane error message.
 		listState = { data: undefined, isLoading: false, error: new Error("x") };
 		const html = renderToStaticMarkup(<ConvoyBoard />);
-		expect(html).toContain("No active sprints.");
+		expect(html).toContain("No active sprints found.");
 		expect(html).not.toContain("Failed to load sprints");
 	});
 
@@ -119,7 +121,10 @@ describe("ConvoyBoard", () => {
 		const html = renderToStaticMarkup(<ConvoyBoard />);
 		expect(html).toContain("Sprints");
 		expect(html).toContain("Sprint planning for tracked issues.");
+		expect(html).toContain("1 active sprint found");
+		expect(html).toContain("Refresh");
 		expect(html).toContain("Sprint summary");
+		expect(html).toContain("Open issue board");
 		expect(html).toContain("Issues");
 		expect(html).toContain("Open");
 		expect(html).toContain("Done");
@@ -147,5 +152,32 @@ describe("ConvoyBoard", () => {
 		listState = { data: [convoy], isLoading: false, error: null };
 		statusState = { data: convoy, isLoading: false, error: null };
 		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain("No issues yet.");
+	});
+
+	it("names unresolved tracked issue references instead of rendering blank status columns", () => {
+		const convoy: Convoy = {
+			id: "cv-missing",
+			title: "Sparse sprint",
+			status: "open",
+			created_at: "2026-04-19T20:00:00Z",
+			tracked: [
+				{
+					id: "ss-missing",
+					title: "",
+					status: "",
+					dependency_type: "tracks",
+					issue_type: "",
+				},
+			],
+		};
+		listState = { data: [convoy], isLoading: false, error: null };
+		statusState = { data: convoy, isLoading: false, error: null };
+
+		const html = renderToStaticMarkup(<ConvoyBoard />);
+		expect(html).toContain("1 active sprint found");
+		expect(html).toContain("Uncategorized");
+		expect(html).toContain("Issue details unavailable");
+		expect(html).toContain("Unknown type");
+		expect(html).toContain("tracks");
 	});
 });

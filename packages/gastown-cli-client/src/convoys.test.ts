@@ -9,6 +9,7 @@ import {
 	createConvoy,
 	deriveBeadStatus,
 	listConvoys,
+	updateConvoyBeadStatus,
 } from "./convoys";
 import { GastownCliError } from "./exec";
 
@@ -392,6 +393,44 @@ describe("createConvoy()", () => {
 		});
 		await expect(
 			createConvoy({ name: "X", issueIds: ["ss-a"] }, {}, { spawn: spawnFn }),
+		).rejects.toBeInstanceOf(GastownCliError);
+	});
+});
+
+describe("updateConvoyBeadStatus()", () => {
+	it("invokes `bd update <id> --status <status>` from the town root", async () => {
+		await withTownRoot(async (townRoot) => {
+			const { spawnFn, calls } = makeRecordingSpawn({
+				stdout: "",
+				exitCode: 0,
+			});
+			await updateConvoyBeadStatus(
+				{ beadId: "ss-fast", status: "closed", townRoot },
+				{},
+				{ spawn: spawnFn },
+			);
+			expect(calls[0]?.bin).toBe("bd");
+			expect(calls[0]?.argv).toEqual([
+				"update",
+				"ss-fast",
+				"--status",
+				"closed",
+			]);
+			expect(calls[0]?.options.cwd).toBe(townRoot);
+		});
+	});
+
+	it("throws GastownCliError on non-zero exit", async () => {
+		const { spawnFn } = makeRecordingSpawn({
+			stderr: "not found",
+			exitCode: 1,
+		});
+		await expect(
+			updateConvoyBeadStatus(
+				{ beadId: "ss-missing", status: "open" },
+				{},
+				{ spawn: spawnFn },
+			),
 		).rejects.toBeInstanceOf(GastownCliError);
 	});
 });
