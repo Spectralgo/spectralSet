@@ -1,15 +1,15 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
+import {
+	GASTOWN_PROBE_QUERY_KEY,
+	useGastownProbe,
+} from "renderer/hooks/useGastownProbe";
 import { electronTrpc } from "renderer/lib/electron-trpc";
-import { electronTrpcClient } from "renderer/lib/trpc-client";
 
 export type GastownConnectionState = "connected" | "reconnecting" | "offline";
 
-export const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
-
 const OFFLINE_THRESHOLD_MS = 60_000;
 const OFFLINE_FAILURE_COUNT = 3;
-const REFRESH_INTERVAL_MS = 5_000;
 
 export interface ConnectionDerivationInput {
 	enabled: boolean;
@@ -49,34 +49,27 @@ export function useGastownConnectionState(): UseGastownConnectionStateResult {
 	const enabledQuery = electronTrpc.settings.getGastownEnabled.useQuery();
 	const enabled = enabledQuery.data?.enabled ?? false;
 	const queryClient = useQueryClient();
-	const probeQuery = useQuery({
-		queryKey: PROBE_QUERY_KEY,
-		queryFn: () => electronTrpcClient.gastown.probe.query(),
-		enabled,
-		refetchInterval: REFRESH_INTERVAL_MS,
-		retry: false,
-	});
+	const probe = useGastownProbe({ enabled });
 
 	const probeOk =
-		probeQuery.isSuccess &&
-		probeQuery.data?.installed === true &&
-		!probeQuery.isError;
-	const lastSeenAt = probeQuery.dataUpdatedAt || null;
+		probe.data !== undefined &&
+		probe.data.installed === true &&
+		probe.error === null;
 	const state = deriveConnectionState({
 		enabled,
 		probeOk,
-		failureCount: probeQuery.failureCount,
-		lastSeenAt,
+		failureCount: probe.query.failureCount,
+		lastSeenAt: probe.lastSeenAt,
 		now: Date.now(),
 	});
 
 	const retryNow = useCallback(() => {
-		void queryClient.invalidateQueries({ queryKey: PROBE_QUERY_KEY });
+		void queryClient.invalidateQueries({ queryKey: GASTOWN_PROBE_QUERY_KEY });
 	}, [queryClient]);
 
 	return {
 		state,
-		lastSeenAt: lastSeenAt ? new Date(lastSeenAt) : null,
+		lastSeenAt: probe.lastSeenAt ? new Date(probe.lastSeenAt) : null,
 		retryNow,
 		enabled,
 	};
