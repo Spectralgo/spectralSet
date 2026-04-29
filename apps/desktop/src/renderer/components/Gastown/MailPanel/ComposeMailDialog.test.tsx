@@ -44,8 +44,32 @@ mock.module("@tanstack/react-query", () => ({
 	},
 }));
 
-const { ComposeMailDialog, MAIL_INBOX_QUERY_KEY, buildSendVariables } =
-	await import("./ComposeMailDialog");
+const {
+	ComposeMailDialog,
+	MAIL_INBOX_QUERY_KEY,
+	buildSendVariables,
+	emptyForm,
+} = await import("./ComposeMailDialog");
+
+describe("emptyForm", () => {
+	it("defaults pinned=true and type=task when recipient is mayor/", () => {
+		expect(emptyForm("mayor/")).toMatchObject({ pinned: true, type: "task" });
+	});
+
+	it("defaults pinned=false and type=notification for non-mayor recipients", () => {
+		expect(emptyForm("spectralSet/witness")).toMatchObject({
+			pinned: false,
+			type: "notification",
+		});
+	});
+
+	it("defaults pinned=false for empty recipient", () => {
+		expect(emptyForm("")).toMatchObject({
+			pinned: false,
+			type: "notification",
+		});
+	});
+});
 
 describe("buildSendVariables", () => {
 	const base = {

@@ -66,14 +66,15 @@ interface FormState {
 	pinned: boolean;
 }
 
-function emptyForm(initialTo: string): FormState {
+export function emptyForm(initialTo: string): FormState {
+	const isMayor = initialTo === MAYOR_ADDRESS;
 	return {
 		to: initialTo,
 		subject: "",
 		body: "",
 		priority: "normal",
-		type: "notification",
-		pinned: false,
+		type: isMayor ? "task" : "notification",
+		pinned: isMayor,
 	};
 }
 
@@ -120,15 +121,25 @@ export function ComposeMailDialog({
 	const townPath = useGastownTownPath();
 	const addressOptions = useAddressOptions();
 	const [form, setForm] = useState<FormState>(() => emptyForm(initialTo));
+	const [pinnedTouched, setPinnedTouched] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const addressListId = useId();
 
 	useEffect(() => {
 		if (!open) {
 			setForm(emptyForm(initialTo));
+			setPinnedTouched(false);
 			setError(null);
 		}
 	}, [open, initialTo]);
+
+	useEffect(() => {
+		if (pinnedTouched) return;
+		const shouldPin = form.to === MAYOR_ADDRESS;
+		setForm((prev) =>
+			prev.pinned === shouldPin ? prev : { ...prev, pinned: shouldPin },
+		);
+	}, [form.to, pinnedTouched]);
 
 	const sendMutation = useMutation({
 		mutationFn: (input: SendMailVariables) =>
@@ -245,7 +256,10 @@ export function ComposeMailDialog({
 					<Label className="flex-row gap-2 text-xs font-normal">
 						<Checkbox
 							checked={form.pinned}
-							onCheckedChange={(c) => update("pinned", c === true)}
+							onCheckedChange={(c) => {
+								setPinnedTouched(true);
+								update("pinned", c === true);
+							}}
 						/>
 						Pinned (survives recipient session resets)
 					</Label>
