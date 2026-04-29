@@ -50,6 +50,9 @@ export {
 	getConvoyBeads,
 	type ListConvoysArgs,
 	listConvoys,
+	type MutableConvoyBeadStatus,
+	type UpdateConvoyBeadStatusArgs,
+	updateConvoyBeadStatus,
 } from "./convoys";
 export {
 	expandTilde,

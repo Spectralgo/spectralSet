@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
 	type ExecGtDeps,
 	type ExecGtOptions,
+	execBd,
 	execDolt,
 	execGt,
 	GastownCliError,
@@ -295,4 +296,30 @@ export async function convoyStatus(
 		throw new GastownCliError({ argv, exitCode, stdout, stderr });
 	}
 	return convoyStatusSchema.parse(JSON.parse(stdout));
+}
+
+export type MutableConvoyBeadStatus = "open" | "hooked" | "closed";
+
+export interface UpdateConvoyBeadStatusArgs {
+	beadId: string;
+	status: MutableConvoyBeadStatus;
+	/** Gas Town town root. Defaults to process.env.GT_TOWN_ROOT. */
+	townRoot?: string;
+}
+
+export async function updateConvoyBeadStatus(
+	args: UpdateConvoyBeadStatusArgs,
+	options: ExecGtOptions = {},
+	deps: ExecGtDeps = {},
+): Promise<void> {
+	const argv = ["update", args.beadId, "--status", args.status];
+	const cwd = resolveTownCwd(args.townRoot, options.cwd);
+	const { stdout, stderr, exitCode } = await execBd(
+		argv,
+		{ ...options, cwd },
+		deps,
+	);
+	if (exitCode !== 0) {
+		throw new GastownCliError({ argv, exitCode, stdout, stderr });
+	}
 }

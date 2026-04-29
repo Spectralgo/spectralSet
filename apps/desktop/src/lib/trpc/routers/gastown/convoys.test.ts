@@ -186,3 +186,54 @@ describe("gastownConvoys.beads", () => {
 		]);
 	});
 });
+
+describe("gastownConvoys.updateBeadStatus", () => {
+	test("updates a bead status through the CLI client and clears the list cache", async () => {
+		let observedUpdate:
+			| {
+					beadId: string;
+					status: "open" | "hooked" | "closed";
+					townRoot?: string;
+			  }
+			| undefined;
+		let listCalls = 0;
+		const router = createGastownConvoysRouter({
+			listConvoysFn: async () => {
+				listCalls += 1;
+				return [
+					convoy({
+						id: listCalls === 1 ? "cached" : "fresh",
+					}),
+				];
+			},
+			updateConvoyBeadStatusFn: async (args) => {
+				observedUpdate = args;
+			},
+			resolveTownPathFn: (townPath) =>
+				townPath === "~/town" ? "/expanded/town" : townPath,
+		});
+		const caller = router.createCaller({});
+
+		await expect(caller.list({ townPath: "~/town" })).resolves.toEqual([
+			convoy({ id: "cached" }),
+		]);
+		await expect(
+			caller.updateBeadStatus({
+				convoyId: "hq-cv-fast",
+				beadId: "ss-fast",
+				status: "closed",
+				townPath: "~/town",
+			}),
+		).resolves.toEqual({ ok: true });
+		await expect(caller.list({ townPath: "~/town" })).resolves.toEqual([
+			convoy({ id: "fresh" }),
+		]);
+
+		expect(observedUpdate).toEqual({
+			beadId: "ss-fast",
+			status: "closed",
+			townRoot: "/expanded/town",
+		});
+		expect(listCalls).toBe(2);
+	});
+});
