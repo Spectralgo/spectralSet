@@ -70,12 +70,17 @@ export function CreateSprintModal({
 				: isDuplicate
 					? "A sprint with this name already exists"
 					: null;
+	const issueIdError =
+		trimmedIssueId.length > 0 && /[,\s]/.test(trimmedIssueId)
+			? "Enter a single issue ID — track more after creation"
+			: null;
 	const canSubmit =
 		!isPending &&
 		trimmedName.length > 0 &&
 		trimmedName.length <= 100 &&
 		!isDuplicate &&
-		trimmedIssueId.length > 0;
+		trimmedIssueId.length > 0 &&
+		!issueIdError;
 
 	const handleSubmit = () => {
 		if (!canSubmit) return;
@@ -125,15 +130,20 @@ export function CreateSprintModal({
 						<Label htmlFor="sprint-issue">First issue</Label>
 						<Input
 							id="sprint-issue"
-							placeholder="e.g. ss-abc, gt-xyz"
+							placeholder="e.g. ss-abc"
 							value={issueId}
 							onChange={(e) => setIssueId(e.target.value)}
 							disabled={isPending}
 							className="font-mono text-sm"
+							aria-invalid={Boolean(issueIdError)}
 						/>
-						<p className="text-muted-foreground text-xs">
-							Required by gt — at least one issue ID to seed the sprint.
-						</p>
+						{issueIdError ? (
+							<p className="text-destructive text-xs">{issueIdError}</p>
+						) : (
+							<p className="text-muted-foreground text-xs">
+								Track more issues after creation.
+							</p>
+						)}
 					</div>
 					<div className="flex items-center justify-between rounded-md border border-border/60 px-3 py-2">
 						<div>

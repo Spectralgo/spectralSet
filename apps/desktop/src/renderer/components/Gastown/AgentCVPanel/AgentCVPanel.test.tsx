@@ -112,10 +112,11 @@ describe("AgentCVPanel", () => {
 		expect(html).toContain("Loading…");
 	});
 
-	it("renders error state", () => {
+	it("falls through to empty state on error (banner owns the error)", () => {
 		listState = { data: undefined, isLoading: false, error: new Error("x") };
 		const html = renderToStaticMarkup(<AgentCVPanel />);
-		expect(html).toContain("Failed to load agents");
+		expect(html).toContain("No agents.");
+		expect(html).not.toContain("Failed to load agents");
 	});
 
 	it("groups agents by kind (top-level) and by rig", () => {

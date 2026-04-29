@@ -41,8 +41,6 @@ export function TodayPane(_props: TodayPaneProps) {
 		enabled: gastownEnabled === true,
 	});
 	const probe = probeQuery.data ?? null;
-	const probeFailed = probeQuery.isError;
-	const townUnreachable = probe !== null && !probe.installed;
 	const workspaceNull = probe !== null && probe.townRoot === null;
 	const townPath = useGastownTownPath();
 	const tp = townPath || undefined;
@@ -51,7 +49,7 @@ export function TodayPane(_props: TodayPaneProps) {
 		probe !== null &&
 		probe.installed &&
 		probe.townRoot !== null &&
-		!probeFailed;
+		!probeQuery.isError;
 	const [sinceTime] = useState(() => new Date().toISOString());
 	const digestQuery = electronTrpc.gastown.today.digest.useQuery(
 		{ sinceTime, ...(tp ? { townPath: tp } : {}) },
@@ -126,9 +124,6 @@ export function TodayPane(_props: TodayPaneProps) {
 		);
 	}
 	if (gastownEnabled === false) return <TodayGastownDisabled />;
-	if (probeFailed || townUnreachable) {
-		return <TodayGastownUnreachable error={probeQuery.error} />;
-	}
 	if (workspaceNull) return <TodayNoWorkspace />;
 
 	return (
@@ -206,29 +201,6 @@ function TodayGastownDisabled() {
 				>
 					Enable Gas Town
 				</button>
-			</div>
-		</TodayShell>
-	);
-}
-
-function TodayGastownUnreachable({
-	error,
-}: {
-	error: Error | null | undefined;
-}) {
-	return (
-		<TodayShell title="Today · Gas Town unreachable">
-			<div className="flex flex-col items-start gap-2">
-				<p className="text-sm text-destructive">
-					Gas Town CLI isn't responding.
-				</p>
-				{error ? (
-					<p className="text-xs text-muted-foreground">{error.message}</p>
-				) : null}
-				<p className="text-xs text-muted-foreground">
-					Check that the `gt` binary is installed and the Dolt server is
-					running.
-				</p>
 			</div>
 		</TodayShell>
 	);

@@ -253,13 +253,9 @@ function ConvoyList({
 	const countLabel = `${convoys.length} ${sprintScope} sprint${
 		convoys.length === 1 ? "" : "s"
 	} found`;
-	const body = isError ? (
-		<div className="p-4 text-xs text-destructive">
-			Failed to load sprints. Is Gas Town running?
-		</div>
-	) : isLoading ? (
+	const body = isLoading ? (
 		<div className="p-4 text-xs text-muted-foreground">Loading sprints…</div>
-	) : convoys.length === 0 ? (
+	) : convoys.length === 0 || isError ? (
 		<div className="space-y-1 p-4 text-xs text-muted-foreground">
 			<div>No {sprintScope} sprints found.</div>
 			<div>Refresh after creating a convoy in Gas Town.</div>

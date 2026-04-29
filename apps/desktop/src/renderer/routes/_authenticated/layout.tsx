@@ -11,6 +11,7 @@ import {
 import { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HiOutlineWifi } from "react-icons/hi2";
+import { GastownOfflineBanner } from "renderer/components/Gastown/GastownOfflineBanner";
 import { NewWorkspaceModal } from "renderer/components/NewWorkspaceModal";
 import { Paywall } from "renderer/components/Paywall";
 import { useUpdateListener } from "renderer/components/UpdateToast";
@@ -202,6 +203,7 @@ function AuthenticatedLayout() {
 						highlighterOptions={{ preferredHighlighter: "shiki-wasm" }}
 					>
 						<AgentHooks />
+						<GastownOfflineBanner />
 						<Outlet />
 						<WorkspaceInitEffects />
 						{isV2CloudEnabled ? (

@@ -1,13 +1,12 @@
 import type { Rig } from "@spectralset/gastown-cli-client";
 import { Spinner } from "@spectralset/ui/spinner";
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MAYOR_ADDRESS } from "renderer/components/Gastown/MailPanel/AddressPicker";
+import { useGastownProbe } from "renderer/hooks/useGastownProbe";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import type { MailMessage } from "renderer/lib/gastown/mail-types";
-import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { MailPile } from "./components/MailPile";
 import {
 	type RigReason,
@@ -23,8 +22,6 @@ import {
 	VerdictTail,
 } from "./components/VerdictTail";
 
-// Matches the sidebar's probe cache so both share a single in-flight request.
-const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
 const EMPTY_RIGS: Rig[] = [];
 
 console.log("[today-page] module loaded", { ts: Date.now() });
@@ -42,15 +39,11 @@ function TodayPage() {
 	const gastownEnabledQuery =
 		electronTrpc.settings.getGastownEnabled.useQuery();
 	const gastownEnabled = gastownEnabledQuery.data?.enabled ?? null;
-	const probeQuery = useQuery({
-		queryKey: PROBE_QUERY_KEY,
-		queryFn: () => electronTrpcClient.gastown.probe.query(),
+	const probeQuery = useGastownProbe({
 		enabled: gastownEnabled === true,
-	});
+	}).query;
 
 	const probe = probeQuery.data ?? null;
-	const probeFailed = probeQuery.isError;
-	const townUnreachable = probe !== null && !probe.installed;
 	const workspaceNull = probe !== null && probe.townRoot === null;
 	const townPath = useGastownTownPath();
 	const tp = townPath || undefined;
@@ -59,7 +52,7 @@ function TodayPage() {
 		probe !== null &&
 		probe.installed &&
 		probe.townRoot !== null &&
-		!probeFailed;
+		!probeQuery.isError;
 	const triageQuery = electronTrpc.gastown.today.triage.useQuery(
 		{ userAddress: MAYOR_ADDRESS, ...(tp ? { townPath: tp } : {}) },
 		{
@@ -96,8 +89,8 @@ function TodayPage() {
 
 	const branchState = {
 		workspaceNull,
-		probeFailed,
-		townUnreachable,
+		probeFailed: probeQuery.isError,
+		townUnreachable: probe !== null && !probe.installed,
 		gastownEnabled,
 	};
 
@@ -113,10 +106,6 @@ function TodayPage() {
 	if (gastownEnabled === false) {
 		console.log("[today-page] branch", "gastown-disabled", branchState);
 		return <TodayGastownDisabled isMac={isMac} />;
-	}
-	if (probeFailed || townUnreachable) {
-		console.log("[today-page] branch", "gastown-unreachable", branchState);
-		return <TodayGastownUnreachable isMac={isMac} error={probeQuery.error} />;
 	}
 	if (workspaceNull) {
 		console.log("[today-page] branch", "no-workspace", branchState);
@@ -192,31 +181,6 @@ function TodayGastownDisabled({ isMac }: { isMac: boolean }) {
 				>
 					Enable Gas Town
 				</button>
-			</div>
-		</TodayShell>
-	);
-}
-
-function TodayGastownUnreachable({
-	isMac,
-	error,
-}: {
-	isMac: boolean;
-	error: Error | null | undefined;
-}) {
-	return (
-		<TodayShell title="Today · Gas Town unreachable" isMac={isMac}>
-			<div className="flex flex-col items-start gap-2">
-				<p className="text-sm text-destructive">
-					Gas Town CLI isn't responding.
-				</p>
-				{error ? (
-					<p className="text-xs text-muted-foreground">{error.message}</p>
-				) : null}
-				<p className="text-xs text-muted-foreground">
-					Check that the `gt` binary is installed and the Dolt server is
-					running.
-				</p>
 			</div>
 		</TodayShell>
 	);
