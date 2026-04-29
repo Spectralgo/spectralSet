@@ -4,6 +4,17 @@ import type {
 	MailMessage,
 } from "@spectralset/gastown-cli-client";
 import { createGastownTodayRouter } from "./today";
+import { createTriageStateStore } from "./triage-state-store";
+
+function memoryStore(initial: string | null = null) {
+	let blob: string | null = initial;
+	return createTriageStateStore({
+		readFile: () => blob,
+		writeFile: (data) => {
+			blob = data;
+		},
+	});
+}
 
 function agent(
 	overrides: Partial<AgentSummary> & Pick<AgentSummary, "kind" | "state">,
@@ -165,6 +176,62 @@ describe("gastownToday.triage", () => {
 			severity: "PINNED",
 			sender: "mayor/",
 		});
+	});
+
+	test("ackCard removes the card from triage on next query", async () => {
+		const store = memoryStore();
+		const router = createGastownTodayRouter({
+			listAgentsFn: async () => [],
+			listInboxFn: async () => [
+				mail({
+					id: "esc-1",
+					subject: "polecat stalled",
+					type: "escalation",
+					priority: "high",
+				}),
+			],
+			resolveTownPathFn: () => undefined,
+			triageStateStore: store,
+		});
+		const caller = router.createCaller({});
+		expect((await caller.triage()).cards).toHaveLength(1);
+		await caller.ackCard({ cardId: "esc-1" });
+		expect((await caller.triage()).cards).toEqual([]);
+	});
+
+	test("snoozeCard hides the card and reveals it after TTL", async () => {
+		const store = memoryStore();
+		let now = 1_000;
+		const router = createGastownTodayRouter({
+			listAgentsFn: async () => [],
+			listInboxFn: async () => [
+				mail({
+					id: "esc-2",
+					subject: "stalled",
+					type: "escalation",
+					priority: "high",
+				}),
+			],
+			resolveTownPathFn: () => undefined,
+			triageStateStore: store,
+			now: () => now,
+		});
+		const caller = router.createCaller({});
+		await caller.snoozeCard({ cardId: "esc-2", ttlMs: 15 * 60_000 });
+		expect((await caller.triage()).cards).toEqual([]);
+		now += 15 * 60_000 + 1;
+		const restored = await caller.triage();
+		expect(restored.cards.map((c) => c.id)).toEqual(["esc-2"]);
+	});
+
+	test("openCard returns mail target for current card types", async () => {
+		const router = createGastownTodayRouter({
+			listAgentsFn: async () => [],
+			listInboxFn: async () => [],
+			resolveTownPathFn: () => undefined,
+		});
+		const result = await router.createCaller({}).openCard({ cardId: "esc-1" });
+		expect(result).toEqual({ type: "mail", target: "esc-1" });
 	});
 
 	test("skips non-urgent non-escalation messages entirely", async () => {

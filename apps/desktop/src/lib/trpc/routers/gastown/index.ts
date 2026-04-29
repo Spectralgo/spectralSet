@@ -33,6 +33,7 @@ import { createMailInboxCache } from "./mail-cache";
 import { extractPolecatWorkspaceSpecs } from "./polecat-discovery";
 import { resolveTownPath } from "./resolve-town-path";
 import { createGastownTodayRouter } from "./today";
+import { createTriageStateStore } from "./triage-state-store";
 
 export { resolveTownPath } from "./resolve-town-path";
 
@@ -311,6 +312,28 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		shellOptionsFn: shellOptions,
 	});
 
+	let triageStateStoreCached: ReturnType<typeof createTriageStateStore> | null =
+		null;
+	const triageStateStoreInstance = () => {
+		if (triageStateStoreCached) return triageStateStoreCached;
+		const { existsSync, readFileSync, writeFileSync } =
+			require("node:fs") as typeof import("node:fs");
+		const { join } = require("node:path") as typeof import("node:path");
+		let filePath: string;
+		try {
+			const { app } = require("electron") as typeof import("electron");
+			filePath = join(app.getPath("userData"), "triage-state.json");
+		} catch {
+			filePath = join(process.cwd(), "triage-state.json");
+		}
+		triageStateStoreCached = createTriageStateStore({
+			readFile: () =>
+				existsSync(filePath) ? readFileSync(filePath, "utf8") : null,
+			writeFile: (data) => writeFileSync(filePath, data, "utf8"),
+		});
+		return triageStateStoreCached;
+	};
+
 	return router({
 		probe: publicProcedure.input(probeInputSchema).query(async ({ input }) => {
 			const opts = await shellOptions();
@@ -457,6 +480,7 @@ export const createGastownRouter = (deps: GastownRouterDeps = {}) => {
 		today: createGastownTodayRouter({
 			resolveTownPathFn: resolveEffectiveTownPath,
 			inboxCache,
+			triageStateStore: triageStateStoreInstance(),
 		}),
 		reconcile: publicProcedure
 			.input(reconcileInputSchema)

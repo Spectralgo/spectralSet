@@ -13,6 +13,10 @@ import {
 	type MailInboxCache,
 } from "./mail-cache";
 import { resolveTownPath } from "./resolve-town-path";
+import {
+	noopTriageStateStore,
+	type TriageStateStore,
+} from "./triage-state-store";
 
 const townPathSchema = z.string().min(1).optional();
 
@@ -139,7 +143,18 @@ interface GastownTodayRouterDeps {
 	inboxCache?: MailInboxCache;
 	listInboxCacheStaleMs?: number;
 	now?: () => number;
+	triageStateStore?: TriageStateStore;
 }
+
+const cardActionInputSchema = z.object({ cardId: z.string().min(1) });
+const snoozeInputSchema = cardActionInputSchema.extend({
+	ttlMs: z.number().int().positive(),
+});
+const openCardResultSchema = z.object({
+	type: z.enum(["mail", "bead", "convoy"]),
+	target: z.string(),
+});
+export type OpenCardResult = z.infer<typeof openCardResultSchema>;
 
 async function shellOptions() {
 	return { env: await getProcessEnvWithShellPath() };
@@ -160,6 +175,7 @@ export const createGastownTodayRouter = (deps: GastownTodayRouterDeps = {}) => {
 				})
 			: defaultMailInboxCache);
 	const nowFn = deps.now ?? (() => Date.now());
+	const stateStore = deps.triageStateStore ?? noopTriageStateStore;
 
 	return router({
 		digest: publicProcedure
@@ -202,13 +218,33 @@ export const createGastownTodayRouter = (deps: GastownTodayRouterDeps = {}) => {
 				const cards: TriageCard[] = [];
 				for (const m of inbox) {
 					const card = classifyMail(m, now);
-					if (card) cards.push(card);
+					if (card && !stateStore.isHidden(card.id, now)) cards.push(card);
 				}
 				cards.sort((a, b) => {
 					const sev = SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity];
 					return sev !== 0 ? sev : a.ageMs - b.ageMs;
 				});
 				return { cards };
+			}),
+		ackCard: publicProcedure
+			.input(cardActionInputSchema)
+			.mutation(({ input }) => {
+				stateStore.ack(input.cardId, nowFn());
+				return { ok: true as const };
+			}),
+		snoozeCard: publicProcedure
+			.input(snoozeInputSchema)
+			.mutation(({ input }) => {
+				stateStore.snooze(input.cardId, nowFn() + input.ttlMs);
+				return { ok: true as const };
+			}),
+		openCard: publicProcedure
+			.input(cardActionInputSchema)
+			.mutation(({ input }): OpenCardResult => {
+				// Today every triage card type derives from mail (incident,
+				// rejection, pinned-mail). The discriminator on the return type
+				// keeps the door open for bead/convoy cards without a client churn.
+				return { type: "mail", target: input.cardId };
 			}),
 	});
 };
