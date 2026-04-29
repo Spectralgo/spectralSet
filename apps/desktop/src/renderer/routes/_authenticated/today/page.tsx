@@ -1,13 +1,12 @@
 import type { Rig } from "@spectralset/gastown-cli-client";
 import { Spinner } from "@spectralset/ui/spinner";
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MAYOR_ADDRESS } from "renderer/components/Gastown/MailPanel/AddressPicker";
+import { useGastownProbe } from "renderer/hooks/useGastownProbe";
 import { useGastownTownPath } from "renderer/hooks/useGastownTownPath";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import type { MailMessage } from "renderer/lib/gastown/mail-types";
-import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { MailPile } from "./components/MailPile";
 import {
 	type RigReason,
@@ -23,8 +22,6 @@ import {
 	VerdictTail,
 } from "./components/VerdictTail";
 
-// Matches the sidebar's probe cache so both share a single in-flight request.
-const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
 const EMPTY_RIGS: Rig[] = [];
 
 console.log("[today-page] module loaded", { ts: Date.now() });
@@ -42,11 +39,9 @@ function TodayPage() {
 	const gastownEnabledQuery =
 		electronTrpc.settings.getGastownEnabled.useQuery();
 	const gastownEnabled = gastownEnabledQuery.data?.enabled ?? null;
-	const probeQuery = useQuery({
-		queryKey: PROBE_QUERY_KEY,
-		queryFn: () => electronTrpcClient.gastown.probe.query(),
+	const probeQuery = useGastownProbe({
 		enabled: gastownEnabled === true,
-	});
+	}).query;
 
 	const probe = probeQuery.data ?? null;
 	const probeFailed = probeQuery.isError;

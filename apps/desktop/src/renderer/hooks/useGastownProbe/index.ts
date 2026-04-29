@@ -6,7 +6,7 @@ export {
 	type GastownProbe,
 	nextProbeInterval,
 	type ProbeStatus,
-	useGastownProbe,
 	type UseGastownProbeOptions,
 	type UseGastownProbeResult,
+	useGastownProbe,
 } from "./useGastownProbe";

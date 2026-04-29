@@ -1,9 +1,13 @@
-import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useWindowVisibility } from "renderer/hooks/useWindowVisibility";
 import { electronTrpcClient } from "renderer/lib/trpc-client";
 
-export const GASTOWN_PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
+export const GASTOWN_PROBE_QUERY_KEY = [
+	"electron",
+	"gastown",
+	"probe",
+] as const;
 export const GASTOWN_PROBE_BASE_INTERVAL_MS = 10_000;
 export const GASTOWN_PROBE_MAX_INTERVAL_MS = 60_000;
 const OFFLINE_FAILURE_THRESHOLD = 3;

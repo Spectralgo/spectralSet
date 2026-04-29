@@ -18,6 +18,7 @@ import {
 } from "react-icons/hi2";
 import { AgentRow } from "renderer/components/Gastown/AgentRow";
 import { useCreateOrAttachWithTheme } from "renderer/hooks/useCreateOrAttachWithTheme";
+import { useGastownProbe } from "renderer/hooks/useGastownProbe";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { attachToAgent, buildTmuxSessionName } from "renderer/lib/gastown";
 import { getRigPrefix } from "renderer/lib/gastown/rig-prefix";
@@ -26,7 +27,6 @@ import { useTabsStore } from "renderer/stores/tabs/store";
 
 // Shares the key with GastownCard so toggle + sidebar read the same cache.
 const ENABLED_QUERY_KEY = ["electron", "settings", "gastownEnabled"] as const;
-const PROBE_QUERY_KEY = ["electron", "gastown", "probe"] as const;
 
 const ROLE_ORDER: Record<RigAgent["role"], number> = {
 	mayor: 0,
@@ -52,12 +52,7 @@ export function GastownSidebarSection() {
 function GastownSidebarSectionBody() {
 	const [open, setOpen] = useState(true);
 
-	const probeQuery = useQuery({
-		queryKey: PROBE_QUERY_KEY,
-		queryFn: () => electronTrpcClient.gastown.probe.query(),
-		refetchInterval: 5000,
-		refetchOnWindowFocus: false,
-	});
+	const probeQuery = useGastownProbe().query;
 
 	const rigs = useMemo(() => {
 		const data = probeQuery.data?.rigs ?? [];
