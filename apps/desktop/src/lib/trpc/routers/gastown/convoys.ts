@@ -7,6 +7,7 @@ import {
 	getConvoyBeads,
 	type ListConvoysArgs,
 	listConvoys,
+	updateConvoyBeadStatus,
 } from "@spectralset/gastown-cli-client";
 import { z } from "zod";
 import { publicProcedure, router } from "../..";
@@ -41,6 +42,13 @@ const createConvoyInputSchema = z.object({
 	townPath: townPathSchema,
 });
 
+const updateBeadStatusInputSchema = z.object({
+	convoyId: z.string().min(1),
+	beadId: z.string().min(1),
+	status: z.enum(["open", "hooked", "closed"]),
+	townPath: townPathSchema,
+});
+
 interface BeadDep {
 	from: string;
 	to: string;
@@ -52,6 +60,7 @@ interface GastownConvoysRouterDeps {
 	convoyStatusFn?: typeof convoyStatus;
 	getConvoyBeadsFn?: typeof getConvoyBeads;
 	createConvoyFn?: typeof createConvoy;
+	updateConvoyBeadStatusFn?: typeof updateConvoyBeadStatus;
 	resolveTownPathFn?: (townPath: string | undefined) => string | undefined;
 	discoverTownRootFn?: () => string | undefined;
 	listConvoysCacheStaleMs?: number;
@@ -84,6 +93,8 @@ export const createGastownConvoysRouter = (
 	const convoyStatusImpl = deps.convoyStatusFn ?? convoyStatus;
 	const getConvoyBeadsImpl = deps.getConvoyBeadsFn ?? getConvoyBeads;
 	const createConvoyImpl = deps.createConvoyFn ?? createConvoy;
+	const updateConvoyBeadStatusImpl =
+		deps.updateConvoyBeadStatusFn ?? updateConvoyBeadStatus;
 	const resolveTownPathImpl = deps.resolveTownPathFn ?? resolveTownPath;
 	const discoverTownRootImpl = deps.discoverTownRootFn ?? discoverTownRoot;
 	const listConvoysCacheStaleMs =
@@ -204,5 +215,21 @@ export const createGastownConvoysRouter = (
 					}
 				},
 			),
+		updateBeadStatus: publicProcedure
+			.input(updateBeadStatusInputSchema)
+			.mutation(async ({ input }) => {
+				const townRoot =
+					resolveTownPathImpl(input.townPath) ?? discoverTownRootImpl();
+				await updateConvoyBeadStatusImpl(
+					{
+						beadId: input.beadId,
+						status: input.status,
+						townRoot,
+					},
+					await shellOptions(),
+				);
+				listConvoysCache.clear();
+				return { ok: true as const };
+			}),
 	});
 };

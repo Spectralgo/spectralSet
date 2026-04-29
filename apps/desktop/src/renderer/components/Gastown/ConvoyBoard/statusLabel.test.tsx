@@ -37,7 +37,7 @@ describe("statusLabel", () => {
 		expect(statusLabel("stranded")).toBe("Unknown · stranded");
 	});
 
-	it("returns plain Unknown for empty/falsy raw value", () => {
-		expect(statusLabel("")).toBe("Unknown");
+	it("labels empty/falsy raw values as uncategorized", () => {
+		expect(statusLabel("")).toBe("Uncategorized");
 	});
 });

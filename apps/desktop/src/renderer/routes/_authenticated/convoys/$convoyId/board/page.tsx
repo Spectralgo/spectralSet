@@ -1,8 +1,10 @@
 import type { ConvoyBead } from "@spectralset/gastown-cli-client";
+import { toast } from "@spectralset/ui/sonner";
 import { ToggleGroup, ToggleGroupItem } from "@spectralset/ui/toggle-group";
 import { createFileRoute } from "@tanstack/react-router";
 import {
 	BeadCard,
+	type BeadStatus,
 	ConvoyBoardShell,
 	type ConvoyBead as ShellBead,
 } from "renderer/components/Gastown/ConvoyBoard";
@@ -33,11 +35,61 @@ function ConvoyBoardPage() {
 		navigate({ search: (p) => ({ ...p, mode: next }), replace: true });
 
 	const townPath = useGastownTownPath() || undefined;
+	const utils = electronTrpc.useUtils();
 	const beadsQuery = electronTrpc.gastown.convoys.beads.useQuery({
 		convoyId,
 		townPath,
 	});
+	const updateBeadStatus =
+		electronTrpc.gastown.convoys.updateBeadStatus.useMutation({
+			onMutate: async (input) => {
+				const queryInput = {
+					convoyId: input.convoyId,
+					townPath: input.townPath,
+				};
+				await utils.gastown.convoys.beads.cancel(queryInput);
+				const previous = utils.gastown.convoys.beads.getData(queryInput);
+				utils.gastown.convoys.beads.setData(queryInput, (current) =>
+					current
+						? {
+								...current,
+								beads: current.beads.map((bead) =>
+									bead.id === input.beadId
+										? { ...bead, status: input.status }
+										: bead,
+								),
+							}
+						: current,
+				);
+				return { previous, queryInput };
+			},
+			onError: (_error, _input, context) => {
+				if (context?.previous) {
+					utils.gastown.convoys.beads.setData(
+						context.queryInput,
+						context.previous,
+					);
+				}
+				toast.error("Failed to update issue status");
+			},
+			onSettled: async (_data, _error, input) => {
+				await Promise.all([
+					utils.gastown.convoys.beads.invalidate({
+						convoyId: input?.convoyId ?? convoyId,
+						townPath: input?.townPath ?? townPath,
+					}),
+					utils.gastown.convoys.status.invalidate({
+						id: input?.convoyId ?? convoyId,
+						townPath: input?.townPath ?? townPath,
+					}),
+					utils.gastown.convoys.list.invalidate(),
+				]);
+			},
+		});
 	const beads = (beadsQuery.data?.beads ?? []) as unknown as ShellBead[];
+	const handleStatusChange = (beadId: string, status: BeadStatus) => {
+		updateBeadStatus.mutate({ convoyId, beadId, status, townPath });
+	};
 
 	return (
 		<div className="flex h-full flex-col">
@@ -69,7 +121,7 @@ function ConvoyBoardPage() {
 				<ConvoyBoardShell
 					beads={beads}
 					dependencies={beadsQuery.data?.dependencies ?? []}
-					onStatusChange={() => {}}
+					onStatusChange={handleStatusChange}
 					renderCard={(b) => <BeadCard bead={b as unknown as ConvoyBead} />}
 				/>
 			)}
