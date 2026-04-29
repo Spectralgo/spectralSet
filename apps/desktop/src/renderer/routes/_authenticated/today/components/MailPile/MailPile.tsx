@@ -69,7 +69,15 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 		onMarkAllRead,
 	});
 
-	if (count === 0) return null;
+	if (count === 0) {
+		return (
+			<section aria-label="Mail pile" data-testid="mail-pile">
+				<p className="py-2 text-sm text-muted-foreground">
+					Inbox clear · all caught up
+				</p>
+			</section>
+		);
+	}
 	return (
 		<section aria-label="Mail pile" data-testid="mail-pile">
 			<button
