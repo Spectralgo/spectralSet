@@ -80,10 +80,12 @@ describe("ConvoyBoard", () => {
 			"No active sprints.",
 		);
 
+		// Error state defers to the global GastownOfflineBanner; the list itself
+		// shows the empty state instead of a per-pane error message.
 		listState = { data: undefined, isLoading: false, error: new Error("x") };
-		expect(renderToStaticMarkup(<ConvoyBoard />)).toContain(
-			"Failed to load sprints",
-		);
+		const html = renderToStaticMarkup(<ConvoyBoard />);
+		expect(html).toContain("No active sprints.");
+		expect(html).not.toContain("Failed to load sprints");
 	});
 
 	it("renders sprint list, auto-selects first sprint, fetches detail, derives progress", () => {

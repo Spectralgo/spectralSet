@@ -28,8 +28,7 @@ export function GastownOfflineBanner() {
 	const seen = formatLastSeen(lastSeenAt, Date.now());
 
 	return (
-		<div
-			role="status"
+		<output
 			aria-live="polite"
 			data-testid="gastown-offline-banner"
 			className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-3 border-b border-amber-500/40 bg-amber-500/15 px-4 py-1.5 text-xs text-amber-700 backdrop-blur-sm dark:text-amber-300"
@@ -45,6 +44,6 @@ export function GastownOfflineBanner() {
 			>
 				Retry now
 			</button>
-		</div>
+		</output>
 	);
 }

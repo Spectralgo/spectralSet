@@ -58,7 +58,9 @@ export function useGastownConnectionState(): UseGastownConnectionStateResult {
 	});
 
 	const probeOk =
-		probeQuery.isSuccess && probeQuery.data?.installed === true && !probeQuery.isError;
+		probeQuery.isSuccess &&
+		probeQuery.data?.installed === true &&
+		!probeQuery.isError;
 	const lastSeenAt = probeQuery.dataUpdatedAt || null;
 	const state = deriveConnectionState({
 		enabled,

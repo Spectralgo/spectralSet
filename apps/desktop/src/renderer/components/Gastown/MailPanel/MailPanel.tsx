@@ -104,13 +104,9 @@ function MessageList({
 }: MessageListProps) {
 	return (
 		<div className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-border/60">
-			{isError ? (
-				<div className="p-4 text-xs text-destructive">
-					Failed to load inbox. Is Gas Town running?
-				</div>
-			) : isLoading ? (
+			{isLoading ? (
 				<div className="p-4 text-xs text-muted-foreground">Loading…</div>
-			) : messages.length === 0 ? (
+			) : messages.length === 0 || isError ? (
 				<div className="p-4 text-xs text-muted-foreground">Inbox is empty.</div>
 			) : (
 				messages.map((m) => (

@@ -211,13 +211,9 @@ function ConvoyList({
 	selectedId,
 	onSelect,
 }: ConvoyListProps) {
-	const body = isError ? (
-		<div className="p-4 text-xs text-destructive">
-			Failed to load sprints. Is Gas Town running?
-		</div>
-	) : isLoading ? (
+	const body = isLoading ? (
 		<div className="p-4 text-xs text-muted-foreground">Loading sprints…</div>
-	) : convoys.length === 0 ? (
+	) : convoys.length === 0 || isError ? (
 		<div className="p-4 text-xs text-muted-foreground">No active sprints.</div>
 	) : (
 		convoys.map((c) => {

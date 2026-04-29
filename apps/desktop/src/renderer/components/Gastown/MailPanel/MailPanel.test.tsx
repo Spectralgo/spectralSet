@@ -74,7 +74,7 @@ describe("MailPanel", () => {
 		expect(html).toContain("Loading…");
 	});
 
-	it("shows an error state when the query fails", () => {
+	it("falls through to empty state on query failure (banner owns the error)", () => {
 		inboxState = {
 			data: undefined,
 			isLoading: false,
@@ -83,7 +83,8 @@ describe("MailPanel", () => {
 		const html = renderToStaticMarkup(
 			<MailPanel ComposeDialogComponent={ComposeDialogStub} />,
 		);
-		expect(html).toContain("Failed to load inbox");
+		expect(html).toContain("Inbox is empty.");
+		expect(html).not.toContain("Failed to load inbox");
 	});
 
 	it("renders the inbox list and auto-selects the first message", () => {
