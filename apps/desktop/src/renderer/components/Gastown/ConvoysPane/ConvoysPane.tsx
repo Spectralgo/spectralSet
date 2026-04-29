@@ -1,4 +1,5 @@
 import { ConvoyBoard } from "renderer/components/Gastown/ConvoyBoard";
+import { PaneErrorBoundary } from "renderer/components/Shell/PaneErrorBoundary";
 import type { BaseTab, Pane } from "shared/tabs-types";
 
 interface ConvoysPaneProps {
@@ -12,7 +13,9 @@ export function ConvoysPane(_props: ConvoysPaneProps) {
 			data-convoys-root
 			className="flex h-full w-full min-w-[320px] flex-col bg-background"
 		>
-			<ConvoyBoard />
+			<PaneErrorBoundary>
+				<ConvoyBoard />
+			</PaneErrorBoundary>
 		</div>
 	);
 }
