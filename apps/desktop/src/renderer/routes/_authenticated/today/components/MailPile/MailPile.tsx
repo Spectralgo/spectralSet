@@ -1,6 +1,7 @@
 import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { InboxIcon } from "lucide-react";
 import { useState } from "react";
 import { MAIL_INBOX_QUERY_KEY } from "renderer/components/Gastown/MailPanel/ComposeMailDialog";
 import { electronTrpc } from "renderer/lib/electron-trpc";
@@ -72,7 +73,8 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 	if (count === 0) {
 		return (
 			<section aria-label="Mail pile" data-testid="mail-pile">
-				<p className="py-2 text-sm text-muted-foreground">
+				<p className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+					<InboxIcon aria-hidden="true" className="h-3.5 w-3.5" />
 					Inbox clear · all caught up
 				</p>
 			</section>
