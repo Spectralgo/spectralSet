@@ -1,7 +1,9 @@
 import { Button } from "@spectralset/ui/button";
 import { toast } from "@spectralset/ui/sonner";
+import { useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { ElectronRouterOutputs } from "renderer/lib/electron-trpc";
+import { electronTrpc } from "renderer/lib/electron-trpc";
 import { useTriageKeybindings } from "./useTriageKeybindings";
 
 export type TriageCard =
@@ -15,6 +17,8 @@ export interface TriageStackQueryState {
 
 const ACTIONS = ["Ack", "Open", "Snooze"] as const;
 type Action = (typeof ACTIONS)[number];
+
+const SNOOZE_TTL_MS = 15 * 60 * 1000;
 
 export function formatAge(ageMs: number): string {
 	const s = Math.max(0, Math.floor(ageMs / 1000));
@@ -36,11 +40,53 @@ export function cardSource(c: TriageCard): string {
 }
 
 export function TriageStack({ query }: { query: TriageStackQueryState }) {
-	const [dismissed, setDismissed] = useState<ReadonlySet<string>>(new Set());
+	const navigate = useNavigate();
+	const [optimisticHidden, setOptimisticHidden] = useState<ReadonlySet<string>>(
+		new Set(),
+	);
+	const removeOptimistic = (id: string) =>
+		setOptimisticHidden((prev) => {
+			if (!prev.has(id)) return prev;
+			const next = new Set(prev);
+			next.delete(id);
+			return next;
+		});
+	const ack = electronTrpc.gastown.today.ackCard.useMutation({
+		onSuccess: (_data, vars) => {
+			void Promise.resolve(query.refetch()).finally(() =>
+				removeOptimistic(vars.cardId),
+			);
+		},
+		onError: (e, vars) => {
+			removeOptimistic(vars.cardId);
+			toast.error(e.message || "Ack failed");
+		},
+	});
+	const snooze = electronTrpc.gastown.today.snoozeCard.useMutation({
+		onSuccess: (_data, vars) => {
+			void Promise.resolve(query.refetch()).finally(() =>
+				removeOptimistic(vars.cardId),
+			);
+		},
+		onError: (e, vars) => {
+			removeOptimistic(vars.cardId);
+			toast.error(e.message || "Snooze failed");
+		},
+	});
+	const openCard = electronTrpc.gastown.today.openCard.useMutation({
+		onSuccess: (result) => {
+			if (result.type === "mail") {
+				void navigate({ to: "/gastown/mail" });
+				return;
+			}
+			toast.message(`${result.type} navigation not yet wired`);
+		},
+		onError: (e) => toast.error(e.message || "Open failed"),
+	});
 	const [focusIdx, setFocusIdx] = useState(0);
 	const visible = useMemo<TriageCard[]>(
-		() => (query.data?.cards ?? []).filter((c) => !dismissed.has(c.id)),
-		[query.data?.cards, dismissed],
+		() => (query.data?.cards ?? []).filter((c) => !optimisticHidden.has(c.id)),
+		[query.data?.cards, optimisticHidden],
 	);
 	const safeIdx =
 		visible.length === 0 ? 0 : Math.min(focusIdx, visible.length - 1);
@@ -48,11 +94,12 @@ export function TriageStack({ query }: { query: TriageStackQueryState }) {
 
 	const dispatch = (c: TriageCard, action: Action) => {
 		if (action === "Open") {
-			toast.message(`Open: ${cardTitle(c)}`);
+			openCard.mutate({ cardId: c.id });
 			return;
 		}
-		setDismissed((prev) => new Set(prev).add(c.id));
-		toast.success(action === "Ack" ? "Acked." : "Snoozed until 15m.");
+		setOptimisticHidden((prev) => new Set(prev).add(c.id));
+		if (action === "Ack") ack.mutate({ cardId: c.id });
+		else snooze.mutate({ cardId: c.id, ttlMs: SNOOZE_TTL_MS });
 	};
 
 	useTriageKeybindings({

@@ -87,6 +87,17 @@ describe("Today route query ownership", () => {
 			"electronTrpc.gastown.today.triage.useQuery",
 		);
 	});
+
+	it("dispatches Ack/Snooze/Open through real mutations (no local Set)", async () => {
+		const triageStack = await readRendererFile(
+			"apps/desktop/src/renderer/routes/_authenticated/today/components/TriageStack/TriageStack.tsx",
+		);
+		expect(triageStack).toContain("today.ackCard.useMutation");
+		expect(triageStack).toContain("today.snoozeCard.useMutation");
+		expect(triageStack).toContain("today.openCard.useMutation");
+		expect(triageStack).toContain("useNavigate");
+		expect(triageStack).not.toContain("setDismissed");
+	});
 });
 
 describe("cardTitle", () => {
