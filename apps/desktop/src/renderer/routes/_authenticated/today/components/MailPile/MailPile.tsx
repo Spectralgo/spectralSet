@@ -4,8 +4,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { InboxIcon } from "lucide-react";
 import { useState } from "react";
 import { MAIL_INBOX_QUERY_KEY } from "renderer/components/Gastown/MailPanel/ComposeMailDialog";
+import { useOptimisticMutation } from "renderer/hooks/useOptimisticMutation";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import type { MailMessage } from "renderer/lib/gastown/mail-types";
+import { electronTrpcClient } from "renderer/lib/trpc-client";
 import { useMailPileKeybindings } from "./useMailPileKeybindings";
 
 export interface MailPileProps {
@@ -47,8 +49,18 @@ export function MailPile({ messages, townPath, now }: MailPileProps) {
 		onSuccess: done("Archived"),
 		onError: (e) => toast.error(e.message || "Archive failed"),
 	});
-	const markRead = electronTrpc.gastown.mail.markRead.useMutation({
-		onSuccess: done("Marked"),
+	const markRead = useOptimisticMutation<
+		{ ok: true },
+		Error,
+		{ ids: string[]; townPath?: string },
+		MailMessage[]
+	>({
+		mutationFn: (input) =>
+			electronTrpcClient.gastown.mail.markRead.mutate(input),
+		queryKey: MAIL_INBOX_QUERY_KEY,
+		applyOptimistic: (prev, vars) =>
+			prev?.map((m) => (vars.ids.includes(m.id) ? { ...m, read: true } : m)),
+		onSuccess: (r, v) => done("Marked")(r, v),
 		onError: (e) => toast.error(e.message || "Mark-read failed"),
 	});
 	const busy = archive.isPending || markRead.isPending;
